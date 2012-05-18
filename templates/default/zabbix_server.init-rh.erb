@@ -1,0 +1,107 @@
+#! /bin/sh
+#
+# zabbix_server service script
+#
+# chkconfig: 345 70 45
+# description: The Zabbix Server
+# processname: zabbix_server
+#
+
+# Provides: zabbix_server
+### BEGIN INIT INFO
+# Required-Start: $local_fs $remote_fs
+# Required-Stop: $local_fs $remote_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: S 0 1 6
+# Short-Description: Zabbix server daemon
+# Description: Controls the Zabbix server daemon
+### END INIT INFO
+
+# Define LSB functions.
+. /lib/lsb/init-functions
+
+NAME=zabbix_server
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin
+DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
+OPTS="-c <%= node.zabbix.etc_dir %>/zabbix_server.conf"
+DESC="Zabbix server daemon"
+PID=<%= node.zabbix.run_dir %>/$NAME.pid
+LOCK=<%= node.zabbix.lock_dir %>/$NAME
+
+# Exit if the package is not installed
+if [ ! -x "$DAEMON" ]; then
+{
+  echo "Couldn't find $DAEMON"
+  exit 99
+}
+fi
+
+start()
+{
+  start_daemon -p $PID $DAEMON $OPTS
+  RETVAL=$?
+  [ $RETVAL -eq 0 ] && touch $LOCK
+  return $RETVAL
+}
+
+stop()
+{
+  killproc -p $PID
+  RETVAL="$?"
+  [ $RETVAL -eq 0 ] && rm -f $PID $LOCK
+  return "$RETVAL"
+}
+
+case "$1" in
+  start)
+    start
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME did not start"
+    else 
+      log_success_msg "$NAME started"
+    fi
+    ;;
+  stop)
+    stop
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME did not stop"
+    else 
+      log_success_msg "$NAME stopped"
+    fi
+    ;;
+  restart)
+    stop
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME did not stop"
+    else
+      sleep 5
+      start
+      if [ "$?" -gt 0 ];
+      then
+        log_failure_msg "$NAME did not start"
+      else 
+        log_success_msg "$NAME restarted"
+      fi
+    fi
+    ;;
+  status)
+    PID_NUM=$(pidofproc -p $PID)
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME is not running"
+      exit 1
+    else 
+      log_success_msg "$NAME is running ($PID_NUM)"
+      exit 0
+    fi
+    ;;
+  *)
+    echo "Usage: $NAME {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0
