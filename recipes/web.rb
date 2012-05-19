@@ -53,6 +53,13 @@ directory "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}/frontends
   action :create
 end
 
+# install zabbix PHP config file
+template "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}/frontends/php/conf/zabbix.conf.php" do
+  source "zabbix_web.conf.php.erb"
+  owner "root"
+  group "root"
+  mode "754"
+end
 
 #install vhost for zabbix frontend
 web_app "#{node.zabbix.web.fqdn}" do
