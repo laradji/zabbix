@@ -27,6 +27,9 @@ case "$1" in
         sleep 5
         $0 start
         ;;
+  status)
+        status_of_proc $DAEMON "Zabbix server"
+        ;;
   *)
         N=/etc/init.d/$NAME
         echo "Usage: $N {start|stop|restart|force-reload}" >&2
