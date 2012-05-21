@@ -37,13 +37,13 @@ Server :
 --------
 
 node[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Development"
-node[:zabbix][:server][:version] = "1.9.8"
+node[:zabbix][:server][:version] = "2.0.0rc6"
 
 Agent :
 -------
 
 node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Development"
-node[:zabbix][:agent][:version] = "1.9.8"
+node[:zabbix][:agent][:version] = "2.0.0rc6"
 node[:zabbix][:agent][:install_method] = "source"
 
 USAGE :
@@ -55,10 +55,19 @@ TODO :
 ======
 
 * Support more platform on agent side windows ?
-* LWRP for telling host to use Zabbix Template
+* LWRP Magic ?
 
 CHANGELOG :
 ===========
+### 0.0.28
+	* Thanks to Steffen Gebert for this release
+	* Use generic sourceforge download URLs
+	* Fix warning string literal in condition
+	* Deploy zabbix.conf.php file for web frontend
+	* Add "status" option to zabbix_server init script
+	* Make MySQL populate scripts compatible with zabbix 2.0
+	* Add example for Chef Solo usage to Vagrantfile
+	
 ### 0.0.27
 	* Configuration error about include_dir in zabbix_agentd.conf.erb	
 	

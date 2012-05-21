@@ -12,7 +12,7 @@ default['zabbix']['agent']['install_method'] = "prebuild"
 default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 
 default['zabbix']['server']['install'] = false
-default['zabbix']['server']['version'] = "1.8.8"
+default['zabbix']['server']['version'] = "1.8.13"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['dbname'] = "zabbix"
 default['zabbix']['server']['dbuser'] = "zabbix"
