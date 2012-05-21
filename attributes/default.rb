@@ -16,6 +16,7 @@ default['zabbix']['server']['version'] = "1.8.13"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['dbname'] = "zabbix"
 default['zabbix']['server']['dbuser'] = "zabbix"
+default['zabbix']['server']['dbhost'] = "localhost"
 default['zabbix']['server']['dbpassword'] = nil
 default['zabbix']['server']['dbport'] = "3306"
 default['zabbix']['server']['install_method'] = "source"
