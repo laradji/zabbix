@@ -70,7 +70,7 @@ zabbix_dirs.each do |dir|
   end
 end
 
-if "#{node.zabbix.agent.install}" == true
+if node.zabbix.agent.install
   include_recipe "zabbix::agent_#{node.zabbix.agent.install_method}"
 end
 
