@@ -3,7 +3,7 @@
 # Attributes:: default
 
 default['zabbix']['agent']['install'] = true
-default['zabbix']['agent']['version'] = "1.8.5"
+default['zabbix']['agent']['version'] = "2.0.0"
 default['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['agent']['server'] = []
 default['zabbix']['agent']['hostname'] = node.fqdn
@@ -12,7 +12,7 @@ default['zabbix']['agent']['install_method'] = "prebuild"
 default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 
 default['zabbix']['server']['install'] = false
-default['zabbix']['server']['version'] = "1.8.13"
+default['zabbix']['server']['version'] = "2.0.0"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['dbname'] = "zabbix"
 default['zabbix']['server']['dbuser'] = "zabbix"
@@ -22,6 +22,10 @@ default['zabbix']['server']['dbport'] = "3306"
 default['zabbix']['server']['install_method'] = "source"
 default['zabbix']['server']['configure_options'] = [ "--with-libcurl","--with-net-snmp","--with-mysql" ]
 default['zabbix']['server']['include_dir'] = "/opt/zabbix/server_include"
+default['zabbix']['server']['db_install_method'] = "local"
+default['zabbix']['server']['rds_host'] = nil
+default['zabbix']['server']['rds_master_user'] = nil
+default['zabbix']['server']['rds_master_password'] = nil
 
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil

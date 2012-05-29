@@ -77,6 +77,9 @@ service "zabbix_server" do
   action [ :start, :enable ]
 end
 
-if node['mysql']['server_root_password']
+case "#{node.zabbix.server.db_install_method}"
+when "local"
   include_recipe "zabbix::mysql_setup"
+when "rds"
+  include_recipe "zabbix::mysql_rds_setup"
 end
