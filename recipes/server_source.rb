@@ -39,14 +39,14 @@ script "install_zabbix_server" do
   action :nothing
   notifies :restart, "service[zabbix_server]"
   code <<-EOH
-  tar xvfz #{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}.tar.gz
+  tar xvfz #{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz
   (cd zabbix-#{node.zabbix.server.version} && ./configure --enable-server --prefix=#{node.zabbix.install_dir} #{node.zabbix.server.configure_options.join(" ")})
   (cd zabbix-#{node.zabbix.server.version} && make install)
   EOH
 end
 
 # Download zabbix source code
-remote_file "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}.tar.gz" do
+remote_file "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz" do
   source "http://downloads.sourceforge.net/project/zabbix/#{node.zabbix.server.branch}/#{node.zabbix.server.version}/zabbix-#{node.zabbix.server.version}.tar.gz"
   mode "0644"
   action :create_if_missing
