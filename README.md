@@ -59,6 +59,8 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.29
+	* typo error on attribute file default['zabbix']['agent']['server'] -> default['zabbix']['agent']['servers'] 
 ### 0.0.28
 	* Thanks to Steffen Gebert for this release
 	* Use generic sourceforge download URLs
