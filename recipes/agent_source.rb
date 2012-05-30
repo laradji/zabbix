@@ -7,6 +7,8 @@
 # Apache 2.0
 #
 
+include_recipe "mysql::client"
+
 case "#{node.platform}"
 when "ubuntu","debian"
   # install some dependencies
