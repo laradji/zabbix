@@ -67,7 +67,7 @@ script "install_zabbix_agent" do
   notifies :restart, "service[zabbix_agentd]"
   code <<-EOH
   rm -rf /tmp/zabbix-#{node.zabbix.agent.version}
-  tar xvfz zabbix-#{node.zabbix.agent.version}.tar.gz -C /tmp
+  tar xvfz zabbix-#{node.zabbix.agent.version}-agent.tar.gz -C /tmp
   mv /tmp/zabbix-#{node.zabbix.agent.version} zabbix-#{node.zabbix.agent.version}-agent
   (cd zabbix-#{node.zabbix.agent.version}-agent && ./configure --enable-agent --prefix=#{node.zabbix.install_dir} #{node.zabbix.agent.configure_options.join(" ")})
   (cd zabbix-#{node.zabbix.agent.version}-agent && make install)
@@ -75,7 +75,7 @@ script "install_zabbix_agent" do
 end
 
 # Download zabbix source code
-remote_file "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.agent.version}.tar.gz" do
+remote_file "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.agent.version}-agent.tar.gz" do
   source "http://downloads.sourceforge.net/project/zabbix/#{node.zabbix.agent.branch}/#{node.zabbix.agent.version}/zabbix-#{node.zabbix.agent.version}.tar.gz"
   mode "0644"
   action :create_if_missing
