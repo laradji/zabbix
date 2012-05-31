@@ -65,7 +65,7 @@ mysql_database_user "#{node.zabbix.server.dbuser}" do
   connection mysql_connection_info
   password "#{node.zabbix.server.dbpassword}"
   database_name "#{node.zabbix.server.dbname}"
-  host 'localhost'
+  host '%'
   privileges [:select,:update,:insert,:create,:drop,:delete]
   action :nothing
 end

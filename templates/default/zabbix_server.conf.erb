@@ -3,7 +3,12 @@
 ############ GENERAL PARAMETERS #################
 
 LogFile=<%= node.zabbix.log_dir %>/zabbix_server.log
-DBHost=localhost
+<% case "#{node.zabbix.server.db_install_method}" %>
+<% when "local" %>
+DBHost=<%= node.zabbix.server.dbhost %>
+<% when "rds" %>
+DBHost=<%= node.zabbix.server.rds_host %>
+<% end %>
 DBName=<%= node.zabbix.server.dbname %>
 DBUser=<%= node.zabbix.server.dbuser %>
 DBPassword=<%= node.zabbix.server.dbpassword %>
