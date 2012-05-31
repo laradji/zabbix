@@ -60,7 +60,11 @@ TODO :
 CHANGELOG :
 ===========
 ### 0.0.29
-	* typo error on attribute file default['zabbix']['agent']['server'] -> default['zabbix']['agent']['servers'] 
+	* Thanks to Steffen Gebert for this release
+	* WARNING! this can break stuff : typo error on attribute file default['zabbix']['agent']['server'] -> default['zabbix']['agent']['servers']
+	* Evaluate node.zabbix.agent.install as boolean, not as string
+	* Respect src_dir in mysql_setup
+	 
 ### 0.0.28
 	* Thanks to Steffen Gebert for this release
 	* Use generic sourceforge download URLs
