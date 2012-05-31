@@ -10,12 +10,6 @@
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
 include_recipe "database"
-include_recipe "mysql::client"
-
-#gem_package "mysql" do
-#  action :install
-#  ignore_failure true
-#end
 
 # generate the password
 node.set_unless['zabbix']['server']['dbpassword'] = secure_password
@@ -67,22 +61,12 @@ else
 end
 
 # create and grant zabbix user
-mysql_database_user "#{node.zabbix.server.rds_master_user}" do
-  connection mysql_connection_info
-  password "#{node.zabbix.server.rds_master_password}"
-  database_name "#{node.zabbix.server.dbname}"
-  host "#{node.zabbix.server.rds_host}"
-  privileges [:select,:update,:insert,:create,:drop,:delete]
-  action :nothing
-end
-
-
-# create and grant zabbix user
 mysql_database_user "#{node.zabbix.server.dbuser}" do
   connection mysql_connection_info
   password "#{node.zabbix.server.dbpassword}"
   database_name "#{node.zabbix.server.dbname}"
-  host "#{node.zabbix.server.rds_host}"
+  host 'localhost'
   privileges [:select,:update,:insert,:create,:drop,:delete]
   action :nothing
 end
+
