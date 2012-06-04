@@ -22,10 +22,14 @@ default['zabbix']['server']['dbport'] = "3306"
 default['zabbix']['server']['install_method'] = "source"
 default['zabbix']['server']['configure_options'] = [ "--with-libcurl","--with-net-snmp","--with-mysql" ]
 default['zabbix']['server']['include_dir'] = "/opt/zabbix/server_include"
-default['zabbix']['server']['db_install_method'] = "local"
-default['zabbix']['server']['rds_host'] = nil
+default['zabbix']['server']['db_install_method'] = "mysql"
+default['zabbix']['server']['rds_dbhost'] = nil
+default['zabbix']['server']['rds_dbport'] = "3306"
 default['zabbix']['server']['rds_master_user'] = nil
 default['zabbix']['server']['rds_master_password'] = nil
+default['zabbix']['server']['rds_dbname'] = "zabbix"
+default['zabbix']['server']['rds_dbuser'] = "zabbix"
+default['zabbix']['server']['rds_dbpassword'] = nil
 
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil

@@ -7,10 +7,6 @@
 # Apache 2.0
 #
 
-if node.zabbix.server.install
-  include_recipe "mysql::client"
-end
-
 case "#{node.platform}"
 when "ubuntu","debian"
   # install some dependencies

@@ -82,8 +82,8 @@ service "zabbix_server" do
 end
 
 case "#{node.zabbix.server.db_install_method}"
-when "local"
+when "mysql"
   include_recipe "zabbix::mysql_setup"
-when "rds"
-  include_recipe "zabbix::mysql_rds_setup"
+when "rds_mysql"
+  include_recipe "zabbix::rds_mysql_setup"
 end
