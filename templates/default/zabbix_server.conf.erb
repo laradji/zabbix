@@ -4,13 +4,13 @@
 
 LogFile=<%= node.zabbix.log_dir %>/zabbix_server.log
 <% case "#{node.zabbix.server.db_install_method}" %>
-<% when "local" %>
+<% when "mysql" %>
 DBHost=<%= node.zabbix.server.dbhost %>
 DBName=<%= node.zabbix.server.dbname %>
 DBUser=<%= node.zabbix.server.dbuser %>
 DBPassword=<%= node.zabbix.server.dbpassword %>
 DBPort=<%= node.zabbix.server.dbport %>
-<% when "rds" %>
+<% when "rds_mysql" %>
 DBHost=<%= node.zabbix.server.rds_dbhost %>
 DBName=<%= node.zabbix.server.rds_dbname %>
 DBUser=<%= node.zabbix.server.rds_dbuser %>
