@@ -2,16 +2,25 @@
 // Zabbix GUI configuration file
 global $DB;
 
-$DB["TYPE"]                             = 'MYSQL';
+$DB["TYPE"]                     = 'MYSQL';
+<% case "#{node.zabbix.server.db_install_method}" %>
+<% when "mysql" %>
 $DB["SERVER"]                   = '<%= node.zabbix.server.dbhost %>';
-$DB["PORT"]                             = '0';
+$DB["PORT"]                     = '<%= node.zabbix.server.dbport %>';
 $DB["DATABASE"]                 = '<%= node.zabbix.server.dbname %>';
-$DB["USER"]                             = '<%= node.zabbix.server.dbuser %>';
+$DB["USER"]                     = '<%= node.zabbix.server.dbuser %>';
 $DB["PASSWORD"]                 = '<%= node.zabbix.server.dbpassword %>';
+<% when "rds_mysql" %>
+$DB["SERVER"]                   = '<%= node.zabbix.server.rds_dbhost %>';
+$DB["PORT"]                     = '<%= node.zabbix.server.rds_dbport %>';
+$DB["DATABASE"]                 = '<%= node.zabbix.server.rds_dbname %>';
+$DB["USER"]                     = '<%= node.zabbix.server.rds_dbuser %>';
+$DB["PASSWORD"]                 = '<%= node.zabbix.server.rds_dbpassword %>';
+<% end %>
 // SCHEMA is relevant only for IBM_DB2 database
 $DB["SCHEMA"]                   = '';
 
-$ZBX_SERVER                             = 'localhost';
+$ZBX_SERVER                     = 'localhost';
 $ZBX_SERVER_PORT                = '10051';
 $ZBX_SERVER_NAME                = '';
 
