@@ -7,6 +7,10 @@
 # Apache 2.0
 #
 
+if node.zabbix.server.install
+  include_recipe "mysql::client"
+end
+
 case "#{node.platform}"
 when "ubuntu","debian"
   # install some dependencies
@@ -77,6 +81,9 @@ service "zabbix_server" do
   action [ :start, :enable ]
 end
 
-if node['mysql']['server_root_password']
+case "#{node.zabbix.server.db_install_method}"
+when "mysql"
   include_recipe "zabbix::mysql_setup"
+when "rds_mysql"
+  include_recipe "zabbix::rds_mysql_setup"
 end
