@@ -16,7 +16,7 @@ Please include the default recipe before using any other recipe.
 Example :
 
 "recipe[zabbix]",
-"recipe[zabbix::agent_source]"
+"recipe[zabbix::agent_prebuild]"
 
 OR
 
@@ -36,15 +36,16 @@ example :
 Server :
 --------
 
-node[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Development"
-node[:zabbix][:server][:version] = "2.0.0rc6"
+node[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Stable"
+node[:zabbix][:server][:version] = "2.0.0"
+ndoe[:zabbix][:server][:install_method] = "source"
 
 Agent :
 -------
 
-node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Development"
-node[:zabbix][:agent][:version] = "2.0.0rc6"
-node[:zabbix][:agent][:install_method] = "source"
+node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Stable"
+node[:zabbix][:agent][:version] = "2.0.0"
+node[:zabbix][:agent][:install_method] = "prebuild"
 
 AWS RDS :
 ---------
@@ -77,6 +78,14 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.30
+	* Thanks to Paul Rossman for this release
+	* Zabbix default install version is now 2.0.0
+	* Option to install Zabbix database on RDS node (default remains localhost MySQL)
+	* MySQL client now installed with Zabbix server
+	* Added missing node[:zabbix][:server][:dbport] to templates/default/zabbix_web.conf.php.erb
+	* Fixed recipe name typo in recipes/web.rb
+	
 ### 0.0.29
 	* Thanks to Steffen Gebert for this release
 	* WARNING! this can break stuff : typo error on attribute file default['zabbix']['agent']['server'] -> default['zabbix']['agent']['servers']
