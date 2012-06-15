@@ -46,6 +46,24 @@ node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Development"
 node[:zabbix][:agent][:version] = "2.0.0rc6"
 node[:zabbix][:agent][:install_method] = "source"
 
+AWS RDS :
+---------
+
+Set this attribute with to use RDS for the Zabbix database. Default database remains localhost MySQL.
+
+node[:zabbix][:server][:db_install_method] = "rds_mysql"
+
+These attributes must also be set. Values below are pre-defined.
+
+node[:zabbix][:server][:rds_master_user] = ""
+node[:zabbix][:server][:rds_master_password] = ""
+
+node[:zabbix][:server][:rds_dbhost] = ""
+node[:zabbix][:server][:rds_dbport] = "3306"
+node[:zabbix][:server][:rds_dbname] = "zabbix"
+node[:zabbix][:server][:rds_dbuser] = "zabbix"
+node[:zabbix][:server][:rds_dbpassword] = ""
+
 USAGE :
 =======
 
