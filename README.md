@@ -30,7 +30,6 @@ ATTRIBUTES:
 Don't forget to set [:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
 Don't forget to set [:zabbix][:web][:fqdn] or you will not have the zabbix web interface
 
-If you want to use beta release of zabbix you can change the branch attribute and the zabbix version
 example : 
 
 Server :
@@ -51,14 +50,11 @@ AWS RDS :
 ---------
 
 Set this attribute with to use RDS for the Zabbix database. Default database remains localhost MySQL.
-
 node[:zabbix][:server][:db_install_method] = "rds_mysql"
 
 These attributes must also be set. Values below are pre-defined.
-
 node[:zabbix][:server][:rds_master_user] = ""
 node[:zabbix][:server][:rds_master_password] = ""
-
 node[:zabbix][:server][:rds_dbhost] = ""
 node[:zabbix][:server][:rds_dbport] = "3306"
 node[:zabbix][:server][:rds_dbname] = "zabbix"
@@ -78,6 +74,10 @@ TODO :
 
 CHANGELOG :
 ===========
+
+### 0.0.31
+	* Readme typo
+	
 ### 0.0.30
 	* Thanks to Paul Rossman for this release
 	* Zabbix default install version is now 2.0.0
