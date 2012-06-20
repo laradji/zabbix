@@ -6,4 +6,7 @@ LogRemoteCommands=1
 Include=<%= node.zabbix.agent.include_dir %>
 PidFile=<%= node.zabbix.run_dir %>/zabbix_agentd.pid
 Server=<%= node.zabbix.agent.servers.join(',') %>
+<% if node.zabbix.agent.servers_active.first -%>
+ServerActive=<%= node.zabbix.agent.servers_active.join(',') %>
+<% end -%>
 StartAgents=4
