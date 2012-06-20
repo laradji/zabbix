@@ -74,6 +74,8 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.32
+	* Fix a issue about order in the declaration of service and the template for recipes agent_*
 
 ### 0.0.31
 	* Readme typo

@@ -46,7 +46,7 @@ end
 # Define zabbix_agentd service
 service "zabbix_agentd" do
   supports :status => true, :start => true, :stop => true
-  action [ :start, :enable ]
+  action [ :enable ]
 end
 
 # --prefix is controlled by install_dir
