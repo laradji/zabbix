@@ -74,6 +74,9 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.33
+	* Added ServerActive configuration option for Zabbix agents (Paul Rossman Patch)
+	
 ### 0.0.32
 	* Fix a issue about order in the declaration of service and the template for recipes agent_*
 
