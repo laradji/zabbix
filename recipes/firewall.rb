@@ -27,7 +27,6 @@ if node.zabbix.server.install == true
        # Accept connection from zabbix_server on agent
        firewall_rule "zabbix_client_#{client[:fqdn]}" do
          port 10051
-         protocol :udp
          source client[:ipaddress]
          action :allow
        end
