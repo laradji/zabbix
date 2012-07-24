@@ -74,6 +74,8 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.34
+	* remove the protocol filter on firewall.
 ### 0.0.33
 	* Added ServerActive configuration option for Zabbix agents (Paul Rossman Patch)
 	
