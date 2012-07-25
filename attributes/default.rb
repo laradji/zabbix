@@ -34,6 +34,7 @@ default['zabbix']['server']['rds_dbpassword'] = nil
 
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil
+default['zabbix']['web']['aliases'] = ["zabbix"]
 
 default['zabbix']['install_dir'] = "/opt/zabbix"
 default['zabbix']['etc_dir'] = "/etc/zabbix"
