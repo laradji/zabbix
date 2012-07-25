@@ -10,6 +10,7 @@
 # Create zabbix group
 group "#{node.zabbix.login}" do
   gid node.zabbix.gid
+  system true
   if node.zabbix.gid.nil? 
     action :nothing
   else
@@ -22,6 +23,7 @@ user "#{node.zabbix.login}" do
   comment "zabbix User"
   home "#{node.zabbix.install_dir}"
   shell "#{node.zabbix.shell}"
+  system true
   uid node.zabbix.uid
   gid node.zabbix.gid 
 end
