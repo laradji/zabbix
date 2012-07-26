@@ -27,39 +27,43 @@ OR
 ATTRIBUTES:
 ===========
 
-Don't forget to set [:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
-Don't forget to set [:zabbix][:web][:fqdn] or you will not have the zabbix web interface
+Don't forget to set :
+
+	[:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
+	[:zabbix][:web][:fqdn] or you will not have the zabbix web interface
 
 example : 
 
 Server :
 --------
 
-node[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Stable"
-node[:zabbix][:server][:version] = "2.0.0"
-ndoe[:zabbix][:server][:install_method] = "source"
+	node[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Stable"
+	node[:zabbix][:server][:version] = "2.0.0"
+	ndoe[:zabbix][:server][:install_method] = "source"
 
 Agent :
 -------
 
-node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Stable"
-node[:zabbix][:agent][:version] = "2.0.0"
-node[:zabbix][:agent][:install_method] = "prebuild"
+	node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Stable"
+	node[:zabbix][:agent][:version] = "2.0.0"
+	node[:zabbix][:agent][:install_method] = "prebuild"
 
 AWS RDS :
 ---------
 
 Set this attribute with to use RDS for the Zabbix database. Default database remains localhost MySQL.
-node[:zabbix][:server][:db_install_method] = "rds_mysql"
+
+	node[:zabbix][:server][:db_install_method] = "rds_mysql"
 
 These attributes must also be set. Values below are pre-defined.
-node[:zabbix][:server][:rds_master_user] = ""
-node[:zabbix][:server][:rds_master_password] = ""
-node[:zabbix][:server][:rds_dbhost] = ""
-node[:zabbix][:server][:rds_dbport] = "3306"
-node[:zabbix][:server][:rds_dbname] = "zabbix"
-node[:zabbix][:server][:rds_dbuser] = "zabbix"
-node[:zabbix][:server][:rds_dbpassword] = ""
+
+	node[:zabbix][:server][:rds_master_user] = ""
+	node[:zabbix][:server][:rds_master_password] = ""
+	node[:zabbix][:server][:rds_dbhost] = ""
+	node[:zabbix][:server][:rds_dbport] = "3306"
+	node[:zabbix][:server][:rds_dbname] = "zabbix"
+	node[:zabbix][:server][:rds_dbuser] = "zabbix"
+	node[:zabbix][:server][:rds_dbpassword] = ""
 
 USAGE :
 =======
@@ -74,8 +78,13 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.35
+	* Fix from Amiando about server_alias how should be a Array.
+	* Fix from Guilhem about default run_dir be /tmp,it can be a big problem.
+
 ### 0.0.34
 	* remove the protocol filter on firewall.
+
 ### 0.0.33
 	* Added ServerActive configuration option for Zabbix agents (Paul Rossman Patch)
 	

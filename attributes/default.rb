@@ -34,6 +34,7 @@ default['zabbix']['server']['rds_dbpassword'] = nil
 
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil
+default['zabbix']['web']['aliases'] = ["zabbix"]
 
 default['zabbix']['install_dir'] = "/opt/zabbix"
 default['zabbix']['etc_dir'] = "/etc/zabbix"
@@ -43,7 +44,7 @@ default['zabbix']['alert_dir'] = "/opt/zabbix/AlertScriptsPath"
 default['zabbix']['lock_dir'] = "/var/lock/subsys"
 default['zabbix']['src_dir'] = "/opt"
 default['zabbix']['log_dir'] = "/var/log/zabbix"
-default['zabbix']['run_dir'] = "/tmp"
+default['zabbix']['run_dir'] = "/tmp/zabbix"
 
 default['zabbix']['login'] = "zabbix"
 default['zabbix']['group'] = "zabbix"
