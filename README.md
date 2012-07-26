@@ -80,6 +80,7 @@ CHANGELOG :
 ===========
 ### 0.0.35
 	* Fix from Amiando about server_alias how should be a Array.
+	* Fix from Guilhem about default run_dir be /tmp,it can be a big problem.
 
 ### 0.0.34
 	* remove the protocol filter on firewall.
