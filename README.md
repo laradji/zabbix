@@ -28,6 +28,7 @@ ATTRIBUTES:
 ===========
 
 Don't forget to set :
+
 	[:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
 	[:zabbix][:web][:fqdn] or you will not have the zabbix web interface
 
@@ -51,9 +52,11 @@ AWS RDS :
 ---------
 
 Set this attribute with to use RDS for the Zabbix database. Default database remains localhost MySQL.
+
 	node[:zabbix][:server][:db_install_method] = "rds_mysql"
 
 These attributes must also be set. Values below are pre-defined.
+
 	node[:zabbix][:server][:rds_master_user] = ""
 	node[:zabbix][:server][:rds_master_password] = ""
 	node[:zabbix][:server][:rds_dbhost] = ""
