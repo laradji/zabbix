@@ -43,7 +43,7 @@ default['zabbix']['alert_dir'] = "/opt/zabbix/AlertScriptsPath"
 default['zabbix']['lock_dir'] = "/var/lock/subsys"
 default['zabbix']['src_dir'] = "/opt"
 default['zabbix']['log_dir'] = "/var/log/zabbix"
-default['zabbix']['run_dir'] = "/tmp"
+default['zabbix']['run_dir'] = "/tmp/zabbix"
 
 default['zabbix']['login'] = "zabbix"
 default['zabbix']['group'] = "zabbix"
