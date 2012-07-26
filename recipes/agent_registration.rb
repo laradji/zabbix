@@ -38,6 +38,7 @@ ruby_block "register agent" do
     host_options = {
       'host' => node['zabbix']['agent']['hostname'],
       'interfaces' => [ { "type" => 1, "main" => 1, "useip" => 0, "ip" => "", "dns" => node['fqdn'], "port" => 10050 } ],
+      'templates' => [],
       'groups' => [ group ]
     }
     zbx.add_host( host_options )
