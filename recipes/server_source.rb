@@ -7,27 +7,43 @@
 # Apache 2.0
 #
 
-if node.zabbix.server.install
+if node.zabbix.server.db_install_method 
   include_recipe "mysql::client"
 end
 
-case "#{node.platform}"
-when "ubuntu","debian"
-  # install some dependencies
-  %w{ fping libmysql++-dev libmysql++3 libcurl3 libiksemel-dev libiksemel3 libsnmp-dev snmp libiksemel-utils libcurl4-openssl-dev }.each do |pck|
-    package "#{pck}" do
-      action :install
+case node.zabbix.server.db_install_method
+when "postgresql"
+  include_recipe "postgresql::client"
+  case node.platform
+  when "ubuntu","debian"
+    # install some dependencies
+    %w{ fping libiksemel-dev libiksemel3 libsnmp-dev snmp libcurl4-openssl-dev libssh2-1-dev }.each do |pck|
+      package "#{pck}" do
+        action :install
+      end
     end
+    init_template = 'zabbix_server.init.erb'
   end
-  init_template = 'zabbix_server.init.erb'
-when "redhat","centos","scientific"
+when "mysql","rds_mysql"
+  include_recipe "mysql::client"
+  case node.platform
+  when "ubuntu","debian"
+    # install some dependencies
+    %w{ fping libmysql++-dev libmysql++3 libcurl3 libiksemel-dev libiksemel3 libsnmp-dev snmp libiksemel-utils libcurl4-openssl-dev }.each do |pck|
+      package "#{pck}" do
+        action :install
+      end
+    end
+    init_template = 'zabbix_server.init.erb'
+  when "redhat","centos","scientific"
     include_recipe "yum::epel"
     %w{ fping mysql-devel curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.each do |pck|
       package "#{pck}" do
         action :install
       end
     end
-  init_template = 'zabbix_server.init-rh.erb'
+    init_template = 'zabbix_server.init-rh.erb'
+  end
 end
 
 # --prefix is controlled by install_dir
@@ -36,17 +52,33 @@ node.zabbix.agent.configure_options.delete_if do |option|
 end
 
 # installation of zabbix bin
-script "install_zabbix_server" do
-  interpreter "bash"
-  user "root"
-  cwd "#{node.zabbix.src_dir}"
-  action :nothing
-  notifies :restart, "service[zabbix_server]"
-  code <<-EOH
-  tar xvfz #{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz
-  (cd zabbix-#{node.zabbix.server.version} && ./configure --enable-server --prefix=#{node.zabbix.install_dir} #{node.zabbix.server.configure_options.join(" ")})
-  (cd zabbix-#{node.zabbix.server.version} && make install)
-  EOH
+case node.zabbix.server.db_install_method
+when "postgresql"
+  script "install_zabbix_server" do
+    interpreter "bash"
+    user "root"
+    cwd "#{node.zabbix.src_dir}"
+    action :nothing
+    notifies :restart, "service[zabbix_server]"
+    code <<-EOH
+    tar xvfz #{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz
+    (cd zabbix-#{node.zabbix.server.version} && ./configure --enable-server --with-postgresql --prefix=#{node.zabbix.install_dir} #{node.zabbix.server.configure_options.join(" ")})
+    (cd zabbix-#{node.zabbix.server.version} && make install)
+    EOH
+  end
+when "mysql","rds_mysql"
+  script "install_zabbix_server" do
+    interpreter "bash"
+    user "root"
+    cwd "#{node.zabbix.src_dir}"
+    action :nothing
+    notifies :restart, "service[zabbix_server]"
+    code <<-EOH
+    tar xvfz #{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz
+    (cd zabbix-#{node.zabbix.server.version} && ./configure --enable-server --with-mysql --prefix=#{node.zabbix.install_dir} #{node.zabbix.server.configure_options.join(" ")})
+    (cd zabbix-#{node.zabbix.server.version} && make install)
+    EOH
+  end
 end
 
 # Download zabbix source code
@@ -86,4 +118,6 @@ when "mysql"
   include_recipe "zabbix::mysql_setup"
 when "rds_mysql"
   include_recipe "zabbix::rds_mysql_setup"
+when "postgresql"
+  include_recipe "zabbix::postgresql_setup"
 end
