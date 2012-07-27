@@ -78,6 +78,9 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.36
+	* added restart option to zabbix_agentd service definitions (Paul Rossman Patch)
+
 ### 0.0.35
 	* Fix from Amiando about server_alias how should be a Array.
 	* Fix from Guilhem about default run_dir be /tmp,it can be a big problem.
