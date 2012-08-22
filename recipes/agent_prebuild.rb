@@ -28,6 +28,9 @@ template "#{node.zabbix.etc_dir}/zabbix_agentd.conf" do
   group "root"
   mode "644"
   notifies :restart, "service[zabbix_agentd]"
+  variables(
+    :ztc =>  node['recipes'].include?('zabbix::agent_ztc')
+  )
 end
 
 # Define arch for binaries
