@@ -78,6 +78,9 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.37
+	* Having run dir in /tmp is not so good (Guilhem Lettron)
+
 ### 0.0.36
 	* added restart option to zabbix_agentd service definitions (Paul Rossman Patch)
 
