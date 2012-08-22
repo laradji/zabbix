@@ -3,7 +3,11 @@ LogFile=<%= node.zabbix.log_dir %>/zabbix_agentd.log
 DebugLevel=3
 EnableRemoteCommands=1
 LogRemoteCommands=1
+<% if @ztc -%>
+Include=/etc/zabbix-agent.d/
+<% else -%>
 Include=<%= node.zabbix.agent.include_dir %>
+<% end %>
 PidFile=<%= node.zabbix.run_dir %>/zabbix_agentd.pid
 Server=<%= node.zabbix.agent.servers.join(',') %>
 <% if node.zabbix.agent.servers_active.first -%>
