@@ -9,7 +9,11 @@ default['zabbix']['agent']['servers'] = []
 default['zabbix']['agent']['servers_active'] = []
 default['zabbix']['agent']['hostname'] = node.fqdn
 default['zabbix']['agent']['configure_options'] = [ "--with-libcurl" ]
-default['zabbix']['agent']['install_method'] = "prebuild"
+if node['os'] == "windows"
+  default['zabbix']['agent']['install_method'] = "windows_suiviperf"
+else
+  default['zabbix']['agent']['install_method'] = "prebuild"
+end
 default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 
 default['zabbix']['server']['install'] = false
