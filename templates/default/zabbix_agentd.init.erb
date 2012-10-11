@@ -6,7 +6,7 @@
 # Add status support by Ovea Inc.
 
 NAME=zabbix_agentd
-PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin:<%= node.zabbix.install_dir %>/bin
 DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
 DESC="Zabbix agent daemon"
 PID=<%= node.zabbix.run_dir %>/$NAME.pid

@@ -78,6 +78,9 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.38
+	* Added zabbix_agent bin dir into PATH for Debian/Ubuntu (Some script need zabbix_sender)
+	
 ### 0.0.37
 	* Having run dir in /tmp is not so good (Guilhem Lettron)
 

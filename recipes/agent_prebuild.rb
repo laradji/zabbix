@@ -58,4 +58,3 @@ remote_file "#{node.zabbix.src_dir}/zabbix_agents_#{node.zabbix.agent.version}.l
 end
 
 
-
