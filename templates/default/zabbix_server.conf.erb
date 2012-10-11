@@ -16,6 +16,13 @@ DBName=<%= node.zabbix.server.rds_dbname %>
 DBUser=<%= node.zabbix.server.rds_dbuser %>
 DBPassword=<%= node.zabbix.server.rds_dbpassword %>
 DBPort=<%= node.zabbix.server.rds_dbport %>
+<% when "postgresql" %>
+#DBHost=<%= node.zabbix.server.dbhost %>
+DBHost=
+DBName=<%= node.zabbix.server.dbname %>
+DBUser=<%= node.zabbix.server.dbuser %>
+DBPassword=<%= node.zabbix.server.dbpassword %>
+#DBPort=<%= node.zabbix.server.dbport %>
 <% end %>
 
 PidFile=<%= node.zabbix.run_dir %>/zabbix_server.pid

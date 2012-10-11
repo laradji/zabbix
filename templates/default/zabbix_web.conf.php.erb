@@ -2,20 +2,28 @@
 // Zabbix GUI configuration file
 global $DB;
 
-$DB["TYPE"]                     = 'MYSQL';
 <% case "#{node.zabbix.server.db_install_method}" %>
 <% when "mysql" %>
+$DB["TYPE"]                     = 'MYSQL';
 $DB["SERVER"]                   = '<%= node.zabbix.server.dbhost %>';
 $DB["PORT"]                     = '<%= node.zabbix.server.dbport %>';
 $DB["DATABASE"]                 = '<%= node.zabbix.server.dbname %>';
 $DB["USER"]                     = '<%= node.zabbix.server.dbuser %>';
 $DB["PASSWORD"]                 = '<%= node.zabbix.server.dbpassword %>';
 <% when "rds_mysql" %>
+$DB["TYPE"]                     = 'MYSQL';
 $DB["SERVER"]                   = '<%= node.zabbix.server.rds_dbhost %>';
 $DB["PORT"]                     = '<%= node.zabbix.server.rds_dbport %>';
 $DB["DATABASE"]                 = '<%= node.zabbix.server.rds_dbname %>';
 $DB["USER"]                     = '<%= node.zabbix.server.rds_dbuser %>';
 $DB["PASSWORD"]                 = '<%= node.zabbix.server.rds_dbpassword %>';
+<% when "postgresql" %>
+$DB["TYPE"]                     = 'POSTGRESQL';
+$DB["SERVER"]                   = '<%= node.zabbix.server.dbhost %>';
+#$DB["PORT"]                     = '<%= node.zabbix.server.dbport %>';
+$DB["DATABASE"]                 = '<%= node.zabbix.server.dbname %>';
+$DB["USER"]                     = '<%= node.zabbix.server.dbuser %>';
+$DB["PASSWORD"]                 = '<%= node.zabbix.server.dbpassword %>';
 <% end %>
 // SCHEMA is relevant only for IBM_DB2 database
 $DB["SCHEMA"]                   = '';
