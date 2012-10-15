@@ -78,10 +78,13 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.40
+	* Added new attribute for server service : zabbix.server.log_level
+
 ### 0.0.39
 	* Added zabbix bin patch in init script (deprecate change made in 0.0.38)
 	* Changed default zabbix version to 2.0.3
-	
+
 ### 0.0.38
 	* Added zabbix_agent bin dir into PATH for Debian/Ubuntu (Some script need zabbix_sender)
 	
