@@ -31,7 +31,7 @@ default['zabbix']['server']['rds_master_password'] = nil
 default['zabbix']['server']['rds_dbname'] = "zabbix"
 default['zabbix']['server']['rds_dbuser'] = "zabbix"
 default['zabbix']['server']['rds_dbpassword'] = nil
-default['zabbix']['log_level'] = 1
+default['zabbix']['log_level'] = 3
 
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil
