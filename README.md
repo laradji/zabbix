@@ -13,10 +13,11 @@ REQUIREMENTS:
 
 Please include the default recipe before using any other recipe. 
 
+Installing agent is the default behavior.
+
 Example :
 
-"recipe[zabbix]",
-"recipe[zabbix::agent_prebuild]"
+"recipe[zabbix]"
 
 OR
 
@@ -80,7 +81,7 @@ CHANGELOG :
 ===========
 ### 0.0.40
 	* Refactoring for passing foodcritic
-	* Added new attribute for server service : zabbix.server.log_level
+	* Added new attribute for server service : node['zabbix']['server']['log_level']
 
 ### 0.0.39
 	* Added zabbix bin patch in init script (deprecate change made in 0.0.38)
