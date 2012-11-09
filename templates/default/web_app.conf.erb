@@ -1,10 +1,10 @@
 <VirtualHost *:80>
-  ServerName <%= @params['server_name'] %>
-  ServerAlias <% @params['server_aliases'].each do |a| %><%= "#{a}" %> <% end %>
-  DocumentRoot <%= @params['docroot'] %>
+  ServerName <%= @params[:server_name] %>
+  ServerAlias <%= @params[:server_aliases].join(' ')%>
+  DocumentRoot <%= @params[:docroot] %>
   RewriteEngine On
   
-  <Directory <%= @params['docroot'] %>>
+  <Directory <%= @params[:docroot] %>>
     Options +FollowSymLinks
     AllowOverride None
     Order allow,deny

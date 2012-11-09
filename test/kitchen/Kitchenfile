@@ -1,5 +1,10 @@
 cookbook "zabbix" do
+	configuration "default"
+  	configuration "server"
 	exclude :platform => 'centos'
+	exclude :platform => 'debian'
+	exclude :platform => 'redhat'
+	
   runtimes []
 
 end

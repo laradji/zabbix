@@ -15,7 +15,7 @@ case node['platform']
 when "ubuntu","debian"
   # install some dependencies
   %w{ fping libmysql++-dev libmysql++3 libcurl3 libiksemel-dev libiksemel3 libsnmp-dev snmp libiksemel-utils libcurl4-openssl-dev }.each do |pck|
-    package "#{pck}" do
+    package pck do
       action :install
     end
   end
@@ -23,7 +23,7 @@ when "ubuntu","debian"
 when "redhat","centos","scientific"
     include_recipe "yum::epel"
     %w{ fping mysql-devel curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.each do |pck|
-      package "#{pck}" do
+      package pck do
         action :install
       end
     end
