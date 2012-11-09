@@ -17,7 +17,7 @@ node.set_unless['zabbix']['server']['dbpassword'] = secure_password
 mysql_connection_info = {:host => "localhost", :username => "root", :password => node['mysql']['server_root_password']}
 
 # create zabbix database
-mysql_database "#{node.zabbix.server.dbname}" do
+mysql_database node['zabbix']['server']['dbname'] do
   connection mysql_connection_info
   action :create
   notifies :run, "execute[zabbix_populate_schema]", :immediately
@@ -61,10 +61,10 @@ else
 end
 
 # create and grant zabbix user
-mysql_database_user "#{node.zabbix.server.dbuser}" do
+mysql_database_user node['zabbix']['server']['dbuser'] do
   connection mysql_connection_info
-  password "#{node.zabbix.server.dbpassword}"
-  database_name "#{node.zabbix.server.dbname}"
+  password node['zabbix']['server']['dbpassword']
+  database_name node['zabbix']['server']['dbname']
   host 'localhost'
   privileges [:select,:update,:insert,:create,:drop,:delete]
   action :nothing

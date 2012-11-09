@@ -7,10 +7,10 @@
 # Apache 2.0
 #
 
-if node.zabbix.server.install
-  include_recipe "zabbix::server_#{node.zabbix.server.install_method}"
+if node['zabbix']['server']['install']
+  include_recipe "zabbix::server_#{node['zabbix']['server']['install_method']}"
 end
 
-if node.zabbix.web.install
+if node['zabbix']['web']['install']
   include_recipe "zabbix::web"
 end

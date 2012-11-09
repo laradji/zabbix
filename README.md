@@ -79,6 +79,7 @@ TODO :
 CHANGELOG :
 ===========
 ### 0.0.40
+	* Refactoring for passing foodcritic
 	* Added new attribute for server service : zabbix.server.log_level
 
 ### 0.0.39

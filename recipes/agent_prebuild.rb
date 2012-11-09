@@ -22,7 +22,7 @@ service "zabbix_agentd" do
 end
 
 # Install configuration
-template "#{node.zabbix.etc_dir}/zabbix_agentd.conf" do
+template "#{node['zabbix']['etc_dir']}/zabbix_agentd.conf" do
   source "zabbix_agentd.conf.erb"
   owner "root"
   group "root"
@@ -31,9 +31,9 @@ template "#{node.zabbix.etc_dir}/zabbix_agentd.conf" do
 end
 
 # Define arch for binaries
-if node.kernel.machine == "x86_64"
+if node['kernel']['machine'] == "x86_64"
   $zabbix_arch = "amd64"
-elsif node.kernel.machine == "i686"
+elsif node['kernel']['machine'] == "i686"
   $zabbix_arch = "i386"
 end
 
@@ -41,17 +41,17 @@ end
 script "install_zabbix_agent" do
   interpreter "bash"
   user "root"
-  cwd node.zabbix.install_dir
+  cwd node['zabbix']['install_dir']
   action :nothing
   notifies :restart, "service[zabbix_agentd]"
   code <<-EOH
-  tar xvfz #{node.zabbix.src_dir}/zabbix_agents_#{node.zabbix.agent.version}.linux2_6.#{$zabbix_arch}.tar.gz
+  tar xvfz #{node['zabbix']['src_dir']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz
   EOH
 end
   
 # Download and intall zabbix agent bins.
-remote_file "#{node.zabbix.src_dir}/zabbix_agents_#{node.zabbix.agent.version}.linux2_6.#{$zabbix_arch}.tar.gz" do
-  source "http://www.zabbix.com/downloads/#{node.zabbix.agent.version}/zabbix_agents_#{node.zabbix.agent.version}.linux2_6.#{$zabbix_arch}.tar.gz"
+remote_file "#{node['zabbix']['src_dir']}/zabbix_agents_#{node['zabbix.agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz" do
+  source "http://www.zabbix.com/downloads/#{node['zabbix']['agent']['version']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz"
   mode "0644"
   action :create_if_missing
   notifies :run, "script[install_zabbix_agent]", :immediately

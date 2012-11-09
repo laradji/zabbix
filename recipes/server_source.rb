@@ -7,11 +7,11 @@
 # Apache 2.0
 #
 
-if node.zabbix.server.install
+if node['zabbix']['server']['install']
   include_recipe "mysql::client"
 end
 
-case "#{node.platform}"
+case node['platform']
 when "ubuntu","debian"
   # install some dependencies
   %w{ fping libmysql++-dev libmysql++3 libcurl3 libiksemel-dev libiksemel3 libsnmp-dev snmp libiksemel-utils libcurl4-openssl-dev }.each do |pck|
@@ -31,7 +31,7 @@ when "redhat","centos","scientific"
 end
 
 # --prefix is controlled by install_dir
-node.zabbix.agent.configure_options.delete_if do |option|
+node['zabbix']['agent']['configure_options'].delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 
@@ -39,19 +39,19 @@ end
 script "install_zabbix_server" do
   interpreter "bash"
   user "root"
-  cwd "#{node.zabbix.src_dir}"
+  cwd node['zabbix']['src_dir']
   action :nothing
   notifies :restart, "service[zabbix_server]"
   code <<-EOH
-  tar xvfz #{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz
-  (cd zabbix-#{node.zabbix.server.version} && ./configure --enable-server --prefix=#{node.zabbix.install_dir} #{node.zabbix.server.configure_options.join(" ")})
-  (cd zabbix-#{node.zabbix.server.version} && make install)
+  tar xvfz #{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server.tar.gz
+  (cd zabbix-#{node['zabbix']['server']['version']} && ./configure --enable-server --prefix=#{node['zabbix']['install_dir']} #{node['zabbix']['server']['configure_options'].join(" ")})
+  (cd zabbix-#{node['zabbix']['server']['version']} && make install)
   EOH
 end
 
 # Download zabbix source code
-remote_file "#{node.zabbix.src_dir}/zabbix-#{node.zabbix.server.version}-server.tar.gz" do
-  source "http://downloads.sourceforge.net/project/zabbix/#{node.zabbix.server.branch}/#{node.zabbix.server.version}/zabbix-#{node.zabbix.server.version}.tar.gz"
+remote_file "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server.tar.gz" do
+  source "http://downloads.sourceforge.net/project/zabbix/#{node['zabbix']['server']['branch']}/#{node['zabbix']['server']['version']}/zabbix-#{node['zabbix']['server']['version']}.tar.gz"
   mode "0644"
   action :create_if_missing
   notifies :run, "script[install_zabbix_server]", :immediately
@@ -59,7 +59,7 @@ end
 
 # Install Init script
 template "/etc/init.d/zabbix_server" do
-  source "#{init_template}"
+  source init_template
   owner "root"
   group "root"
   mode "755"
@@ -67,7 +67,7 @@ template "/etc/init.d/zabbix_server" do
 end
 
 # install zabbix server conf
-template "#{node.zabbix.etc_dir}/zabbix_server.conf" do
+template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   source "zabbix_server.conf.erb"
   owner "root"
   group "root"
@@ -81,7 +81,7 @@ service "zabbix_server" do
   action [ :start, :enable ]
 end
 
-case "#{node.zabbix.server.db_install_method}"
+case node['zabbix']['server']['db_install_method']
 when "mysql"
   include_recipe "zabbix::mysql_setup"
 when "rds_mysql"
