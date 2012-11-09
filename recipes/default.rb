@@ -34,8 +34,8 @@ root_dirs = [
   "#{node['zabbix']['install_dir']}/sbin",
   "#{node['zabbix']['install_dir']}/share",
   node['zabbix']['external_dir'],
-  node['zabbix']['server.include_dir'],
-  node['zabbix']['agent.include_dir'],
+  node['zabbix']['server']['include_dir'],
+  node['zabbix']['agent']['include_dir'],
   node['zabbix']['alert_dir'],
   node['zabbix']['src_dir']
 ]
