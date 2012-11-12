@@ -72,7 +72,7 @@ script "install_zabbix_agent" do
 end
 
 # Download zabbix source code
-remote_file "#{node.zabbix.src_dir}/zabbix-#{node['zabbix']['agent']['version']}-agent.tar.gz" do
+remote_file "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['agent']['version']}-agent.tar.gz" do
   source "http://downloads.sourceforge.net/project/zabbix/#{node['zabbix']['agent']['branch']}/#{node['zabbix']['agent']['version']}/zabbix-#{node['zabbix']['agent']['version']}.tar.gz"
   mode "0644"
   action :create_if_missing

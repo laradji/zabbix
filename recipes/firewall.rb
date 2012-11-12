@@ -15,7 +15,7 @@ firewall "ufw" do
   action :enable
 end
 
-if node.zabbix.server.install == true
+if node['zabbix']['server']['install'] == true
   # Search for some client
   if Chef::Config[:solo]
     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")

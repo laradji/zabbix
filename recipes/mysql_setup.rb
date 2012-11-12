@@ -11,6 +11,7 @@
 
 include_recipe "database"
 
+
 # generate the password
 node.set_unless['zabbix']['server']['dbpassword'] = secure_password
 

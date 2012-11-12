@@ -1,10 +1,11 @@
 cookbook "zabbix" do
 	configuration "default"
-  	configuration "server"
+  	configuration "server_source"
 	exclude :platform => 'centos'
 	exclude :platform => 'debian'
 	exclude :platform => 'redhat'
-	
+	run_list_extras ['mysql::server']
+
   runtimes []
 
 end

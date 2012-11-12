@@ -7,7 +7,9 @@
 # Apache 2.0
 #
 
-if node['zabbix']['server']['install']
+include_recipe "zabbix::default"
+
+if node['zabbix']['server']['install'] && node['zabbix']['server']['db_install_method'] == "mysql"
   include_recipe "mysql::client"
 end
 
