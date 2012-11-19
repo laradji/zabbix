@@ -32,8 +32,8 @@ default['zabbix']['server']['rds_dbname'] = "zabbix"
 default['zabbix']['server']['rds_dbuser'] = "zabbix"
 default['zabbix']['server']['rds_dbpassword'] = nil
 default['zabbix']['server']['log_level'] = 3
-default['zabbix']['server']['housekeeping_frequency'] = 1
-default['zabbix']['server']['max_housekeeper_delete'] = 100000
+default['zabbix']['server']['housekeeping_frequency'] = "1"
+default['zabbix']['server']['max_housekeeper_delete'] = "100000"
  
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil

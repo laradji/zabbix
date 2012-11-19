@@ -22,5 +22,5 @@ PidFile=<%= node['zabbix']['run_dir'] %>/zabbix_server.pid
 Include=<%= node['zabbix']['server']['include_dir'] %>
 AlertScriptsPath=<%= node['zabbix']['alert_dir'] %>
 
-HousekeepingFrequency=<%= node['zabbix']['housekeeping_frequency']%>
-MaxHousekeeperDelete=<%= node['zabbix']['max_housekeeper_delete'] %>
+HousekeepingFrequency=<%= node['zabbix']['server']['housekeeping_frequency']%>
+MaxHousekeeperDelete=<%= node['zabbix']['server']['max_housekeeper_delete'] %>
