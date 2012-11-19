@@ -81,7 +81,8 @@ CHANGELOG :
 ===========
 ### 0.0.40
 	* Refactoring for passing foodcritic
-	* Added new attribute for server service : node['zabbix']['server']['log_level']
+	* Added new attribute for server service : log_level
+	* Added new attribute for server service : max_housekeeper_delete & housekeeping_frequency
 
 ### 0.0.39
 	* Added zabbix bin patch in init script (deprecate change made in 0.0.38)
