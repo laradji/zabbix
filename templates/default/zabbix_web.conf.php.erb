@@ -3,7 +3,7 @@
 global $DB;
 
 $DB["TYPE"]                     = 'MYSQL';
-<% case "#{node.zabbix.server.db_install_method}" %>
+<% case node.zabbix.server.db_install_method %>
 <% when "mysql" %>
 $DB["SERVER"]                   = '<%= node.zabbix.server.dbhost %>';
 $DB["PORT"]                     = '<%= node.zabbix.server.dbport %>';
