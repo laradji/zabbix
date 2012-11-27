@@ -32,6 +32,12 @@ if node['zabbix']['server']['install'] == true
        end
 
      end if zabbix_clients
+       # Localhost too
+       firewall_rule "zabbix_client_127.0.0.1}" do
+         port 10051
+         source "127.0.0.1"
+         action :allow
+       end 
   end
 
 end

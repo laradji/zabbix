@@ -80,9 +80,10 @@ TODO :
 CHANGELOG :
 ===========
 ### 0.0.40
-	* Refactoring for passing foodcritic
+	* Refactoring for passing foodcritic with help from dkarpenko
 	* Added new attribute for server service : log_level
 	* Added new attribute for server service : max_housekeeper_delete & housekeeping_frequency
+	* Modified firewall recipe to accept connection to localhost zabbix_server
 
 ### 0.0.39
 	* Added zabbix bin patch in init script (deprecate change made in 0.0.38)
