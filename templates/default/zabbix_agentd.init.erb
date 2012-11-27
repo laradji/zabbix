@@ -16,9 +16,13 @@ NAME=zabbix_agentd
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin:<%= node.zabbix.install_dir %>/bin
 DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
 DESC="Zabbix agent daemon"
+DIR=<%= node.zabbix.run_dir %>
 PID=<%= node.zabbix.run_dir %>/$NAME.pid
 
 test -f $DAEMON || exit 0
+
+[ -d "$DIR" ] || mkdir "$DIR"
+chown -R zabbix:zabbix "$DIR"
 
 set -e
 

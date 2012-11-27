@@ -7,9 +7,13 @@
 NAME=zabbix_server
 DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
 DESC="Zabbix server daemon"
+DIR=<%= node.zabbix.run_dir %>
 PID=<%= node.zabbix.run_dir %>/$NAME.pid
 
 test -f $DAEMON || exit 0
+
+[ -d "$DIR" ] || mkdir "$DIR"
+chown -R zabbix:zabbix "$DIR"
 
 case "$1" in
   start)

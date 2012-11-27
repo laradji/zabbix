@@ -21,7 +21,7 @@ when "ubuntu","debian"
     end
   end
 
-when "redhat","centos","scientific"
+when "redhat","centos","scientific","amazon"
 
   if node['platform_version'].to_f < 6.0
     %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
