@@ -22,7 +22,7 @@ when "ubuntu","debian"
     end
   end
   init_template = 'zabbix_server.init.erb'
-when "redhat","centos","scientific","amazon"
+when "redhat","centos","scientific","amazon","oracle"
     include_recipe "yum::epel"
     %w{ fping mysql-devel curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.each do |pck|
       package pck do
