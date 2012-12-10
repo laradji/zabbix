@@ -9,7 +9,7 @@
 
 # Install Init script
 template "/etc/init.d/zabbix_agentd" do
-  source value_for_platform([ "centos", "redhat", "scientific" ] => {"default" => "zabbix_agentd.init-rh.erb"}, "default" => "zabbix_agentd.init.erb")
+  source value_for_platform([ "centos", "redhat", "scientific", "oracle" ] => {"default" => "zabbix_agentd.init-rh.erb"}, "default" => "zabbix_agentd.init.erb")
   owner "root"
   group "root"
   mode "754"
