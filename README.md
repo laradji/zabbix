@@ -79,6 +79,9 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.41
+	* Format metadata and add support for Oracle linux (Thanks to tas50 and his love for oracle Linux)
+
 ### 0.0.40
 	* Refactoring for passing foodcritic with help from dkarpenko
 	* Added new attribute for server service : log_level
