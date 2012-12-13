@@ -9,8 +9,8 @@
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe "database"
-
+include_recipe "database::mysql"
+include_recipe "mysql::server"
 
 # generate the password
 node.set_unless['zabbix']['server']['dbpassword'] = secure_password
