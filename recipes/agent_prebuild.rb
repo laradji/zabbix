@@ -7,6 +7,9 @@
 # Apache 2.0
 #
 
+# Install prerequisite RPM
+package "redhat-lsb"
+
 # Install Init script
 template "/etc/init.d/zabbix_agentd" do
   source value_for_platform([ "centos", "redhat", "scientific", "oracle" ] => {"default" => "zabbix_agentd.init-rh.erb"}, "default" => "zabbix_agentd.init.erb")
