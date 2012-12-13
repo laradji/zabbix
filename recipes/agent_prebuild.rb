@@ -8,7 +8,9 @@
 #
 
 # Install prerequisite RPM
-package "redhat-lsb"
+if node['platform_family'] =="rhel"
+  package "redhat-lsb"
+end
 
 # Install Init script
 template "/etc/init.d/zabbix_agentd" do
