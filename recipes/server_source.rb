@@ -11,6 +11,7 @@ include_recipe "zabbix::default"
 
 if node['zabbix']['server']['install'] && node['zabbix']['server']['db_install_method'] == "mysql"
   include_recipe "mysql::client"
+  include_recipe "mysql::ruby"
 end
 
 case node['platform']
