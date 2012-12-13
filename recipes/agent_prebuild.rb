@@ -8,7 +8,7 @@
 #
 
 # Install prerequisite RPM
-if node['platform_family'] =="rhel"
+if node['platform_family'] == "rhel"
   package "redhat-lsb"
 end
 
