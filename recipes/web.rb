@@ -7,12 +7,17 @@
 # Apache 2.0
 #
 
+# Turn off default site for all platforms.
+# This is the default for some but not all platforms.
+# See apache2/attributes/default.rb for details.
+node.set['apache']['default_site_enabled'] = false
+
 # Execute apache2 receipe + mod_php5 receipe
 include_recipe "apache2"
 include_recipe "apache2::mod_php5"
 
-case node['platform']
-when "ubuntu","debian"
+case node['platform_family']
+when "debian"
 
   %w{ php5-mysql php5-gd }.each do |pck|
     package pck do
@@ -21,7 +26,7 @@ when "ubuntu","debian"
     end
   end
 
-when "redhat","centos","scientific","amazon","oracle"
+when "rhel"
 
   if node['platform_version'].to_f < 6.0
     %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
