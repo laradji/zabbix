@@ -7,10 +7,9 @@
 # Apache 2.0
 #
 
-# Turn off default site for all platforms.
-# This is the default for some but not all platforms.
-# See apache2/attributes/default.rb for details.
-node.set['apache']['default_site_enabled'] = false
+apache_site "000-default" do
+  enable false
+end
 
 # Execute apache2 receipe + mod_php5 receipe
 include_recipe "apache2"
