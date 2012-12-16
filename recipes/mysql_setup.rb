@@ -15,7 +15,7 @@ include_recipe "database"
 # generate the password
 node.set_unless['zabbix']['server']['dbpassword'] = secure_password
 
-mysql_connection_info = {:host => "localhost", :username => "root", :password => node['mysql']['server_root_password']}
+mysql_connection_info = {:host => node['zabbix']['server']['dbhost'], :username => "root", :password => node['mysql']['server_root_password']}
 
 # create zabbix database
 mysql_database node['zabbix']['server']['dbname'] do
