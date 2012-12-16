@@ -3,7 +3,7 @@
 # Attributes:: default
 
 default['zabbix']['agent']['install'] = true
-default['zabbix']['agent']['version'] = "2.0.3"
+default['zabbix']['agent']['version'] = "2.0.4"
 default['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['agent']['servers'] = []
 default['zabbix']['agent']['servers_active'] = []
@@ -13,7 +13,7 @@ default['zabbix']['agent']['install_method'] = "prebuild"
 default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 
 default['zabbix']['server']['install'] = false
-default['zabbix']['server']['version'] = "2.0.3"
+default['zabbix']['server']['version'] = "2.0.4"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['dbname'] = "zabbix"
 default['zabbix']['server']['dbuser'] = "zabbix"
@@ -40,7 +40,7 @@ default['zabbix']['web']['fqdn'] = nil
 default['zabbix']['web']['aliases'] = ["zabbix"]
 
 default['zabbix']['install_dir'] = "/opt/zabbix"
-default['zabbix']['etc_dir'] = "/etc/zabbix"
+default['zabbix']['etc_dir'] = "/usr/local/etc"
 default['zabbix']['web_dir'] = "/opt/zabbix/web"
 default['zabbix']['external_dir'] = "/opt/zabbix/externalscripts"
 default['zabbix']['alert_dir'] = "/opt/zabbix/AlertScriptsPath"
