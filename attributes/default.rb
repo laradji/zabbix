@@ -3,7 +3,7 @@
 # Attributes:: default
 
 default['zabbix']['agent']['install'] = true
-default['zabbix']['agent']['version'] = "2.0.3"
+default['zabbix']['agent']['version'] = "2.0.4"
 default['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['agent']['servers'] = []
 default['zabbix']['agent']['servers_active'] = []
@@ -13,7 +13,7 @@ default['zabbix']['agent']['install_method'] = "prebuild"
 default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 
 default['zabbix']['server']['install'] = false
-default['zabbix']['server']['version'] = "2.0.3"
+default['zabbix']['server']['version'] = "2.0.4"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['dbname'] = "zabbix"
 default['zabbix']['server']['dbuser'] = "zabbix"
