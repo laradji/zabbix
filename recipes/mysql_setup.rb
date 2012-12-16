@@ -9,7 +9,7 @@
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe "database"
+include_recipe "database::mysql"
 
 
 # generate the password
