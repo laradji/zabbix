@@ -10,12 +10,16 @@
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
 include_recipe "database::mysql"
-include_recipe "mysql::server"
+# if the MySQL server is on this host make sure it is installed.
+if node['zabbix']['server']['dbhost'] == "localhost"
+  include_recipe "mysql::server"
+end
+
 
 # generate the password
 node.set_unless['zabbix']['server']['dbpassword'] = secure_password
 
-mysql_connection_info = {:host => "localhost", :username => "root", :password => node['mysql']['server_root_password']}
+mysql_connection_info = {:host => node['zabbix']['server']['dbhost'], :username => "root", :password => node['mysql']['server_root_password']}
 
 # create zabbix database
 mysql_database node['zabbix']['server']['dbname'] do
