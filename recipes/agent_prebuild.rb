@@ -7,6 +7,9 @@
 # Apache 2.0
 #
 
+# Prebuilt zabbix_agentd uses this etc_dir
+node.set['zabbix']['etc_dir'] = "/usr/local/etc"
+
 # Install prerequisite RPM
 if node['platform_family'] == "rhel"
   package "redhat-lsb"
