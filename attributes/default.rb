@@ -40,7 +40,7 @@ default['zabbix']['web']['fqdn'] = nil
 default['zabbix']['web']['aliases'] = ["zabbix"]
 
 default['zabbix']['install_dir'] = "/opt/zabbix"
-default['zabbix']['etc_dir'] = "/usr/local/etc"
+default['zabbix']['etc_dir'] = "/etc/zabbix"
 default['zabbix']['web_dir'] = "/opt/zabbix/web"
 default['zabbix']['external_dir'] = "/opt/zabbix/externalscripts"
 default['zabbix']['alert_dir'] = "/opt/zabbix/AlertScriptsPath"
