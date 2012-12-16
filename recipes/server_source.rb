@@ -24,7 +24,12 @@ when "ubuntu","debian"
   init_template = 'zabbix_server.init.erb'
 when "redhat","centos","scientific","amazon","oracle"
     include_recipe "yum::epel"
-    %w{ fping mysql-devel curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.each do |pck|
+    if node['platform_version'].to_i < 6
+      curldev = 'curl-devel'
+    else
+      curldev = 'libcurl-devel'
+    end
+    %w{ fping mysql-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.push(curldev).each do |pck|
       package pck do
         action :install
       end
