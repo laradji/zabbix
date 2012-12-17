@@ -13,6 +13,12 @@ include_recipe "database::mysql"
 # if the MySQL server is on this host make sure it is installed.
 if node['zabbix']['server']['dbhost'] == "localhost"
   include_recipe "mysql::server"
+  directory "/var/log/mysql" do
+    owner "mysql" unless platform? 'windows'
+    group "mysql" unless platform? 'windows'
+    action :create
+    recursive true
+  end
 end
 
 
