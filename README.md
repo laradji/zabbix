@@ -33,6 +33,13 @@ Don't forget to set :
 	[:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
 	[:zabbix][:web][:fqdn] or you will not have the zabbix web interface
 
+Note :
+
+An agent running on the Zabbix server will need to :
+
+* use a different account than the on the server uses or it will be able to spy on private data.
+* specify the local Zabbix server using the localhost address.
+
 example : 
 
 Server :
