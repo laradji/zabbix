@@ -22,7 +22,7 @@ Example :
 OR
 
 "recipe[zabbix]",
-"recipe[zabbix::server_source]"
+"recipe[zabbix::server]"
 
 
 ATTRIBUTES:
@@ -30,48 +30,59 @@ ATTRIBUTES:
 
 Don't forget to set :
 
-	[:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
-	[:zabbix][:web][:fqdn] or you will not have the zabbix web interface
+	node.set[:zabbix][:agent][:servers] = ["Your_zabbix_server.com","secondaryserver.com"]
+	node.set[:zabbix][:web][:fqdn] or you will not have the zabbix web interface
 
 Note :
 
-An agent running on the Zabbix server will need to :
+A Zabbix agent running on the Zabbix server will need to :
 
 * use a different account than the on the server uses or it will be able to spy on private data.
-* specify the local Zabbix server using the localhost address.
+* specify the local Zabbix server using the localhost (127.0.0.1, ::1) address.
 
 example : 
 
 Server :
 --------
 
-	node[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Stable"
-	node[:zabbix][:server][:version] = "2.0.0"
-	ndoe[:zabbix][:server][:install_method] = "source"
+	node.set[:zabbix][:server][:branch] = "ZABBIX%20Latest%20Stable"
+	node.set[:zabbix][:server][:version] = "2.0.0"
+	ndoe.set[:zabbix][:server][:install_method] = "source"
 
 Agent :
 -------
 
-	node[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Stable"
-	node[:zabbix][:agent][:version] = "2.0.0"
-	node[:zabbix][:agent][:install_method] = "prebuild"
+	node.set[:zabbix][:agent][:branch] = "ZABBIX%20Latest%20Stable"
+	node.set[:zabbix][:agent][:version] = "2.0.0"
+	node.set[:zabbix][:agent][:install_method] = "prebuild"
 
 AWS RDS :
 ---------
 
 Set this attribute with to use RDS for the Zabbix database. Default database remains localhost MySQL.
 
-	node[:zabbix][:server][:db_install_method] = "rds_mysql"
+	node.set[:zabbix][:server][:db_install_method] = "rds_mysql"
 
 These attributes must also be set. Values below are pre-defined.
 
-	node[:zabbix][:server][:rds_master_user] = ""
-	node[:zabbix][:server][:rds_master_password] = ""
-	node[:zabbix][:server][:rds_dbhost] = ""
-	node[:zabbix][:server][:rds_dbport] = "3306"
-	node[:zabbix][:server][:rds_dbname] = "zabbix"
-	node[:zabbix][:server][:rds_dbuser] = "zabbix"
-	node[:zabbix][:server][:rds_dbpassword] = ""
+	node.set[:zabbix][:server][:rds_master_user] = ""
+	node.set[:zabbix][:server][:rds_master_password] = ""
+	node.set[:zabbix][:server][:rds_dbhost] = ""
+	node.set[:zabbix][:server][:rds_dbport] = "3306"
+	node.set[:zabbix][:server][:rds_dbname] = "zabbix"
+	node.set[:zabbix][:server][:rds_dbuser] = "zabbix"
+	node.set[:zabbix][:server][:rds_dbpassword] = ""
+
+MySQL :
+-------
+
+If you are going to run the MySQL server on the same host as the Zabbix server you must set
+
+        node.set['zabbix']['server']['dbpassword'] = "some-password"
+
+and include
+
+"recipe[mysql::server]"
 
 USAGE :
 =======
