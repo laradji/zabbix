@@ -29,9 +29,9 @@ end
 # Install configuration
 template "#{node['zabbix']['etc_dir']}/zabbix_agentd.conf" do
   source "zabbix_agentd.conf.erb"
-  owner "root"
-  group "root"
-  mode "644"
+  owner "zabbix"
+  group "zabbix"
+  mode "600"
   notifies :restart, "service[zabbix_agentd]"
 end
 
