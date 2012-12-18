@@ -10,7 +10,7 @@
 if node['zabbix']['server']['install']
   include_recipe "zabbix::server_#{node['zabbix']['server']['install_method']}"
   if node['zabbix']['agent']['install']
-    node.override['zabbix']['agent']['servers'].unshift "localhost"
+    node.set['zabbix']['agent']['servers'].unshift "localhost"
   end
 end
 
