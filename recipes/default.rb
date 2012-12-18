@@ -8,7 +8,7 @@
 #
 
 # Create zabbix group
-group node['zabbix']['login'] do
+group node['zabbix']['group'] do
   gid node['zabbix']['gid']
   if node['zabbix']['gid'].nil? 
     action :nothing
