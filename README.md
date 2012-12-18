@@ -76,13 +76,15 @@ These attributes must also be set. Values below are pre-defined.
 MySQL :
 -------
 
-If you are going to run the MySQL server on the same host as the Zabbix server you must set
+Set the MySQL zabbix account password:
 
         node.set['zabbix']['server']['dbpassword'] = "some-password"
 
-and include
+If you are going to run the MySQL server on the same host as the Zabbix server you must include
 
 "recipe[mysql::server]"
+
+in the run_list before the zabbix recipes.
 
 USAGE :
 =======
