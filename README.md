@@ -101,7 +101,7 @@ CHANGELOG :
 ===========
 ### 0.0.41
 	* Format metadata and add support for Oracle linux (Thanks to tas50 and his love for oracle Linux)
-	* Fix about redhat LSB in agent-prebuild recipe (Thanbks nutznboltz)
+	* Fix about redhat LSB in agent-prebuild recipe (Thanks nutznboltz)
 
 ### 0.0.40
 	* Refactoring for passing foodcritic with help from dkarpenko
