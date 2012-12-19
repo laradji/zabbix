@@ -30,6 +30,7 @@ case "$1" in
   start)
 	echo "Starting $DESC: $NAME"
 	start-stop-daemon --oknodo --start --pidfile $PID \
+		--user <%= node.zabbix.login %> \
 		--exec $DAEMON -- -c <%= node.zabbix.etc_dir %>/zabbix_agentd.conf
 	;;
 
