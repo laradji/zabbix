@@ -38,6 +38,7 @@ default['zabbix']['server']['max_housekeeper_delete'] = "100000"
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil
 default['zabbix']['web']['aliases'] = ["zabbix"]
+default['zabbix']['web']['timezone'] = "UTC"
 
 default['zabbix']['install_dir'] = "/opt/zabbix"
 default['zabbix']['etc_dir'] = "/etc/zabbix"
@@ -59,9 +60,9 @@ default['zabbix']['gid'] = nil
 default['zabbix']['home'] = '/opt/zabbix'
 default['zabbix']['shell'] = "/bin/bash"
 
-default['zabbix']['server']['login'] = "zbxsrv"
-default['zabbix']['server']['group'] = "zbxsrv"
-default['zabbix']['server']['uid'] = 399
-default['zabbix']['server']['gid'] = 399
+default['zabbix']['server']['login'] = "zabxserv"
+default['zabbix']['server']['group'] = "zabxserv"
+default['zabbix']['server']['uid'] = nil
+default['zabbix']['server']['gid'] = nil
 default['zabbix']['server']['home'] = '/opt/zabbix'
 default['zabbix']['server']['shell'] = "/bin/bash"
