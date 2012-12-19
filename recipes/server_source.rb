@@ -76,9 +76,9 @@ end
 # install zabbix server conf
 template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   source "zabbix_server.conf.erb"
-  owner "root"
-  group "root"
-  mode "644"
+  owner node['zabbix']['server']['login']
+  group node['zabbix']['server']['group']
+  mode "600"
   notifies :restart, "service[zabbix_server]"
 end
 

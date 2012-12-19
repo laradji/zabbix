@@ -49,9 +49,19 @@ default['zabbix']['src_dir'] = "/opt"
 default['zabbix']['log_dir'] = "/var/log/zabbix"
 default['zabbix']['run_dir'] = "/var/run/zabbix"
 
+default['zabbix']['server']['log_dir'] = "/var/log/zabbix_srv"
+default['zabbix']['server']['run_dir'] = "/var/run/zabbix_srv"
+
 default['zabbix']['login'] = "zabbix"
 default['zabbix']['group'] = "zabbix"
 default['zabbix']['uid'] = nil
 default['zabbix']['gid'] = nil
 default['zabbix']['home'] = '/opt/zabbix'
 default['zabbix']['shell'] = "/bin/bash"
+
+default['zabbix']['server']['login'] = "zbxsrv"
+default['zabbix']['server']['group'] = "zbxsrv"
+default['zabbix']['server']['uid'] = 399
+default['zabbix']['server']['gid'] = 399
+default['zabbix']['server']['home'] = '/opt/zabbix'
+default['zabbix']['server']['shell'] = "/bin/bash"

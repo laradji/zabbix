@@ -42,7 +42,7 @@ chown -R zabbix:zabbix "$DIR"
 
 start()
 {
-  start_daemon -p $PID $DAEMON $OPTS
+  start_daemon -p $PID -u <%= node.zabbix.server.login %> $DAEMON $OPTS
   RETVAL=$?
   [ $RETVAL -eq 0 ] && touch $LOCK
   return $RETVAL
