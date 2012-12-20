@@ -3,7 +3,7 @@
 # Attributes:: default
 
 default['zabbix']['agent']['install'] = true
-default['zabbix']['agent']['version'] = "2.0.3"
+default['zabbix']['agent']['version'] = "2.0.4"
 default['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['agent']['servers'] = []
 default['zabbix']['agent']['servers_active'] = []
@@ -13,7 +13,7 @@ default['zabbix']['agent']['install_method'] = "prebuild"
 default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 
 default['zabbix']['server']['install'] = false
-default['zabbix']['server']['version'] = "2.0.3"
+default['zabbix']['server']['version'] = "2.0.4"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['dbname'] = "zabbix"
 default['zabbix']['server']['dbuser'] = "zabbix"
@@ -38,6 +38,7 @@ default['zabbix']['server']['max_housekeeper_delete'] = "100000"
 default['zabbix']['web']['install'] = false
 default['zabbix']['web']['fqdn'] = nil
 default['zabbix']['web']['aliases'] = ["zabbix"]
+default['zabbix']['web']['timezone'] = "UTC"
 
 default['zabbix']['install_dir'] = "/opt/zabbix"
 default['zabbix']['etc_dir'] = "/etc/zabbix"
@@ -49,9 +50,19 @@ default['zabbix']['src_dir'] = "/opt"
 default['zabbix']['log_dir'] = "/var/log/zabbix"
 default['zabbix']['run_dir'] = "/var/run/zabbix"
 
+default['zabbix']['server']['log_dir'] = "/var/log/zabbix_srv"
+default['zabbix']['server']['run_dir'] = "/var/run/zabbix_srv"
+
 default['zabbix']['login'] = "zabbix"
 default['zabbix']['group'] = "zabbix"
 default['zabbix']['uid'] = nil
 default['zabbix']['gid'] = nil
 default['zabbix']['home'] = '/opt/zabbix'
 default['zabbix']['shell'] = "/bin/bash"
+
+default['zabbix']['server']['login'] = "zabxserv"
+default['zabbix']['server']['group'] = "zabxserv"
+default['zabbix']['server']['uid'] = nil
+default['zabbix']['server']['gid'] = nil
+default['zabbix']['server']['home'] = '/opt/zabbix'
+default['zabbix']['server']['shell'] = "/bin/bash"
