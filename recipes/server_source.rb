@@ -68,7 +68,8 @@ end
 # server before changing the init script or the PID file could be in a
 # directory no longer referenced by run_dir while the server is still
 # running.
-service "zabbix_server" do
+service "zabbix_server_stop" do
+  service_name "zabbix_server"
   ignore_failure true
   action :stop
   only_if do

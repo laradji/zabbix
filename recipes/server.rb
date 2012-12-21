@@ -17,7 +17,8 @@ else
 # the GID.  Would be nice if "action :modify" could change a group name
 # but seems the only way is to delete and recreate the group.
   node['etc']['group'].each do |grp, grpdata|
-    if grpdata['gid'].to_i == node['zabbix']['server']['gid'].to_i
+    if (grpdata['gid'].to_i == node['zabbix']['server']['gid'].to_i) \
+      and (grp != node['zabbix']['server']['group'])
       Chef::Log.debug("gid #{grpdata['gid']} found for group #{grp}")
 # Plus you get "groupdel: cannot remove the primary group of user"
 # unless you delete any accounts that are using the group's gid.
@@ -61,7 +62,7 @@ user node['zabbix']['server']['login'] do
   home node['zabbix']['server']['install_dir']
   shell node['zabbix']['server']['shell']
   uid node['zabbix']['server']['uid']
-  gid node['zabbix']['server']['gid']
+  gid node['zabbix']['server']['gid'].to_i # https://github.com/acrmp/foodcritic/issues/53
   system true
   action action
 end
