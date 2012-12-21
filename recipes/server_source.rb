@@ -64,6 +64,19 @@ remote_file "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['ver
   notifies :run, "script[install_zabbix_server]", :immediately
 end
 
+# If we are upgrading and the run_dir has changed, try to stop the
+# server before changing the init script or the PID file could be in a
+# directory no longer referenced by run_dir while the server is still
+# running.
+service "zabbix_server" do
+  ignore_failure true
+  action :stop
+  only_if do
+    File.exists?("/etc/init.d/zabbix_server") and
+      open("/etc/init.d/zabbix_server").grep(/^DIR=#{node['zabbix']['server']['run_dir']}\s*$/).length == 0
+  end
+end
+
 # Install Init script
 template "/etc/init.d/zabbix_server" do
   source init_template
