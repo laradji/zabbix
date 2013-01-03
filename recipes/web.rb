@@ -66,7 +66,7 @@ template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['versio
 end
 
 # install vhost for zabbix frontend
-web_app node['zabbix']['web']['fqdn'] do
+web_app 'zabbix' do
   server_name node['zabbix']['web']['fqdn']
   server_aliases node['zabbix']['web']['aliases']
   docroot node['zabbix']['web_dir']
