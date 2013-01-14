@@ -1,6 +1,7 @@
 maintainer       "Nacer Laradji"
 maintainer_email "nacer.laradji@gmail.com"
 license          "Apache 2.0"
+name 		     "zabbix"
 description      "Installs/Configures Zabbix Agent/Server"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.0.40"
