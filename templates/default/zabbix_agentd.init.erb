@@ -1,3 +1,10 @@
+#! /bin/sh
+#
+# Zabbix agent start/stop script.
+#
+# Written by Alexei Vladishev <alexei.vladishev@zabbix.com>.
+# Add status support by Ovea Inc.
+
 ### BEGIN INIT INFO
 # Provides:          zabbix_agentd
 # Default-Start:     2 3 4 5
@@ -5,12 +12,6 @@
 # Short-Description: Start zabbix_agentd at boot time
 # Description:       Zabbix agent.
 ### END INIT INFO
-#! /bin/sh
-#
-# Zabbix agent start/stop script.
-#
-# Written by Alexei Vladishev <alexei.vladishev@zabbix.com>.
-# Add status support by Ovea Inc.
 
 NAME=zabbix_agentd
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin:<%= node.zabbix.install_dir %>/bin
