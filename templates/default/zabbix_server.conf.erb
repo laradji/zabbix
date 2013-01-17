@@ -2,7 +2,7 @@
 
 ############ GENERAL PARAMETERS #################
 
-LogFile=<%= node['zabbix']['log_dir'] %>/zabbix_server.log
+LogFile=<%= node['zabbix']['server']['log_dir'] %>/zabbix_server.log
 <% case node['zabbix']['server']['db_install_method'] %>
 <% when "mysql" %>
 DBHost=<%= node['zabbix']['server']['dbhost'] %>
@@ -18,7 +18,7 @@ DBPassword=<%= node['zabbix']['server']['rds_dbpassword'] %>
 DBPort=<%= node['zabbix']['server']['rds_dbport'] %>
 <% end %>
 DebugLevel=<%= node['zabbix']['server']['log_level'] %>
-PidFile=<%= node['zabbix']['run_dir'] %>/zabbix_server.pid
+PidFile=<%= node['zabbix']['server']['run_dir'] %>/zabbix_server.pid
 Include=<%= node['zabbix']['server']['include_dir'] %>
 AlertScriptsPath=<%= node['zabbix']['alert_dir'] %>
 

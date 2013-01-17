@@ -25,8 +25,8 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin
 DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
 OPTS="-c <%= node.zabbix.etc_dir %>/zabbix_server.conf"
 DESC="Zabbix server daemon"
-DIR=<%= node.zabbix.run_dir %>
-PID=<%= node.zabbix.run_dir %>/$NAME.pid
+DIR=<%= node.zabbix.server.run_dir %>
+PID=<%= node.zabbix.server.run_dir %>/$NAME.pid
 LOCK=<%= node.zabbix.lock_dir %>/$NAME
 
 # Exit if the package is not installed
@@ -38,11 +38,11 @@ if [ ! -x "$DAEMON" ]; then
 fi
 
 [ -d "$DIR" ] || mkdir "$DIR"
-chown -R zabbix:zabbix "$DIR"
+chown -R <%= node.zabbix.server.login %>:<%= node.zabbix.server.group %> "$DIR"
 
 start()
 {
-  start_daemon -p $PID $DAEMON $OPTS
+  start_daemon -p $PID -u <%= node.zabbix.server.login %> $DAEMON $OPTS
   RETVAL=$?
   [ $RETVAL -eq 0 ] && touch $LOCK
   return $RETVAL

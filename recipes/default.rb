@@ -8,7 +8,7 @@
 #
 
 # Create zabbix group
-group node['zabbix']['login'] do
+group node['zabbix']['group'] do
   gid node['zabbix']['gid']
   if node['zabbix']['gid'].nil? 
     action :nothing
@@ -61,7 +61,7 @@ zabbix_dirs.each do |dir|
   directory dir do
     owner node['zabbix']['login']
     group node['zabbix']['group']
-    mode "755"
+    mode "750"
     recursive true
     # Only execute this if zabbix can't write to it. This handles cases of
     # dir being world writable (like /tmp)

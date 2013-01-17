@@ -14,7 +14,7 @@
     php_admin_value upload_max_filesize 16M
     php_admin_value max_execution_time 600
     php_admin_value max_input_time 600
-    php_admin_value date.timezone "Europe/Paris"
+    php_admin_value date.timezone <%= @node['zabbix']['web']['timezone'] %>
   </Directory>
   
   <Directory />
@@ -31,8 +31,8 @@
   </Location>
 
   LogLevel info
-  ErrorLog <%= node['apache']['log_dir'] %>/<%= @params['name'] %>-error.log
-  CustomLog <%= node['apache']['log_dir'] %>/<%= @params['name'] %>-access.log combined
+  ErrorLog <%= node['apache']['log_dir'] %>/<%= @application_name %>-error.log
+  CustomLog <%= node['apache']['log_dir'] %>/<%= @application_name %>-access.log combined
 
   RewriteEngine On
   RewriteLog <%= node['apache']['log_dir'] %>/<%= @application_name %>-rewrite.log
