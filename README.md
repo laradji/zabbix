@@ -106,6 +106,7 @@ CHANGELOG :
 	* Fix about redhat LSB in agent-prebuild recipe (Thanks nutznboltz)
 	* Fix Add missing shabang for init file. (Thanks justinabrahms)
 	* Fix FC045 foodcritic
+	* new dependencies version on database and mysql cookbook
 
 ### 0.0.40
 	* Refactoring for passing foodcritic with help from dkarpenko

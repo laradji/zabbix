@@ -51,7 +51,7 @@ service "zabbix_agentd" do
 end
 
 # --prefix is controlled by install_dir
-node['zabbix']['agent']['configure_options'].delete_if do |option|
+node.set['zabbix']['agent']['configure_options'].delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 
