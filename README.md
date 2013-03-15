@@ -107,6 +107,7 @@ CHANGELOG :
 	* Fix Add missing shabang for init file. (Thanks justinabrahms)
 	* Fix FC045 foodcritic
 	* new dependencies version on database and mysql cookbook
+	* Add support for custom config file location to zabbix_agentd.init-rh.erb (Thanks charlesjohnson)
 
 ### 0.0.40
 	* Refactoring for passing foodcritic with help from dkarpenko
