@@ -1,0 +1,4 @@
+UserParameter=mysql.status[*],mysqladmin --defaults-extra-file=<%= node['zabbix']['agent']['mysql_conf'] %> extended-status 2>/dev/null | awk '/ $1 /{print $$4}'
+UserParameter=mysql.ping,mysqladmin --defaults-extra-file=<%= node['zabbix']['agent']['mysql_conf'] %> ping | grep alive | wc -l
+UserParameter=mysql.version,mysqladmin -V
+UserParameter=mysql.slave[*],mysql --defaults-extra-file=<%= node['zabbix']['agent']['mysql_conf'] %> -e "show slave status\G" | perl -ne 'print $$1 if /$1:\s*(.*)$/' | sed s/Yes/1/ | sed s/No/0/

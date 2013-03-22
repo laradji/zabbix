@@ -16,6 +16,11 @@ Installing the Agent :
 
     "recipe[zabbix]"
 
+Installing the Agent with MySQL support(requires mysql cookbook) :
+
+    "recipe[zabbix]",
+    "recipe[zabbix::agent_mysql]"
+
 Installing the Server :
 
     "recipe[zabbix]",  
