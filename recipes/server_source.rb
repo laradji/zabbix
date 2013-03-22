@@ -38,7 +38,7 @@ when "redhat","centos","scientific","amazon","oracle"
 end
 
 # --prefix is controlled by install_dir
-node.set['zabbix']['agent']['configure_options'].delete_if do |option|
+node.set['zabbix']['server']['configure_options'].delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 
