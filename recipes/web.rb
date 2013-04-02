@@ -7,6 +7,8 @@
 # Apache 2.0
 #
 
+node.set['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
+
 apache_site "000-default" do
   enable false
 end
