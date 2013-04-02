@@ -18,7 +18,6 @@ when "ubuntu","debian"
   init_template = 'zabbix_agentd.init.erb'
   
 when "redhat","centos","scientific","amazon"
-    include_recipe "yum::epel"
     %w{ fping curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.each do |pck|
       package pck do
         action :install
