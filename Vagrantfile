@@ -39,6 +39,7 @@ Vagrant.configure("2") do |config|
     }
 
     chef.run_list = [
+      "recipe[yum::epel]",
       "recipe[mysql::server]",
       "recipe[zabbix::default]",
       "recipe[zabbix::server]"
