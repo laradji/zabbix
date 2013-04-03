@@ -17,12 +17,19 @@ Installing agent is the default behavior.
 
 Example :
 
-"recipe[zabbix]"
+    "recipe[zabbix]"
 
 OR
 
-"recipe[zabbix]",  
-"recipe[zabbix::server]"
+    "recipe[zabbix]",  
+    "recipe[zabbix::server]"
+
+NOTE:
+
+If you are running on Redhat, Centos, Scientific of Amazon, you will need packages from EPEL.
+Include "recipe[yum::epel]" in your runlist or satisfy these requirements some other way.
+
+    "recipe[yum::epel]"
 
 
 ATTRIBUTES:
