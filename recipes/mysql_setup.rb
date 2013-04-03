@@ -18,16 +18,15 @@ include_recipe "database::mysql"
 # Under chef_solo these must be set somehow because node.set doesn't persist
 # between runs
 node.set_unless[:mysql][:server_root_password] = secure_password
-node.set_unless['zabbix']['server']['dbpassword'] = secure_password
+node.set_unless['zabbix']['database']['dbpassword'] = secure_password
 
-mysql_connection_info = {
-  :host => node['zabbix']['server']['dbhost'], 
-  :dbname => node['zabbix']['server']['dbname'],
-  :root_password => node[:mysql][:server_root_password],
-  :username => node['zabbix']['server']['dbuser'],
-  :password => node['zabbix']['server']['dbpassword']
-}
-
-zabbix_mysql_setup "Server DB Setup" do
-  mysql_connection_info mysql_connection_info
+zabbix_database node['zabbix']['database']['dbname'] do
+  host                    node['zabbix']['database']['dbhost']
+  username                node['zabbix']['database']['dbuser']
+  password                node['zabbix']['database']['dbpassword']
+  root_username           "root"
+  root_password           node[:mysql][:server_root_password]
+  allowed_user_hosts      "localhost"
+  zabbix_source_dir       node['zabbix']['src_dir']
+  zabbix_server_version   node['zabbix']['server']['version']
 end

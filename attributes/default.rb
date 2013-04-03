@@ -15,22 +15,21 @@ default['zabbix']['agent']['include_dir'] = "/opt/zabbix/agent_include"
 default['zabbix']['server']['install'] = false
 default['zabbix']['server']['version'] = "2.0.3"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
-default['zabbix']['server']['dbname'] = "zabbix"
-default['zabbix']['server']['dbuser'] = "zabbix"
-default['zabbix']['server']['dbhost'] = "localhost"
-default['zabbix']['server']['dbpassword'] = nil
-default['zabbix']['server']['dbport'] = "3306"
+
+default['zabbix']['server']['db_install_method'] = "mysql"
+default['zabbix']['database']['dbname'] = "zabbix"
+default['zabbix']['database']['dbuser'] = "zabbix"
+default['zabbix']['database']['dbhost'] = "localhost"
+default['zabbix']['database']['dbpassword'] = nil
+default['zabbix']['database']['dbport'] = "3306"
+
+default['zabbix']['database']['rds_master_user'] = nil
+default['zabbix']['database']['rds_master_password'] = nil
+
+
 default['zabbix']['server']['install_method'] = "source"
 default['zabbix']['server']['configure_options'] = [ "--with-libcurl","--with-net-snmp","--with-mysql" ]
 default['zabbix']['server']['include_dir'] = "/opt/zabbix/server_include"
-default['zabbix']['server']['db_install_method'] = "mysql"
-default['zabbix']['server']['rds_dbhost'] = nil
-default['zabbix']['server']['rds_dbport'] = "3306"
-default['zabbix']['server']['rds_master_user'] = nil
-default['zabbix']['server']['rds_master_password'] = nil
-default['zabbix']['server']['rds_dbname'] = "zabbix"
-default['zabbix']['server']['rds_dbuser'] = "zabbix"
-default['zabbix']['server']['rds_dbpassword'] = nil
 default['zabbix']['server']['log_level'] = 3
 default['zabbix']['server']['housekeeping_frequency'] = "1"
 default['zabbix']['server']['max_housekeeper_delete'] = "100000"
