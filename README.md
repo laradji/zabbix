@@ -108,6 +108,10 @@ TODO :
 
 CHANGELOG :
 ===========
+### 0.0.42
+	* Adds Berkshelf/Vagrant 1.1 compatibility (andrewGarson)
+	* Moves recipe[yum::epel] to a documented runlist dependency instead of forcing you to use it via include_recipe
+
 ### 0.0.41
 	* Format metadata and add support for Oracle linux (Thanks to tas50 and his love for oracle Linux)
 	* Fix about redhat LSB in agent-prebuild recipe (Thanks nutznboltz)
