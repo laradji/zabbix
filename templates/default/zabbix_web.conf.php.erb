@@ -3,20 +3,11 @@
 global $DB;
 
 $DB["TYPE"]                     = 'MYSQL';
-<% case node.zabbix.server.db_install_method %>
-<% when "mysql" %>
 $DB["SERVER"]                   = '<%= node.zabbix.database.dbhost %>';
 $DB["PORT"]                     = '<%= node.zabbix.database.dbport %>';
 $DB["DATABASE"]                 = '<%= node.zabbix.database.dbname %>';
 $DB["USER"]                     = '<%= node.zabbix.database.dbuser %>';
 $DB["PASSWORD"]                 = '<%= node.zabbix.database.dbpassword %>';
-<% when "rds_mysql" %>
-$DB["SERVER"]                   = '<%= node.zabbix.database.rds_dbhost %>';
-$DB["PORT"]                     = '<%= node.zabbix.database.rds_dbport %>';
-$DB["DATABASE"]                 = '<%= node.zabbix.database.rds_dbname %>';
-$DB["USER"]                     = '<%= node.zabbix.database.rds_dbuser %>';
-$DB["PASSWORD"]                 = '<%= node.zabbix.database.rds_dbpassword %>';
-<% end %>
 // SCHEMA is relevant only for IBM_DB2 database
 $DB["SCHEMA"]                   = '';
 

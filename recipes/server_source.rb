@@ -9,10 +9,6 @@
 
 include_recipe "zabbix::default"
 
-if node['zabbix']['server']['install'] && node['zabbix']['server']['db_install_method'] == "mysql"
-  include_recipe "mysql::client"
-end
-
 case node['platform']
 when "ubuntu","debian"
   # install some dependencies
@@ -70,7 +66,7 @@ template "/etc/init.d/zabbix_server" do
   owner "root"
   group "root"
   mode "755"
-  notifies :restart, "service[zabbix_server]"
+  notifies :restart, "service[zabbix_server]", :delayed
 end
 
 # install zabbix server conf
@@ -79,18 +75,18 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   owner "root"
   group "root"
   mode "644"
-  notifies :restart, "service[zabbix_server]"
+  variables ({
+    :dbhost     => node['zabbix']['database']['dbhost'],
+    :dbname     => node['zabbix']['database']['dbname'],
+    :dbuser     => node['zabbix']['database']['dbuser'],
+    :dbpassword => node['zabbix']['database']['dbpassword'],
+    :dbport     => node['zabbix']['database']['dbport']
+  })
+  notifies :restart, "service[zabbix_server]", :delayed
 end
 
 # Define zabbix_agentd service
 service "zabbix_server" do
   supports :status => true, :start => true, :stop => true, :restart => true
   action [ :start, :enable ]
-end
-
-case node['zabbix']['server']['db_install_method']
-when "mysql"
-  include_recipe "zabbix::mysql_setup"
-when "rds_mysql"
-  include_recipe "zabbix::rds_mysql_setup"
 end

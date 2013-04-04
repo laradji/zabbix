@@ -33,6 +33,8 @@ Vagrant.configure("2") do |config|
         },
         'server' => {
           'install' => true,
+        },
+        'database' => {
           'dbpassword' => 'password123'
         }
       }
@@ -42,6 +44,7 @@ Vagrant.configure("2") do |config|
       "recipe[yum::epel]",
       "recipe[database::mysql]",
       "recipe[mysql::server]",
+      "recipe[zabbix::database]",
       "recipe[zabbix::default]",
       "recipe[zabbix::server]"
     ]

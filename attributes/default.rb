@@ -16,7 +16,7 @@ default['zabbix']['server']['install'] = false
 default['zabbix']['server']['version'] = "2.0.3"
 default['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 
-default['zabbix']['server']['db_install_method'] = "mysql"
+default['zabbix']['database']['install_method'] = "mysql"
 default['zabbix']['database']['dbname'] = "zabbix"
 default['zabbix']['database']['dbuser'] = "zabbix"
 default['zabbix']['database']['dbhost'] = "localhost"

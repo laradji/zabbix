@@ -3,20 +3,13 @@
 ############ GENERAL PARAMETERS #################
 
 LogFile=<%= node['zabbix']['log_dir'] %>/zabbix_server.log
-<% case node['zabbix']['server']['db_install_method'] %>
-<% when "mysql" %>
-DBHost=<%= node['zabbix']['database']['dbhost'] %>
-DBName=<%= node['zabbix']['database']['dbname'] %>
-DBUser=<%= node['zabbix']['database']['dbuser'] %>
-DBPassword=<%= node['zabbix']['database']['dbpassword'] %>
-DBPort=<%= node['zabbix']['database']['dbport'] %>
-<% when "rds_mysql" %>
-DBHost=<%= node['zabbix']['database']['rds_dbhost'] %>
-DBName=<%= node['zabbix']['database']['rds_dbname'] %>
-DBUser=<%= node['zabbix']['database']['rds_dbuser'] %>
-DBPassword=<%= node['zabbix']['database']['rds_dbpassword'] %>
-DBPort=<%= node['zabbix']['database']['rds_dbport'] %>
-<% end %>
+
+DBHost=<%= @dbhost %>
+DBName=<%= @dbname %>
+DBUser=<%= @dbuser %>
+DBPassword=<%= @dbpassword %>
+DBPort=<%= @dbport %>
+
 DebugLevel=<%= node['zabbix']['server']['log_level'] %>
 PidFile=<%= node['zabbix']['run_dir'] %>/zabbix_server.pid
 Include=<%= node['zabbix']['server']['include_dir'] %>

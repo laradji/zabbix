@@ -10,6 +10,30 @@ action :create do
     :password => new_resource.root_password
   }
 
+  zabbix_tmp_path = "/tmp/zabbix-#{new_resource.zabbix_server_version}"
+  zabbix_tar_path =  "#{new_resource.zabbix_source_dir}/zabbix-#{new_resource.zabbix_server_version}-database.tar.gz"
+  zabbix_path = ::File.join(new_resource.zabbix_source_dir, "zabbix-#{new_resource.zabbix_server_version}-database")
+  # get the zabbix files
+  script "extract_zabbix_database" do
+    interpreter "bash"
+    user "root"
+    cwd new_resource.zabbix_source_dir
+    action :nothing
+    code <<-EOH
+      rm -rf #{zabbix_tmp_path}
+      tar xvfz #{zabbix_tar_path} -C /tmp
+      mv #{zabbix_tmp_path} #{zabbix_path}
+    EOH
+  end
+
+  # Download zabbix source code
+  remote_file zabbix_tar_path do
+    source "http://downloads.sourceforge.net/project/zabbix/#{node['zabbix']['server']['branch']}/#{node['zabbix']['server']['version']}/zabbix-#{node['zabbix']['server']['version']}.tar.gz"
+    mode "0644"
+    action :create_if_missing
+    notifies :run, "script[extract_zabbix_database]", :immediately
+  end
+
   # create zabbix database
   mysql_database new_resource.dbname do
     connection root_connection
@@ -17,10 +41,8 @@ action :create do
     notifies :run, "execute[zabbix_populate_schema]", :immediately
     notifies :run, "execute[zabbix_populate_image]", :immediately
     notifies :run, "execute[zabbix_populate_data]", :immediately
-    notifies :create, "template[#{node['zabbix']['etc_dir']}/zabbix_server.conf]", :immediately
     notifies :create, "mysql_database_user[#{new_resource.username}]", :immediately
     notifies :grant, "mysql_database_user[#{new_resource.username}]", :immediately
-    notifies :restart, "service[zabbix_server]", :immediately
   end
 
   # populate database
@@ -31,7 +53,6 @@ action :create do
   dbname = "#{new_resource.dbname}"
   sql_command = "#{executable} #{root_username} #{root_password} #{host} #{dbname}"
 
-  zabbix_path = ::File.join(new_resource.zabbix_source_dir, "zabbix-#{new_resource.zabbix_server_version}")
   sql_scripts = if new_resource.zabbix_server_version.to_f < 2.0
                   Chef::Log.info "Version 1.x branch of zabbix in use"
                   [
