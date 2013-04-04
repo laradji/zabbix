@@ -10,7 +10,7 @@ Default login password for zabbix frontend is admin / zabbix  CHANGE IT !
 USAGE :
 =======
 
-Be carefull when you update your server version, you need to run the sql patch in /opt/zabbix-$VERSION.
+Be careful when you update your server version, you need to run the sql patch in /opt/zabbix-$VERSION.
 
 Please include the default recipe before using any other recipe. 
 
@@ -25,15 +25,14 @@ Installing the Server :
 
 Installing the Database :
   
-    "require[mysql::server]",
-    "recipe[zabbix]",
+    "recipe[mysql::server]",
     "recipe[zabbix]",
     "recipe[zabbix::database]"
 
 Installing all 3 - Database MUST come before Server
 
-    "require[database::mysql]",
-    "require[mysql::server]",
+    "recipe[database::mysql]",
+    "recipe[mysql::server]",
     "recipe[zabbix]",
     "recipe[zabbix::database]",
     "recipe[zabbix::server]"
