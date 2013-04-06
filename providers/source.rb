@@ -15,8 +15,6 @@ def extract_dir(code_dir, target_dir)
 end
 
 action :extract_only do
-  Chef::Log.warn("LASERBEAMS")
-
   tar_path = zabbix_tar_path(new_resource.code_dir, new_resource.branch, new_resource.version)
   source_url = zabbix_source_url(new_resource.branch, new_resource.version)
   remote_file tar_path do
@@ -41,18 +39,12 @@ action :extract_only do
 end
 
 action :install_server do
-  Chef::Log.warn("CHICKEN")
   action_extract_only
-  Chef::Log.warn("CHICKEN")
 
   source_dir = extract_dir(new_resource.code_dir, new_resource.target_dir)
   script "install_zabbix_server_#{zabbix_source_identifier(new_resource.branch, new_resource.version)}" do
     interpreter "bash"
     user "root"
-    Chef::Log.warn("(cd #{source_dir} && ./configure --enable-server --prefix=#{new_resource.install_dir} #{new_resource.configure_options})")
-    Chef::Log.warn("(cd #{source_dir} && ./configure --enable-server --prefix=#{new_resource.install_dir} #{new_resource.configure_options})")
-    Chef::Log.warn("(cd #{source_dir} && ./configure --enable-server --prefix=#{new_resource.install_dir} #{new_resource.configure_options})")
-    Chef::Log.warn("(cd #{source_dir} && ./configure --enable-server --prefix=#{new_resource.install_dir} #{new_resource.configure_options})")
     code <<-EOH
       (cd #{source_dir} && ./configure --enable-server --prefix=#{new_resource.install_dir} #{new_resource.configure_options})
       (cd #{source_dir} && make install && touch already_built)
