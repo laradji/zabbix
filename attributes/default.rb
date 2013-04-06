@@ -3,6 +3,7 @@
 # Attributes:: default
 
 default['zabbix']['agent']['install']           = true
+default['zabbix']['agent']['branch']            = "ZABBIX%20Latest%20Stable"
 default['zabbix']['agent']['version']           = "2.0.3"
 default['zabbix']['agent']['servers']           = []
 default['zabbix']['agent']['servers_active']    = []

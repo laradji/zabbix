@@ -38,26 +38,15 @@ configure_options = (node['zabbix']['server']['configure_options'] || Array.new)
 end
 node.set['zabbix']['server']['configure_options'] = configure_options
 
-# installation of zabbix bin
-script "install_zabbix_server" do
-  interpreter "bash"
-  user "root"
-  cwd node['zabbix']['src_dir']
-  action :nothing
-  notifies :restart, "service[zabbix_server]"
-  code <<-EOH
-  tar xvfz #{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server.tar.gz
-  (cd zabbix-#{node['zabbix']['server']['version']} && ./configure --enable-server --prefix=#{node['zabbix']['install_dir']} #{node['zabbix']['server']['configure_options'].join(" ")})
-  (cd zabbix-#{node['zabbix']['server']['version']} && make install)
-  EOH
-end
+zabbix_source "install_zabbix_server" do
+  branch              node['zabbix']['server']['branch']
+  version             node['zabbix']['server']['version']
+  code_dir            node['zabbix']['src_dir']
+  target_dir          "zabbix-#{node['zabbix']['server']['version']}-server"  
+  install_dir         node['zabbix']['install_dir']
+  configure_options   configure_options.join(" ")
 
-# Download zabbix source code
-remote_file "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server.tar.gz" do
-  source "http://downloads.sourceforge.net/project/zabbix/#{node['zabbix']['server']['branch']}/#{node['zabbix']['server']['version']}/zabbix-#{node['zabbix']['server']['version']}.tar.gz"
-  mode "0644"
-  action :create_if_missing
-  notifies :run, "script[install_zabbix_server]", :immediately
+  action :install_server
 end
 
 # Install Init script

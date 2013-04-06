@@ -10,28 +10,14 @@ action :create do
     :password => new_resource.root_password
   }
 
-  zabbix_tmp_path = "/tmp/zabbix-#{new_resource.zabbix_server_version}"
-  zabbix_tar_path =  "#{new_resource.zabbix_source_dir}/zabbix-#{new_resource.zabbix_server_version}-database.tar.gz"
-  zabbix_path = ::File.join(new_resource.zabbix_source_dir, "zabbix-#{new_resource.zabbix_server_version}-database")
-  # get the zabbix files
-  script "extract_zabbix_database" do
-    interpreter "bash"
-    user "root"
-    cwd new_resource.zabbix_source_dir
-    action :nothing
-    code <<-EOH
-      rm -rf #{zabbix_tmp_path}
-      tar xvfz #{zabbix_tar_path} -C /tmp
-      mv #{zabbix_tmp_path} #{zabbix_path}
-    EOH
-  end
+  zabbix_source "install_zabbix_server" do
+    branch              new_resource.server_branch
+    version             new_resource.server_version
+    code_dir            new_resource.source_dir
+    target_dir          "zabbix-#{new_resource.server_version}-database"  
+    install_dir         new_resource.install_dir
 
-  # Download zabbix source code
-  remote_file zabbix_tar_path do
-    source "http://downloads.sourceforge.net/project/zabbix/#{node['zabbix']['server']['branch']}/#{node['zabbix']['server']['version']}/zabbix-#{node['zabbix']['server']['version']}.tar.gz"
-    mode "0644"
-    action :create_if_missing
-    notifies :run, "script[extract_zabbix_database]", :immediately
+    action :extract_only
   end
 
   # create zabbix database
@@ -53,7 +39,8 @@ action :create do
   dbname = "#{new_resource.dbname}"
   sql_command = "#{executable} #{root_username} #{root_password} #{host} #{dbname}"
 
-  sql_scripts = if new_resource.zabbix_server_version.to_f < 2.0
+  zabbix_path = ::File.join(new_resource.source_dir, "zabbix-#{new_resource.server_version}-database")
+  sql_scripts = if new_resource.server_version.to_f < 2.0
                   Chef::Log.info "Version 1.x branch of zabbix in use"
                   [
                     ["zabbix_populate_schema", ::File.join(zabbix_path, "create", "schema", "mysql.sql")],
