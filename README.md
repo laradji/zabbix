@@ -1,5 +1,4 @@
-DESCRIPTION:
-============
+# DESCRIPTION
 
 This cookbook install zabbix-agent and zabbix-server.
 
@@ -7,8 +6,7 @@ By defaut the cookbook installs zabbix-agent, check the attribute for enable/dis
 
 Default login password for zabbix frontend is admin / zabbix  CHANGE IT !
 
-USAGE :
-=======
+# USAGE
 
 Be careful when you update your server version, you need to run the sql patch in /opt/zabbix-$VERSION.
 
@@ -44,13 +42,12 @@ Include "recipe[yum::epel]" in your runlist or satisfy these requirements some o
 
     "recipe[yum::epel]"
 
-ATTRIBUTES:
-===========
+# ATTRIBUTES
 
 Don't forget to set :
 
     node.set['zabbix']['agent']['servers'] = ["Your_zabbix_server.com","secondaryserver.com"]
-	  node.set['zabbix']['web']['fqdn'] or you will not have the zabbix web interface
+    node.set['zabbix']['web']['fqdn'] or you will not have the zabbix web interface
 
 Note :
 
@@ -61,22 +58,19 @@ A Zabbix agent running on the Zabbix server will need to :
 
 example : 
 
-Server :
---------
+## Server
 
 	  node.set['zabbix']['server']['branch'] = "ZABBIX%20Latest%20Stable"
 	  node.set['zabbix']['server']['version'] = "2.0.0"
 	  ndoe.set['zabbix']['server']['install_method'] = "source"
 
-Agent :
--------
+## Agent
 
 	  node.set['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
 	  node.set['zabbix']['agent']['version'] = "2.0.0"
 	  node.set['zabbix']['agent']['install_method'] = "prebuild"
 
-Database :
-----------
+## Database
 
     node.set['zabbix']['database']['install_method'] = 'mysql'
     node.set['zabbix']['database']['dbname'] = "zabbix"
@@ -93,11 +87,10 @@ If you are using AWS RDS
 
 
 
-RECIPES:
-========
+# RECIPES
 
-default:
---------
+## default
+
 The default recipe creates the Zabbix user and directories used by all Zabbix components.
 
 Optionally, it installs the Zabbix agent.
@@ -107,8 +100,8 @@ You can control the agent install with the following attributes:
     node['zabbix']['agent']['install'] = true
     node['zabbix']['agent']['install_method'] = 'source'
 
-agent\_prebuild:
-----------------
+## agent\_prebuild
+
 Downloads and installs the Zabbix agent from a pre built package
 
 If you are on a machine in the RHEL family of platforms, then you must have your
@@ -120,9 +113,8 @@ You can control the agent version with:
 
     node['zabbix']['agent']['version']
 
+## agent\_source
 
-agent\_source:
--------------
 Downloads and installs the Zabbix agent from source
 
 If you are on a machine in the RHEL family of platforms, then you will
@@ -137,8 +129,8 @@ You can control the agent install with:
     node['zabbix']['agent']['version']
     node['zabbix']['agent']['configure_options']
 
-database:
----------
+# database
+
 WARNING: This recipe persists your database credentials back to the Chef server
 as plaintext  node attributes. To prevent this, consume the `zabbix_database` 
 LWRP in your own wrapper cookbook.
@@ -175,12 +167,12 @@ If `install_method` is 'rds\_mysql' you also need:
     node['zabbix']['database']['rds_master_username']
     node['zabbix']['database']['rds_master_password']
 
-firewall:
---------
+# firewall
+
 Opens firewall rules to allow Zabbix nodes to communicate with each other.
 
-server:
--------
+# server
+
 Delegates to other recipes to install the Zabbix server and Web components.
 
 You can control the server and web installs with the following attributes:
@@ -189,8 +181,8 @@ You can control the server and web installs with the following attributes:
     node['zabbix']['server']['install_method'] = 'source'
     node['zabbix']['web']['install'] = true
 
-server\_source:
----------------
+# server\_source
+
 Downloads and installs the Zabbix Server component from source
 
 If you are on a machine in the RHEL family of platforms, then you will
@@ -213,15 +205,16 @@ The server also needs to know about:
     node['zabbix']['database']['dbpassword']
     node['zabbix']['database']['dbport']
 
-web:
-----
+# web
+
 Creates an Apache site for the Zabbix Web component
 
-LWRPs:
-======
+# LWRPs
 
-resources/database:
--------------------
+## database
+
+### resources/database
+
 Installs the Zabbix Database
 
 The default provider is Chef::Provider::ZabbixDatabaseMySql in "providers/database_my_sql".
@@ -229,10 +222,12 @@ If you want a different provider, make sure you set the following in your resour
 
     provider Chef::Provider::SomeProviderClass
 
-Actions:
+#### Actions
+
 * `create` (Default Action) - Creates the Zabbix Database
 
-Attributes:
+#### Attributes
+
 * `dbname` (Name Attribute) -  Name of the Zabbix databse to create
 * `host` - Host to create the database on
 * `username` - Name of the Zabbix database user
@@ -245,8 +240,8 @@ Attributes:
 * `source_dir` - Where Zabbix source code should be stored on the host
 * `install_dir` - Where Zabbix should be installed to
 
-providers/database_my_sql:
---------------------------
+### providers/database_my_sql
+
 Installs a MySql or RDS MySql Zabbix Database
 
 This is the default provider for `resources/database`
@@ -261,16 +256,16 @@ If you are using RDS MySql make sure you set
     root_username "your rds master username"
     root_password "your rds master password"
 
-resources/source:
------------------
+### resources/source
+
 Fetchs the Zabbix source tar and does something with it
 
-Actions:
+#### Actions
 * `extract_only` (Default Action) - Just fetch and extract the tar
 * `install_server` - Fetch the tar then compile the source as a Server
 * `install_agent` - Fetch the tar then compile the source as an Agent 
 
-Attributes:
+#### Attributes
 * `name` (Name Attribute) - An arbitrary name for the resource
 * `branch` - The branch of Zabbix to grab code for
 * `version` - The version of Zabbix to grab code for
@@ -279,19 +274,18 @@ Attributes:
 * `install_dir` (Optional) - Where Zabbix should be installed to
 * `configure_options` (Optional) - Flags to use when compiling Zabbix
 
-providers/source:
-----------------
+### providers/source:
+
 Default implementation of how to Fetch and handle the Zabbix source code.
 
 
-TODO :
-======
+# TODO
 
 * Support more platform on agent side windows ?
 * LWRP Magic ?
 
-CHANGELOG :
-===========
+# CHANGELOG
+
 ### 0.0.42
 * Adds Berkshelf/Vagrant 1.1 compatibility (andrewGarson)
   * Moves recipe[yum::epel] to a documented runlist dependency instead of forcing you to use it via include_recipe
