@@ -1,5 +1,4 @@
 # DESCRIPTION
-=====
 
 This cookbook install zabbix-agent and zabbix-server.
 
@@ -8,7 +7,6 @@ By defaut the cookbook installs zabbix-agent, check the attribute for enable/dis
 Default login password for zabbix frontend is admin / zabbix  CHANGE IT !
 
 # USAGE
-=====
 
 Be careful when you update your server version, you need to run the sql patch in /opt/zabbix-$VERSION.
 
@@ -45,7 +43,6 @@ Include "recipe[yum::epel]" in your runlist or satisfy these requirements some o
     "recipe[yum::epel]"
 
 # ATTRIBUTES
-=====
 
 Don't forget to set :
 
@@ -91,7 +88,6 @@ If you are using AWS RDS
 
 
 # RECIPES
-=====
 
 ## default
 
@@ -214,7 +210,6 @@ The server also needs to know about:
 Creates an Apache site for the Zabbix Web component
 
 # LWRPs
-=====
 
 ## database
 
@@ -285,13 +280,11 @@ Default implementation of how to Fetch and handle the Zabbix source code.
 
 
 # TODO
-=====
 
 * Support more platform on agent side windows ?
 * LWRP Magic ?
 
 # CHANGELOG
-=====
 
 ### 0.0.42
 * Adds Berkshelf/Vagrant 1.1 compatibility (andrewGarson)
