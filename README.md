@@ -1,4 +1,5 @@
 # DESCRIPTION
+=====
 
 This cookbook install zabbix-agent and zabbix-server.
 
@@ -7,6 +8,7 @@ By defaut the cookbook installs zabbix-agent, check the attribute for enable/dis
 Default login password for zabbix frontend is admin / zabbix  CHANGE IT !
 
 # USAGE
+=====
 
 Be careful when you update your server version, you need to run the sql patch in /opt/zabbix-$VERSION.
 
@@ -43,6 +45,7 @@ Include "recipe[yum::epel]" in your runlist or satisfy these requirements some o
     "recipe[yum::epel]"
 
 # ATTRIBUTES
+=====
 
 Don't forget to set :
 
@@ -88,6 +91,7 @@ If you are using AWS RDS
 
 
 # RECIPES
+=====
 
 ## default
 
@@ -129,7 +133,7 @@ You can control the agent install with:
     node['zabbix']['agent']['version']
     node['zabbix']['agent']['configure_options']
 
-# database
+## database
 
 WARNING: This recipe persists your database credentials back to the Chef server
 as plaintext  node attributes. To prevent this, consume the `zabbix_database` 
@@ -167,11 +171,11 @@ If `install_method` is 'rds\_mysql' you also need:
     node['zabbix']['database']['rds_master_username']
     node['zabbix']['database']['rds_master_password']
 
-# firewall
+## firewall
 
 Opens firewall rules to allow Zabbix nodes to communicate with each other.
 
-# server
+## server
 
 Delegates to other recipes to install the Zabbix server and Web components.
 
@@ -181,7 +185,7 @@ You can control the server and web installs with the following attributes:
     node['zabbix']['server']['install_method'] = 'source'
     node['zabbix']['web']['install'] = true
 
-# server\_source
+## server\_source
 
 Downloads and installs the Zabbix Server component from source
 
@@ -205,11 +209,12 @@ The server also needs to know about:
     node['zabbix']['database']['dbpassword']
     node['zabbix']['database']['dbport']
 
-# web
+## web
 
 Creates an Apache site for the Zabbix Web component
 
 # LWRPs
+=====
 
 ## database
 
@@ -280,11 +285,13 @@ Default implementation of how to Fetch and handle the Zabbix source code.
 
 
 # TODO
+=====
 
 * Support more platform on agent side windows ?
 * LWRP Magic ?
 
 # CHANGELOG
+=====
 
 ### 0.0.42
 * Adds Berkshelf/Vagrant 1.1 compatibility (andrewGarson)
