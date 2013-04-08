@@ -3,7 +3,7 @@ DESCRIPTION:
 
 This cookbook install zabbix-agent and zabbix-server.
 
-By defaut the cookbook install zabbix-agent, check the attribute for enable/disable zabbix_server / web or disable zabbix_agent installation.
+By defaut the cookbook installs zabbix-agent, check the attribute for enable/disable zabbix_server / web or disable zabbix_agent installation.
 
 Default login password for zabbix frontend is admin / zabbix  CHANGE IT !
 
@@ -44,14 +44,13 @@ Include "recipe[yum::epel]" in your runlist or satisfy these requirements some o
 
     "recipe[yum::epel]"
 
-
 ATTRIBUTES:
 ===========
 
 Don't forget to set :
 
-	node.set['zabbix']['agent']['servers'] = ["Your_zabbix_server.com","secondaryserver.com"]
-	node.set['zabbix']['web']['fqdn'] or you will not have the zabbix web interface
+    node.set['zabbix']['agent']['servers'] = ["Your_zabbix_server.com","secondaryserver.com"]
+	  node.set['zabbix']['web']['fqdn'] or you will not have the zabbix web interface
 
 Note :
 
@@ -91,6 +90,199 @@ If you are using AWS RDS
     node.set['zabbix']['database']['install_method'] = 'rds_mysql'
     node.set['zabbix']['database']['rds_master_user'] = 'username'
     node.set['zabbix']['database']['rds_master_password'] = 'password'
+
+
+
+RECIPES:
+========
+
+default:
+--------
+The default recipe creates the Zabbix user and directories used by all Zabbix components.
+
+Optionally, it installs the Zabbix agent.
+
+You can control the agent install with the following attributes:
+
+    node['zabbix']['agent']['install'] = true
+    node['zabbix']['agent']['install_method'] = 'source'
+
+agent\_prebuild:
+----------------
+Downloads and installs the Zabbix agent from a pre built package
+
+If you are on a machine in the RHEL family of platforms, then you must have your
+package manager setup to allow installation of:
+
+    package "redhat-lsb"
+
+You can control the agent version with:
+
+    node['zabbix']['agent']['version']
+
+
+agent\_source:
+-------------
+Downloads and installs the Zabbix agent from source
+
+If you are on a machine in the RHEL family of platforms, then you will
+need to install packages from the EPEL repository. The easiest way to do this 
+is to add the following recipe to your runlist before zabbix::agent\_source
+
+    recipe "yum::epel"
+
+You can control the agent install with:
+
+    node['zabbix']['agent']['branch']
+    node['zabbix']['agent']['version']
+    node['zabbix']['agent']['configure_options']
+
+database:
+---------
+WARNING: This recipe persists your database credentials back to the Chef server
+as plaintext  node attributes. To prevent this, consume the `zabbix_database` 
+LWRP in your own wrapper cookbook.
+
+Creates and initializes the Zabbix database
+
+Currenly only supports MySql and RDS MySql databases
+
+If they are not already set, this recipe will generate the following attributes:
+
+    node['zabbix']['database']['dbpassword']
+    node['mysql']['server_root_password'] # Not generated if you are using RDS
+
+You can control the database version with:
+
+    node['zabbix']['server']['branch']
+    node['zabbix']['server']['version']
+
+The database setup uses the following attributes:
+
+    node['zabbix']['database']['dbhost']
+    node['zabbix']['database']['dbname']
+    node['zabbix']['database']['dbuser']
+    node['zabbix']['database']['dbpassword']
+
+    node['zabbix']['database']['install_method']
+
+If `install_method` is 'mysql' you also need:
+
+    node['mysql']['server_root_password']
+
+If `install_method` is 'rds\_mysql' you also need:
+
+    node['zabbix']['database']['rds_master_username']
+    node['zabbix']['database']['rds_master_password']
+
+firewall:
+--------
+Opens firewall rules to allow Zabbix nodes to communicate with each other.
+
+server:
+-------
+Delegates to other recipes to install the Zabbix server and Web components.
+
+You can control the server and web installs with the following attributes:
+
+    node['zabbix']['server']['install'] = true
+    node['zabbix']['server']['install_method'] = 'source'
+    node['zabbix']['web']['install'] = true
+
+server\_source:
+---------------
+Downloads and installs the Zabbix Server component from source
+
+If you are on a machine in the RHEL family of platforms, then you will
+need to install packages from the EPEL repository. The easiest way to do this 
+is to add the following recipe to your runlist before zabbix::server\_source
+
+    recipe "yum::epel"
+
+You can control the server install with:
+
+    node['zabbix']['server']['branch']
+    node['zabbix']['server']['version']
+    node['zabbix']['server']['configure_options']
+
+The server also needs to know about:
+
+    node['zabbix']['database']['dbhost']
+    node['zabbix']['database']['dbname']
+    node['zabbix']['database']['dbuser']
+    node['zabbix']['database']['dbpassword']
+    node['zabbix']['database']['dbport']
+
+web:
+----
+Creates an Apache site for the Zabbix Web component
+
+LWRPs:
+======
+
+resources/database:
+-------------------
+Installs the Zabbix Database
+
+The default provider is Chef::Provider::ZabbixDatabaseMySql in "providers/database_my_sql".
+If you want a different provider, make sure you set the following in your resource call.
+
+    provider Chef::Provider::SomeProviderClass
+
+Actions:
+* `create` (Default Action) - Creates the Zabbix Database
+
+Attributes:
+* `dbname` (Name Attribute) -  Name of the Zabbix databse to create
+* `host` - Host to create the database on
+* `username` - Name of the Zabbix database user
+* `password` - Password for the Zabbix database user
+* `root_username` - Name of the root user for the database server
+* `root_password` - Password for the database root user
+* `allowed_user_hosts` - Where users can connect to the database from
+* `server_branch` - Which branch of server code you are using
+* `server_version` - Which version of server code you are using
+* `source_dir` - Where Zabbix source code should be stored on the host
+* `install_dir` - Where Zabbix should be installed to
+
+providers/database_my_sql:
+--------------------------
+Installs a MySql or RDS MySql Zabbix Database
+
+This is the default provider for `resources/database`
+
+If you are using MySQL make sure you set
+
+    root_username "root"
+    root_password "your root password"
+
+If you are using RDS MySql make sure you set
+  
+    root_username "your rds master username"
+    root_password "your rds master password"
+
+resources/source:
+-----------------
+Fetchs the Zabbix source tar and does something with it
+
+Actions:
+* `extract_only` (Default Action) - Just fetch and extract the tar
+* `install_server` - Fetch the tar then compile the source as a Server
+* `install_agent` - Fetch the tar then compile the source as an Agent 
+
+Attributes:
+* `name` (Name Attribute) - An arbitrary name for the resource
+* `branch` - The branch of Zabbix to grab code for
+* `version` - The version of Zabbix to grab code for
+* `code_dir` - Where Zabbix source code should be stored on the host
+* `target_dir` - A sub directory under `code_dir` where you want the source extracted
+* `install_dir` (Optional) - Where Zabbix should be installed to
+* `configure_options` (Optional) - Flags to use when compiling Zabbix
+
+providers/source:
+----------------
+Default implementation of how to Fetch and handle the Zabbix source code.
+
 
 TODO :
 ======
