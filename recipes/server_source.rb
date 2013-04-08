@@ -19,7 +19,6 @@ when "ubuntu","debian"
   end
   init_template = 'zabbix_server.init.erb'
 when "redhat","centos","scientific","amazon","oracle"
-    include_recipe "yum::epel"
     if node['platform_version'].to_i < 6
       curldev = 'curl-devel'
     else
