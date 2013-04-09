@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
   config.ssh.max_tries = 40
   config.ssh.timeout   = 120
 
+  config.vm.provision :shell, :inline => "sudo /opt/chef/embedded/bin/gem install chef -v 10.24.0"
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       :mysql => {

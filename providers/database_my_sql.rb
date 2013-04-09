@@ -1,4 +1,47 @@
+require 'mysql'
+
+def whyrun_supported? 
+  true
+end
+
+def load_current_resource
+  @current_resource = Chef::Resource::ZabbixDatabase.new(@new_resource.dbname)
+  @current_resource.dbname(@new_resource.dbname)
+  @current_resource.host(@new_resource.host)
+  @current_resource.root_username(@new_resource.root_username)
+  @current_resource.root_password(@new_resource.root_password)
+
+  if database_exists?(@current_resource.dbname, @current_resource.host, @current_resource.root_username, @current_resource.root_password)
+    @current_resource.exists = true
+  end
+end
+
+def database_exists?(dbname, host, root_username, root_password)
+  exists = false
+  db = nil
+  begin
+    db = ::Mysql.new(host, root_username, root_password, dbname)
+    exists = true
+    Chef::Log.info("Connection to database '#{dbname}' on '#{host}' successful")
+  rescue ::Mysql::Error
+    Chef::Log.info("Connection to database '#{dbname}' on '#{host}' failed")
+  ensure
+    db.close unless db.nil?
+  end
+  exists
+end
+
 action :create do
+  if @current_resource.exists
+    Chef::Log.info("Create #{new_resource.dbname} already exists - Nothing to do")
+  else
+    converge_by("Create #{new_resource.dbname}") do
+      create_new_database
+    end
+  end
+end
+
+def create_new_database
   user_connection = {
     :host => new_resource.host,
     :username => new_resource.username,
@@ -20,24 +63,14 @@ action :create do
     action :extract_only
   end
 
-  the_resource = new_resource
-  ruby_block "set_updated" do
-    block do
-      the_resource.updated_by_last_action(true)
-    end
-    action :nothing
-  end
-
   # create zabbix database
   mysql_database new_resource.dbname do
     connection root_connection
-    action :nothing
     notifies :run, "execute[zabbix_populate_schema]", :immediately
     notifies :run, "execute[zabbix_populate_image]", :immediately
     notifies :run, "execute[zabbix_populate_data]", :immediately
     notifies :create, "mysql_database_user[#{new_resource.username}]", :immediately
     notifies :grant, "mysql_database_user[#{new_resource.username}]", :immediately
-    notifies :create, "ruby_block[set_updated]", :immediately
   end
 
   # populate database

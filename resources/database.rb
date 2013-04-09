@@ -1,6 +1,8 @@
 actions :create
 default_action :create
 
+attr_accessor :exists
+
 def initialize(name, run_context=nil)
   super
   @provider ||= Chef::Provider::ZabbixDatabaseMySql
@@ -18,3 +20,4 @@ attribute :server_branch, :kind_of => String, :required => true
 attribute :server_version, :kind_of => String, :required => true
 attribute :source_dir, :kind_of => String, :required => true
 attribute :install_dir, :kind_of => String, :required => true
+
