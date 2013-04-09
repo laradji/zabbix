@@ -44,8 +44,8 @@ Vagrant.configure("2") do |config|
       "recipe[yum::epel]",
       "recipe[database::mysql]",
       "recipe[mysql::server]",
-      "recipe[zabbix::database]",
       "recipe[zabbix::default]",
+      "recipe[zabbix::database]",
       "recipe[zabbix::server]"
     ]
   end
