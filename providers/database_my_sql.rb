@@ -63,6 +63,13 @@ def create_new_database
     action :extract_only
   end
 
+  ruby_block "set_updated" do
+    action :nothing
+    block do
+      new_resource.updated_by_last_action(true)
+    end
+  end
+
   # create zabbix database
   mysql_database new_resource.dbname do
     connection root_connection
@@ -71,6 +78,7 @@ def create_new_database
     notifies :run, "execute[zabbix_populate_data]", :immediately
     notifies :create, "mysql_database_user[#{new_resource.username}]", :immediately
     notifies :grant, "mysql_database_user[#{new_resource.username}]", :immediately
+    notifies :create, "ruby_block[set_updated]", :immediately
   end
 
   # populate database
