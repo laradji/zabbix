@@ -181,6 +181,17 @@ You can control the server and web installs with the following attributes:
     node['zabbix']['server']['install_method'] = 'source'
     node['zabbix']['web']['install'] = true
 
+If you are using a MySql or RDS MySql database make sure your runlist
+includes:
+
+    "recipe[database::mysql]",
+    "recipe[mysql::client]"
+
+If you are user a Postgres database make sure your runlist includes:
+
+    "recipe[database::postgresql]",
+    "recipe[postgresql::client]",
+
 ## server\_source
 
 Downloads and installs the Zabbix Server component from source
@@ -230,17 +241,18 @@ If you want a different provider, make sure you set the following in your resour
 
 * `dbname` (Name Attribute) -  Name of the Zabbix databse to create
 * `host` - Host to create the database on
+* `port` - Port to connext to the database over
 * `username` - Name of the Zabbix database user
 * `password` - Password for the Zabbix database user
 * `root_username` - Name of the root user for the database server
 * `root_password` - Password for the database root user
-* `allowed_user_hosts` - Where users can connect to the database from
+* `allowed_user_hosts` (Default: '') - Where users can connect to the database from
 * `server_branch` - Which branch of server code you are using
 * `server_version` - Which version of server code you are using
 * `source_dir` - Where Zabbix source code should be stored on the host
 * `install_dir` - Where Zabbix should be installed to
 
-### providers/database_my_sql
+### providers/database\_my\_sql
 
 Installs a MySql or RDS MySql Zabbix Database
 
@@ -255,6 +267,21 @@ If you are using RDS MySql make sure you set
   
     root_username "your rds master username"
     root_password "your rds master password"
+
+### providers/database\_postgres
+
+Installs a Postgres Zabbix Database
+
+Call the `zabbix_database` resource with
+
+    provider Chef::Provider::ZabbixDatabasePostgres
+
+Make sure you set
+
+    root_username 'postgres'
+    root_pasword  'your postgres admin password'
+
+The `allowed_user_hosts` attribute is ignored
 
 ### resources/source
 

@@ -24,6 +24,11 @@ Vagrant.configure("2") do |config|
         :server_debian_password => 'debpass',
         :server_repl_password => 'replpass'
       },
+      'postgresql' => {
+        'password' => {
+          'postgres' => 'rootpass'
+        }
+      },
       'zabbix' => {
         'agent' => {
           'servers' => ['127.0.0.1'],
@@ -36,6 +41,8 @@ Vagrant.configure("2") do |config|
           'install' => true,
         },
         'database' => {
+          'dbport' => '5432',
+          'install_method' => 'postgres',
           'dbpassword' => 'password123'
         }
       }
@@ -45,6 +52,9 @@ Vagrant.configure("2") do |config|
       "recipe[yum::epel]",
       "recipe[database::mysql]",
       "recipe[mysql::server]",
+      "recipe[database::postgresql]",
+      "recipe[postgresql::server]",
+      "recipe[postgresql::client]",
       "recipe[zabbix::default]",
       "recipe[zabbix::database]",
       "recipe[zabbix::server]"

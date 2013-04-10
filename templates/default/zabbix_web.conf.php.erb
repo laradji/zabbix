@@ -2,7 +2,12 @@
 // Zabbix GUI configuration file
 global $DB;
 
-$DB["TYPE"]                     = 'MYSQL';
+<% dbtypes = Hash.new %>
+<% dbtypes['mysql'] = "MYSQL" %>
+<% dbtypes['rds_mysql'] = "MYSQL" %>
+<% dbtypes['postgres'] = "POSTGRESQL" %>
+
+$DB["TYPE"]                     = '<%= dbtypes[node.zabbix.database.install_method] %>';
 $DB["SERVER"]                   = '<%= node.zabbix.database.dbhost %>';
 $DB["PORT"]                     = '<%= node.zabbix.database.dbport %>';
 $DB["DATABASE"]                 = '<%= node.zabbix.database.dbname %>';

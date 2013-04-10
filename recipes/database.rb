@@ -10,19 +10,30 @@ include_recipe "mysql::client"
 # Under chef_solo these must be set somehow because node.set doesn't persist
 # between runs
 node.set_unless['zabbix']['database']['dbpassword'] = secure_password
-if node['zabbix']['database']['install_method'] == 'rds_mysql'
+
+case node['zabbix']['database']['install_method'] 
+when 'rds_mysql'
   root_username       = node['zabbix']['database']['rds_master_username']
   root_password       = node['zabbix']['database']['rds_master_password']
   allowed_user_hosts  = "%"
-else
+  provider = Chef::Provider::ZabbixDatabaseMySql
+when 'mysql'
   node.set_unless['mysql']['server_root_password'] = secure_password
   root_username       = "root"
   root_password       = node['mysql']['server_root_password']
   allowed_user_hosts  = "localhost"
+  provider = Chef::Provider::ZabbixDatabaseMySql
+when 'postgres'
+  node.set_unless['postgresql']['password']['postgres'] = secure_password
+  root_username       = "postgres"
+  root_password       = node['postgresql']['password']['postgres'] 
+  provider = Chef::Provider::ZabbixDatabasePostgres
 end
 
 zabbix_database node['zabbix']['database']['dbname'] do
+  provider                provider
   host                    node['zabbix']['database']['dbhost']
+  port                    node['zabbix']['database']['dbport']
   username                node['zabbix']['database']['dbuser']
   password                node['zabbix']['database']['dbpassword']
   root_username           root_username

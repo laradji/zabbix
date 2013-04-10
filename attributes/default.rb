@@ -26,9 +26,8 @@ default['zabbix']['database']['dbport']         = "3306"
 default['zabbix']['database']['rds_master_user']      = nil
 default['zabbix']['database']['rds_master_password']  = nil
 
-
 default['zabbix']['server']['install_method']         = "source"
-default['zabbix']['server']['configure_options']      = [ "--with-libcurl","--with-net-snmp","--with-mysql" ]
+default['zabbix']['server']['configure_options']      = [ "--with-libcurl","--with-net-snmp"]
 default['zabbix']['server']['include_dir']            = "/opt/zabbix/server_include"
 default['zabbix']['server']['log_level']              = 3
 default['zabbix']['server']['housekeeping_frequency'] = "1"
