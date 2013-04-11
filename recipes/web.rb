@@ -49,10 +49,10 @@ end
 
 # Link to the web interface version
 link node['zabbix']['web_dir'] do
-  to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
+  to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server/frontends/php"
 end
 
-directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf" do
+directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server/frontends/php/conf" do
   owner node['apache']['user']
   group node['apache']['group']
   mode "0755"
@@ -60,7 +60,7 @@ directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['versi
 end
 
 # install zabbix PHP config file
-template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf/zabbix.conf.php" do
+template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server/frontends/php/conf/zabbix.conf.php" do
   source "zabbix_web.conf.php.erb"
   owner "root"
   group "root"

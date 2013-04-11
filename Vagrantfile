@@ -16,12 +16,18 @@ Vagrant.configure("2") do |config|
   config.ssh.max_tries = 40
   config.ssh.timeout   = 120
 
+  config.vm.provision :shell, :inline => "sudo /opt/chef/embedded/bin/gem install chef -v 10.24.0"
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       :mysql => {
         :server_root_password => 'rootpass',
         :server_debian_password => 'debpass',
         :server_repl_password => 'replpass'
+      },
+      'postgresql' => {
+        'password' => {
+          'postgres' => 'rootpass'
+        }
       },
       'zabbix' => {
         'agent' => {
@@ -33,6 +39,10 @@ Vagrant.configure("2") do |config|
         },
         'server' => {
           'install' => true,
+        },
+        'database' => {
+          'dbport' => '5432',
+          'install_method' => 'postgres',
           'dbpassword' => 'password123'
         }
       }
@@ -40,8 +50,13 @@ Vagrant.configure("2") do |config|
 
     chef.run_list = [
       "recipe[yum::epel]",
+      "recipe[database::mysql]",
       "recipe[mysql::server]",
+      "recipe[database::postgresql]",
+      "recipe[postgresql::server]",
+      "recipe[postgresql::client]",
       "recipe[zabbix::default]",
+      "recipe[zabbix::database]",
       "recipe[zabbix::server]"
     ]
   end
