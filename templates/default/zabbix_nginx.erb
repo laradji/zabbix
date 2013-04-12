@@ -7,10 +7,6 @@ server {
   
   access_log /var/log/nginx/zabbix.access.log;
 
-  location / {
-    rewrite ^(.*)$ /index.php last;
-  }
-
   location ~ .*\.php$ {
     include /etc/nginx/fastcgi_params;
     fastcgi_read_timeout 60000;
