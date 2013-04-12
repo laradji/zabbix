@@ -15,7 +15,7 @@ when "ubuntu","debian"
   packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp}
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
-    packags.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd' )
+    packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd' )
   when 'postgres'
     packages.push('libssh2-1-dev')
   end
