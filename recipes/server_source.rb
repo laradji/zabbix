@@ -65,7 +65,7 @@ zabbix_source "install_zabbix_server" do
   branch              node['zabbix']['server']['branch']
   version             node['zabbix']['server']['version']
   code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['server']['version']}-server"  
+  target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
   install_dir         node['zabbix']['install_dir']
   configure_options   configure_options.join(" ")
 
