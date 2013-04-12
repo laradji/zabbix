@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
           'servers_active' => ['127.0.0.1']
         },
         'web' => {
-          'install_method' => 'nginx',
+          'install_method' => 'apache',
         },
         'server' => {
           'install' => true,
@@ -62,7 +62,6 @@ Vagrant.configure("2") do |config|
       "recipe[mysql::client]",
       "recipe[postgresql::client]",
       "recipe[zabbix::server]",
-
 
       "recipe[php-fpm]",
       "recipe[nginx]",

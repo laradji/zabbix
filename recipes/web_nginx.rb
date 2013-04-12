@@ -66,10 +66,11 @@ template "/etc/nginx/sites-available/zabbix" do
   group "root"
   mode "754"
   variables ({
-    :timezone => node['zabbix']['web']['timezone'],
+    :php_settings => node['zabbix']['web']['php_settings'],
     :web_port => node['zabbix']['web']['port'],
     :web_dir => node['zabbix']['web_dir']
   })
+  notifies :restart, "service[php-fpm]", :delayed
 end
 
 #create a symlink

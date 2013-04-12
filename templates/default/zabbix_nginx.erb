@@ -13,7 +13,8 @@ server {
     fastcgi_buffers 512 16k;
     fastcgi_pass   127.0.0.1:9000;
     fastcgi_index   index.php;
-    fastcgi_param PHP_VALUE "date.timezone='<%= @timezone %>'";
+    <% php_values = @php_settings.map { |name, value| "#{name}=#{value}"}.join("\n") %>
+    fastcgi_param PHP_VALUE "<%=php_values%>";
     fastcgi_param SCRIPT_FILENAME <%=@web_dir%>$fastcgi_script_name;
   }
 }

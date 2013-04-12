@@ -73,4 +73,5 @@ web_app node['zabbix']['web']['fqdn'] do
   server_aliases node['zabbix']['web']['aliases']
   docroot node['zabbix']['web_dir']
   only_if { node['zabbix']['web']['fqdn'] != nil }
+  php_settings node['zabbix']['web']['php_settings']
 end  
