@@ -31,9 +31,11 @@ default['zabbix']['server']['log_level']              = 3
 default['zabbix']['server']['housekeeping_frequency'] = "1"
 default['zabbix']['server']['max_housekeeper_delete'] = "100000"
  
-default['zabbix']['web']['install_method'] = 'apache'
-default['zabbix']['web']['fqdn']    = nil
-default['zabbix']['web']['aliases'] = ["zabbix"]
+default['zabbix']['web']['install_method']  = 'apache'
+default['zabbix']['web']['fqdn']            = nil
+default['zabbix']['web']['aliases']         = ["zabbix"]
+default['zabbix']['web']['port']            = 80
+default['zabbix']['web']['timezone']        = "UTC"
 
 default['zabbix']['install_dir']  = "/opt/zabbix"
 default['zabbix']['etc_dir']      = "/etc/zabbix"
