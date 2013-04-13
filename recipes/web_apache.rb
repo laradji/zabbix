@@ -7,12 +7,12 @@
 # Apache 2.0
 #
 
+=begin
 node.set['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
 
 apache_site "000-default" do
   enable false
 end
-
 # Execute apache2 receipe + mod_php5 receipe
 include_recipe "apache2"
 include_recipe "apache2::mod_php5"
@@ -49,10 +49,10 @@ end
 
 # Link to the web interface version
 link node['zabbix']['web_dir'] do
-  to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server/frontends/php"
+  to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
 end
 
-directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server/frontends/php/conf" do
+directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf" do
   owner node['apache']['user']
   group node['apache']['group']
   mode "0755"
@@ -60,12 +60,20 @@ directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['versi
 end
 
 # install zabbix PHP config file
-template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}-server/frontends/php/conf/zabbix.conf.php" do
+template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf/zabbix.conf.php" do
   source "zabbix_web.conf.php.erb"
   owner "root"
   group "root"
   mode "754"
 end
+
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
+Chef::Log.warn("CHICKEN: #{node['zabbix']['web']['fqdn']}")
 
 # install vhost for zabbix frontend
 web_app node['zabbix']['web']['fqdn'] do
@@ -75,3 +83,4 @@ web_app node['zabbix']['web']['fqdn'] do
   only_if { node['zabbix']['web']['fqdn'] != nil }
   php_settings node['zabbix']['web']['php_settings']
 end  
+=end
