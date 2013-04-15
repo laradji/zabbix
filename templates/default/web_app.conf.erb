@@ -10,7 +10,7 @@
     Order allow,deny
     Allow from all
     <% @params[:php_settings].each do |name, value| %>
-    php_admin_value <%=name%> <%value%>
+    php_admin_value <%=name%> <%=value%>
     <%end%>
   </Directory>
   
