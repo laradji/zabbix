@@ -1,3 +1,5 @@
+include_recipe "zabbix::common"
+
 case node['platform']
 when "ubuntu","debian"
   %w{ php5-mysql php5-gd }.each do |pck|
