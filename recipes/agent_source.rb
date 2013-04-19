@@ -55,26 +55,13 @@ configure_options = (node['zabbix']['agent']['configure_options'] || Array.new).
 end
 node.set['zabbix']['agent']['configure_options'] = configure_options
 
-# installation of zabbix bin
-script "install_zabbix_agent" do
-  interpreter "bash"
-  user "root"
-  cwd node['zabbix']['src_dir']
-  action :nothing
-  notifies :restart, "service[zabbix_agentd]"
-  code <<-EOH
-  rm -rf /tmp/zabbix-#{node['zabbix']['agent']['version']}
-  tar xvfz zabbix-#{node['zabbix']['agent']['version']}-agent.tar.gz -C /tmp
-  mv /tmp/zabbix-#{node['zabbix']['agent']['version']} zabbix-#{node['zabbix']['agent']['version']}-agent
-  (cd zabbix-#{node['zabbix']['agent']['version']}-agent && ./configure --enable-agent --prefix=#{node['zabbix']['install_dir']} #{node['zabbix']['agent']['configure_options'].join(" ")})
-  (cd zabbix-#{node['zabbix']['agent']['version']}-agent && make install)
-  EOH
-end
+zabbix_source "install_zabbix_agent" do
+  branch              node['zabbix']['agent']['branch']
+  version             node['zabbix']['agent']['version']
+  code_dir            node['zabbix']['src_dir']
+  target_dir          "zabbix-#{node['zabbix']['agent']['version']}-agent"  
+  install_dir         node['zabbix']['install_dir']
+  configure_options   configure_options.join(" ")
 
-# Download zabbix source code
-remote_file "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['agent']['version']}-agent.tar.gz" do
-  source "http://downloads.sourceforge.net/project/zabbix/#{node['zabbix']['agent']['branch']}/#{node['zabbix']['agent']['version']}/zabbix-#{node['zabbix']['agent']['version']}.tar.gz"
-  mode "0644"
-  action :create_if_missing
-  notifies :run, "script[install_zabbix_agent]", :immediately
+  action :install_agent
 end
