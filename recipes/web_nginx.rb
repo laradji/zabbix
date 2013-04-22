@@ -1,14 +1,19 @@
-case node['platform']
-when "ubuntu","debian"
+# Install nginx and disable default site
+node.override['nginx']['default_site_enabled'] = false
+include_recipe "nginx"
+
+# Install php-fpm to execute PHP code from nginx
+include_recipe "php-fpm"
+
+case node['platform_family']
+when "debian"
   %w{ php5-mysql php5-gd }.each do |pck|
     package pck do
       action :install
       notifies :restart, "service[nginx]"
     end
   end
-
-when "redhat","centos","scientific","amazon","oracle"
-
+when "rhel"
   if node['platform_version'].to_f < 6.0
     %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
       package pck do
@@ -24,7 +29,6 @@ when "redhat","centos","scientific","amazon","oracle"
       end
     end
   end
-
 end
 
 zabbix_source "extract_zabbix_web" do
@@ -57,6 +61,7 @@ template ::File.join(conf_dir, "zabbix.conf.php") do
   owner "root"
   group "root"
   mode "754"
+  notifies :restart, "service[php-fpm]", :delayed
 end
 
 # install host for zabbix
@@ -68,21 +73,10 @@ template "/etc/nginx/sites-available/zabbix" do
   variables ({
     :php_settings => node['zabbix']['web']['php_settings'],
     :web_port => node['zabbix']['web']['port'],
-    :web_dir => node['zabbix']['web_dir']
+    :web_dir => node['zabbix']['web_dir'],
+    :php_listen => node['zabbix']['web']['php_listen']
   })
-  notifies :restart, "service[php-fpm]", :delayed
+  notifies :reload, "service[nginx]"
 end
 
-#create a symlink
-link "/etc/nginx/sites-enabled/zabbix" do
-  to "/etc/nginx/sites-available/zabbix"
-end
-
-#remove default
-link "/etc/nginx/sites-enabled/000-default" do
-  action :delete
-end
-
-file "/etc/nginx/conf.d/default.conf" do
-  action :delete
-end
+nginx_site "zabbix"
