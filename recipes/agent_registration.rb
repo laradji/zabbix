@@ -23,7 +23,7 @@ if port_open?(zabbixServer['zabbix']['web']['fqdn'], 80)
 
   groups_id = []
   node['zabbix']['agent']['groups'].each do |group|
-    ruby_block "Create group on Zabbix server" do
+    ruby_block "Create group #{group} on Zabbix server" do
       block do
         zbx.hostgroups.create(
           :host => group
