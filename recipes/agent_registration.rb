@@ -13,20 +13,20 @@ end
 require 'zabbixapi'
 
 unless Chef::Config[:solo]
-  zabbixServer = search(:node, "recipes:zabbix\\:\\:server").first
+  zabbix_server = search(:node, "recipes:zabbix\\:\\:server").first
 elsif node['zabbix']['server']['ipaddress']
-  zabbixServer = node['zabbix']['server']['ipaddress']
+  zabbix_server = node['zabbix']['server']['ipaddress']
 else
   Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
   Chef::Log.warn("You don't set node['zabbix']['server']['ipaddress']. Recipe fail")
   return
 end
 
-if port_open?(zabbixServer['zabbix']['web']['fqdn'], 80)
+if port_open?(zabbix_server['zabbix']['web']['fqdn'], 80)
   zbx = ZabbixApi.connect(
-    :url => "http://#{zabbixServer['zabbix']['web']['fqdn']}/api_jsonrpc.php",
-    :user => zabbixServer['zabbix']['web']['login'],
-    :password => zabbixServer['zabbix']['web']['password']
+    :url => "http://#{zabbix_server['zabbix']['web']['fqdn']}/api_jsonrpc.php",
+    :user => zabbix_server['zabbix']['web']['login'],
+    :password => zabbix_server['zabbix']['web']['password']
   )
 
   groups_id = []
