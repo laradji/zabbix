@@ -11,7 +11,7 @@ server {
     include /etc/nginx/fastcgi_params;
     fastcgi_read_timeout 60000;
     fastcgi_buffers 512 16k;
-    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_pass   <%= @php_listen %>;
     fastcgi_index   index.php;
     <% php_values = @php_settings.map { |name, value| "#{name}=#{value}"}.join("\n") %>
     fastcgi_param PHP_VALUE "<%=php_values%>";
