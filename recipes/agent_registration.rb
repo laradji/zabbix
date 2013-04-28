@@ -22,7 +22,7 @@ else
   return
 end
 
-if port_open?(zabbix_server['zabbix']['web']['fqdn'], 80)
+if Chef::Zabbix.port_open?(zabbix_server['zabbix']['web']['fqdn'], 80)
   zbx = ZabbixApi.connect(
     :url => "http://#{zabbix_server['zabbix']['web']['fqdn']}/api_jsonrpc.php",
     :user => zabbix_server['zabbix']['web']['login'],
