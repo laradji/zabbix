@@ -34,5 +34,5 @@ end
 def create_group
   Chef::Zabbix.with_connection(new_resource.connection) do |connection|
     connection.hostgroups.create(:host => group)
-  en
+  end
 end

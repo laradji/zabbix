@@ -5,13 +5,6 @@
 # Apache 2.0
 #
 
-chef_gem "zabbixapi" do
-  action :install
-  version "~> 0.5.9"
-end
-
-require 'zabbixapi'
-
 unless Chef::Config[:solo]
   zabbix_server = search(:node, "recipes:zabbix\\:\\:server").first
 elsif node['zabbix']['server']['ipaddress']
@@ -22,42 +15,13 @@ else
   return
 end
 
-if Chef::Zabbix.port_open?(zabbix_server['zabbix']['web']['fqdn'], 80)
-  zbx = ZabbixApi.connect(
-    :url => "http://#{zabbix_server['zabbix']['web']['fqdn']}/api_jsonrpc.php",
-    :user => zabbix_server['zabbix']['web']['login'],
-    :password => zabbix_server['zabbix']['web']['password']
-  )
+connection_info = {
+  :url => "http://#{zabbix_server['zabbix']['web']['fqdn']}/api_jsonrpc.php",
+  :user => zabbix_server['zabbix']['web']['login'],
+  :password => zabbix_server['zabbix']['web']['password']
+}
 
-  groups_id = []
-  node['zabbix']['agent']['groups'].each do |group|
-    ruby_block "Create group #{group} on Zabbix server" do
-      block do
-        zbx.hostgroups.create(
-          :host => group
-        )
-      end
-      not_if { zbx.hostgroups.get_id(:name => group) }
-    end
-    groups_id += [ :groupid => zbx.hostgroups.get_id(:name => group) ]
-  end
-
-  ruby_block "Create or update host on Zabbix server" do
-    block do
-      zbx.hosts.create_or_update(
-        :host => node['zabbix']['agent']['hostname'],
-        :interfaces => [
-          {
-            :type => 1,
-            :main => 1,
-            :ip => '',
-            :port => 10050,
-            :dns => node['zabbix']['agent']['hostname'],
-            :useip => 0
-          }
-        ],
-        :groups => groups_id
-      )
-    end
-  end
+zabbix_host node['zabbix']['agent']['hostname'] do
+  groups            node['zabbix']['agent']['groups']
+  server_connection connection_info
 end
