@@ -7,7 +7,7 @@
 
 chef_gem "zabbixapi" do
   action :install
-  version "~> 0.5.8"
+  version "~> 0.5.9"
 end
 
 require 'zabbixapi'
@@ -48,6 +48,10 @@ if port_open?(zabbix_server['zabbix']['web']['fqdn'], 80)
         :host => node['zabbix']['agent']['hostname'],
         :interfaces => [
           {
+            :type => 1,
+            :main => 1,
+            :ip => '',
+            :port => 10050,
             :dns => node['zabbix']['agent']['hostname'],
             :useip => 0
           }
