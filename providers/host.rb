@@ -8,9 +8,10 @@ action :create_or_update do
   require 'zabbixapi'
 
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-    group_ids = new_resource.groups.map do |group|
-      connection.hostgroups.get_id(:name => group) ||
-        connection.hostgroups.create(:host => group)
+    group_ids = []
+    new_resource.groups.map do |group|
+      group_ids += [ :groupid => ( connection.hostgroups.get_id(:name => group) ||
+        connection.hostgroups.create(:host => group) ) ]
     end
 
     interfaces = [
@@ -31,5 +32,5 @@ action :create_or_update do
     )
   end
 
-  updated_by_last_action(true)
+  new_resource.updated_by_last_action(true)
 end
