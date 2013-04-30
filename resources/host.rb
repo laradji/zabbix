@@ -3,5 +3,6 @@ default_action :create_or_update
 
 attribute :hostname, :kind_of => String, :name_attribute => true
 attribute :server_connection, :kind_of => Hash, :default => Hash.new
+attribute :interfaces, :kind_of => Array, :default => Array.new
 attribute :groups, :kind_of => Array, :default => Array.new
-
+attribute :force_group_creation, :kind_of => [TrueClass, FalseClass], :default => false

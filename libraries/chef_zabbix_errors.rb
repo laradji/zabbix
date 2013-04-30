@@ -26,5 +26,17 @@ class Chef
         "Zabbix Server not reachable on '#{ip}:#{port}'"
       end
     end
+
+    class UnknownHostInterfaceTypeError < ZabbixError
+      def message(type)
+        "Interface type must be one of [:agent, :snmp, :ipmi, :jmx] but received '#{type}'"
+      end
+    end
+
+    class HostGroupNotFoundError < ZabbixError
+      def message(group)
+        "Could not find a HostGroup named '#{group}'"
+      end
+    end
   end
 end
