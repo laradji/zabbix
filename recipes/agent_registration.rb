@@ -7,12 +7,14 @@
 
 unless Chef::Config[:solo]
   zabbix_server = search(:node, "recipes:zabbix\\:\\:server").first
-elsif node['zabbix']['server']['ipaddress']
-  zabbix_server = node['zabbix']['server']['ipaddress']
-else
-  Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-  Chef::Log.warn("You don't set node['zabbix']['server']['ipaddress']. Recipe fail")
-  return
+else 
+  if node['zabbix']['server']['ipaddress']
+    zabbix_server = node['zabbix']['server']['ipaddress']
+  else
+    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+    Chef::Log.warn("You don't set node['zabbix']['server']['ipaddress']. Recipe fail")
+    return
+  end
 end
 
 connection_info = {
