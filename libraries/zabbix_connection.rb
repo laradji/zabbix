@@ -23,17 +23,6 @@ class Chef
         if [:url, :user, :password].any? { |key| connection_spec[key].to_s.empty? }
           raise InvalidZabbixServerSpecificationError.new(connection_spec)
         end
-
-        raise ServerNotReachableError unless port_open?(connection_spec[:url], 80)
-      end
-
-      def port_open?(ip, port, seconds=1)
-        begin
-          TCPSocket.new(ip, port).close
-          true
-        rescue
-          false
-        end
       end
     end
 
@@ -74,7 +63,7 @@ class Chef
         @main = main ? 1 : 0
         @type = TYPES[type]
         @hostid = hostid
-        raise UnknownHostInterfaceType(type) unless @type
+        raise UnknownHostInterfaceTypeError(type) unless @type
       end
 
       def to_argument

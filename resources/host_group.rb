@@ -1,4 +1,4 @@
-action :create
+actions :create
 default_action :create
 
 attr_accessor :exists

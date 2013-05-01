@@ -32,6 +32,8 @@ default['zabbix']['server']['log_level']              = 3
 default['zabbix']['server']['housekeeping_frequency'] = "1"
 default['zabbix']['server']['max_housekeeper_delete'] = "100000"
  
+default['zabbix']['web']['login'] = "admin"
+default['zabbix']['web']['password'] = "zabbix"
 default['zabbix']['web']['install_method']  = 'apache'
 default['zabbix']['web']['fqdn']            = nil
 default['zabbix']['web']['aliases']         = ["zabbix"]

@@ -12,7 +12,7 @@ action :create_or_update do
       id = connection.hostgroups.get_id(:name => group)
       if id.nil?
         if new_resource.force_group_creation
-          id = connection.hostgroups.create(:host => group)
+          id = connection.hostgroups.create(:name => group)
         else
           raise HostGroupNotFoundError(group)
         end
@@ -21,15 +21,15 @@ action :create_or_update do
     end
 
     interfaces = new_resource.interfaces.empty? ?
-      [ Chef::Zabbix::HostInterface.dns(new_resource.hostname) ]
+      [ Chef::Zabbix::HostInterface.dns(new_resource.hostname) ] :
       new_resource.interfaces
 
     connection.hosts.create_or_update(
       :host => new_resource.hostname,
-      :interfaces => interfaces.map(&:to_argument)
-      :groups => group_ids
+      :interfaces => interfaces.map(&:to_argument),
+      :groups => group_ids.map { |id| { "groupid" => id } }
     )
   end
 
-  updated_by_last_action(true)
+  new_resource.updated_by_last_action(true)
 end
