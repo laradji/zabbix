@@ -1,3 +1,17 @@
+def find_group_ids(connection, groups, create_missing_groups=false)
+  new_resource.groups.map do |group|
+    id = connection.hostgroups.get_id(:name => group)
+    if id.nil?
+      if create_if_missing
+        id = connection.hostgroups.create(:name => group)
+      else
+        raise HostGroupNotFoundError(group)
+      end
+    end
+    id
+  end
+end
+
 action :create_or_update do
 
   chef_gem "zabbixapi" do
@@ -8,17 +22,8 @@ action :create_or_update do
   require 'zabbixapi'
 
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-    group_ids = new_resource.groups.map do |group|
-      id = connection.hostgroups.get_id(:name => group)
-      if id.nil?
-        if new_resource.force_group_creation
-          id = connection.hostgroups.create(:name => group)
-        else
-          raise HostGroupNotFoundError(group)
-        end
-      end
-      id
-    end
+
+    group_ids = find_group_ids(connection, new_resource.groups, new_resource.create_missing_groups)
 
     interfaces = new_resource.interfaces.empty? ?
       [ Chef::Zabbix::HostInterface.dns(new_resource.hostname) ] :
