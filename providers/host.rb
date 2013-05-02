@@ -2,7 +2,7 @@ def find_group_ids(connection, groups, create_missing_groups=false)
   new_resource.groups.map do |group|
     id = connection.hostgroups.get_id(:name => group)
     if id.nil?
-      if create_if_missing
+      if create_missing_groups
         id = connection.hostgroups.create(:name => group)
       else
         raise HostGroupNotFoundError(group)

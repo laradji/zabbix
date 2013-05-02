@@ -8,11 +8,11 @@
 unless Chef::Config[:solo]
   zabbix_server = search(:node, "recipes:zabbix\\:\\:server").first
 else 
-  if node['zabbix']['server']['ipaddress']
+  if node['zabbix']['web']['fqdn']
     zabbix_server = node
   else
     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-    Chef::Log.warn("You don't set node['zabbix']['server']['ipaddress']. Recipe fail")
+    Chef::Log.warn("You don't set node['zabbix']['web']['fqdn']. Recipe fail")
     return
   end
 end
@@ -27,6 +27,11 @@ zabbix_host node['zabbix']['agent']['hostname'] do
   groups                node['zabbix']['agent']['groups']
   create_missing_groups true
   server_connection     connection_info
-  groups            node['zabbix']['agent']['groups']
-  server_connection connection_info
+  action :nothing
+end
+
+ruby_block "shim" do
+  block do
+  end
+  notifies :create_or_update, "zabbix_host[#{node['zabbix']['agent']['hostname']}]", :delayed
 end
