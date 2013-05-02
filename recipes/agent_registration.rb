@@ -22,6 +22,6 @@ connection_info = {
 
 zabbix_host node['zabbix']['agent']['hostname'] do
   groups                node['zabbix']['agent']['groups']
-  force_group_creation  true
+  create_missing_groups true
   server_connection     connection_info
 end
