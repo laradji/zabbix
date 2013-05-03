@@ -7,6 +7,8 @@
 # Apache 2.0
 #
 
+include_recipe "zabbix::common"
+
 node.set['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
 
 case node['platform_family']

@@ -1,3 +1,5 @@
+include_recipe "zabbix::common"
+
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
 include_recipe "database::mysql"
