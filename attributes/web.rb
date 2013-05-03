@@ -1,3 +1,5 @@
+default['zabbix']['web']['login'] = "admin"
+default['zabbix']['web']['password'] = "zabbix"
 default['zabbix']['web']['install_method']  = 'apache'
 default['zabbix']['web']['fqdn']            = nil
 default['zabbix']['web']['aliases']         = ["zabbix"]

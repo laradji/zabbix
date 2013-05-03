@@ -39,6 +39,7 @@ Vagrant.configure("2") do |config|
         },
         'server' => {
           'install' => true,
+          'ipaddress' => '127.0.0.1',
         },
         'database' => {
           #'dbport' => '5432',
@@ -67,9 +68,9 @@ Vagrant.configure("2") do |config|
       #"recipe[nginx]",
       "recipe[apache2]",
       "recipe[apache2::mod_php5]",
-      "recipe[zabbix::web]"
+      "recipe[zabbix::web]",
 
-
+      "recipe[zabbix::agent_registration]"
     ]
   end
 end
