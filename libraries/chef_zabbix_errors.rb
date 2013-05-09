@@ -59,5 +59,36 @@ class Chef
         "Could not find a HostGroup named '#{@group}'"
       end
     end
+
+    class InvalidDataTypeError
+      def initialize(data_type)
+        @data_type = data_type
+      end
+
+      def message
+        "Data Type '#{data_type}' is not known."
+      end
+    end
+
+    class InvalidApiMethodError 
+      def initialize(data_type, method)
+        @data_type = data_type
+        @method = method
+      end
+
+      def message
+        "Method '#{@method}' is unknown for Data Type '#{@data_type}'"
+      end
+    end
+
+    class InvalidParametersHashError
+      def initialize(bad_params)
+        @bad_params = bad_params
+      end
+
+      def message
+        "Expected parameters to be a Hash but got '#{@bad_params.class}': #{@bad_params.to_s}"
+      end
+    end
   end
 end

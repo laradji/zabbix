@@ -14,12 +14,7 @@ end
 
 action :create_or_update do
 
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.5.9"
-  end
-
-  require 'zabbixapi'
+  zabbix_api_dependencies
 
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
