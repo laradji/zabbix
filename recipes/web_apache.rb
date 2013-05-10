@@ -10,6 +10,9 @@
 include_recipe "zabbix::common"
 
 node.set['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
+node.set['zabbix']['web']['user'] = "apache"
+
+user node['zabbix']['web']['user']
 
 case node['platform_family']
 when "debian"

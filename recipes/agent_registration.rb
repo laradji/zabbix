@@ -12,7 +12,7 @@ else
     zabbix_server = node
   else
     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-    Chef::Log.warn("You don't set node['zabbix']['web']['fqdn']. Recipe fail")
+    Chef::Log.warn("If you did not set node['zabbix']['web']['fqdn'], the recipe will fail")
     return
   end
 end

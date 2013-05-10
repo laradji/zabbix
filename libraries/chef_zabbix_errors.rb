@@ -60,17 +60,22 @@ class Chef
       end
     end
 
-    class InvalidDataTypeError
+    class InvalidDataTypeError < ZabbixError
       def initialize(data_type)
         @data_type = data_type
       end
 
       def message
-        "Data Type '#{data_type}' is not known."
+        "Data Type '#{data_type}' is not known.\n
+        Known Data Types: \n
+         -- hostgroups\n
+         -- templates\n
+         -- applications\n
+        "
       end
     end
 
-    class InvalidApiMethodError 
+    class InvalidApiMethodError < ZabbixError
       def initialize(data_type, method)
         @data_type = data_type
         @method = method
@@ -81,7 +86,7 @@ class Chef
       end
     end
 
-    class InvalidParametersHashError
+    class InvalidParametersHashError < ZabbixError
       def initialize(bad_params)
         @bad_params = bad_params
       end

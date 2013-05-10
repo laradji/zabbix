@@ -24,10 +24,18 @@ action :call do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     validate_data_type(connection, new_resource.data_type)
     data_type = connection.send(new_resource.data_type)
+    unless connection.applications.get_id( :name => new_resource.parameters[:name])
 
-    validate_method(data_type, new_resource.method)
-    puts "Method valid, sending stuff.."
-    data_type.send(new_resource.method, new_resource.parameters)
+        validate_method(data_type, new_resource.method)
+        puts "Method valid, sending stuff.."
+        # turn the hostName into an id
+        puts new_resource.parameters[:hostName]
+        hostId = connection.templates.get_id(:host=>new_resource.parameters[:hostName])
+        puts hostId
+        params = { :name => new_resource.parameters[:name] , :hostid => hostId }
+        puts params
+        data_type.send(new_resource.method, params)
+    end
   end
 
   new_resource.updated_by_last_action(true)
