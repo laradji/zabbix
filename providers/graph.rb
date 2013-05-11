@@ -27,6 +27,17 @@ action :call do
 
     validate_method(data_type, new_resource.method)
     puts "Method valid, sending stuff.."
+    # turn the name into an Id
+    new_resource.parameters[:gitems].each do |gitem|
+        #gitem[:itemid] = connection.items.get_id( :name => gitem[:itemname] )
+        itemId = connection.query( :method => "item.get" , :params => {
+                                                 :hostids => connection.templates.get_id( :name => gitem[:hostName] ),
+                                                 :search => {
+                                                   :key_ => gitem[:key],
+                                                   :hostname => gitem[:hostName] }
+                                   } )
+        gitem[:itemid] = itemId[0]['itemid']
+    end
     puts new_resource.parameters
     data_type.send(new_resource.method, new_resource.parameters)
   end
