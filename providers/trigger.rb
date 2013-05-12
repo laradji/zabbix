@@ -1,18 +1,4 @@
-def validate_data_type(connection, data_type)
-  puts data_type
-  raise Chef::Zabbix::InvalidDataTypeError(data_type) unless connection.respond_to?(data_type)
-end
-
-def validate_method(data_type, method)
-  puts data_type, method
-  raise Chef::Zabbix::InvalidApiMethodError(method) unless data_type.respond_to?(method)
-end
-
-def validate_parameters(parameters)
-  raise InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
-end
-
-action :call do
+action :create do
 
   chef_gem "zabbixapi" do
     action :install
@@ -22,6 +8,35 @@ action :call do
   require 'zabbixapi'
 
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+     # Test to see if the application already exists
+     unless connection.query( :method => "trigger.get",
+                              :params => {
+                                 :filter => {
+                                    :name => new_resource.parameters[:name]
+                              }
+                           })
+        # Convert the "hostname" (a template name) into a hostid
+        hostId = connection.query( :method => "template.get",
+                                   :params => {
+                                      :filter => {
+                                         :host => new_resource.parameters[:hostName]
+                                      }
+                                   })
+        appId = connection.query( :method => "application.get",
+                                  :params => {
+                                     :filter => {
+                                        :name => new_resource.parameters[:applicationNames]
+                                     }
+                                   })
+        # Make a new params with the correct parameters
+        new_resource.parameters[:hostid] = hostId
+        new_resource.parameters[:applications] = [ appId ]
+        # Send the creation request to the server
+        connection.query( :method => "item.create",
+                          :params => new_resource.parameters
+                        )
+     end
+
     validate_data_type(connection, new_resource.data_type)
     data_type = connection.send(new_resource.data_type)
 

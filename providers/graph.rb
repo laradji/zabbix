@@ -30,11 +30,12 @@ action :call do
     # turn the name into an Id
     new_resource.parameters[:gitems].each do |gitem|
         #gitem[:itemid] = connection.items.get_id( :name => gitem[:itemname] )
-        itemId = connection.query( :method => "item.get" , :params => {
-                                                 :hostids => connection.templates.get_id( :name => gitem[:hostName] ),
-                                                 :search => {
-                                                   :key_ => gitem[:key],
-                                                   :hostname => gitem[:hostName] }
+        itemId = connection.query( :method => "item.get", 
+                                   :params => {
+                                      :hostids => connection.templates.get_id( :name => gitem[:hostName] ),
+                                      :search => {
+                                         :key_ => gitem[:key],
+                                         :hostname => gitem[:hostName] }
                                    } )
         gitem[:itemid] = itemId[0]['itemid']
     end
