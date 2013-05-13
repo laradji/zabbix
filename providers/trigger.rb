@@ -1,62 +1,56 @@
 action :create do
 
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.5.9"
-  end
+    chef_gem "zabbixapi" do
+        action :install
+        version "~> 0.5.9"
+    end
 
-  require 'zabbixapi'
+    require 'zabbixapi'
 
-  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-     # Test to see if the application already exists
-     unless connection.query( :method => "trigger.get",
-                              :params => {
-                                 :filter => {
-                                    :name => new_resource.parameters[:name]
-                              }
-                           })
+    Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+        # Swap data around because the trigger API is different
+        new_resource.parameters[:comments] = new_resource.parameters[:description]
+        new_resource.parameters[:description] = new_resource.parameters[:name]
+        new_resource.parameters[:priority] = new_resource.parameters[:priority].to_i - 1
+
         # Convert the "hostname" (a template name) into a hostid
         hostId = connection.query( :method => "template.get",
                                    :params => {
-                                      :filter => {
-                                         :host => new_resource.parameters[:hostName]
-                                      }
-                                   })
+                                       :filter => {
+                                           :host => new_resource.parameters[:hostName]}
+                                              })
         appId = connection.query( :method => "application.get",
                                   :params => {
-                                     :filter => {
-                                        :name => new_resource.parameters[:applicationNames]
-                                     }
-                                   })
-        # Make a new params with the correct parameters
-        new_resource.parameters[:hostid] = hostId
-        new_resource.parameters[:applications] = [ appId ]
-        # Send the creation request to the server
-        connection.query( :method => "item.create",
-                          :params => new_resource.parameters
-                        )
-     end
+                                      :filter => {
+                                          :name => new_resource.parameters[:applicationNames]}
+                                             })
 
-    validate_data_type(connection, new_resource.data_type)
-    data_type = connection.send(new_resource.data_type)
+        triggerId = connection.query( :method => "trigger.get",
+                                     :params => {
+                                         :filter => {
+                                             :description => new_resource.parameters[:description]},
+                                         :search => {
+                                             :hostid => hostId,},
+                                                })
 
-    validate_method(data_type, new_resource.method)
-    # Need to move some data around in params because the call is a little different for triggers
-    # WHY? ...
-    # get the templateId
-    templateId = connection.templates.get_id(:host=>new_resource.parameters[:templateName])
-    params = { :description => new_resource.parameters[:name],
-               :expression => new_resource.parameters[:expression],
-               :comments => new_resource.parameters[:description],
-               :priority => new_resource.parameters[:priority],
-               :status     => new_resource.parameters[:status],
-               :templateid => 0,
-               :type => new_resource.parameters[:type]
-    }
-    puts "Method valid, sending stuff.."
-    puts params
-    data_type.send(new_resource.method, params)
-  end
-
-  new_resource.updated_by_last_action(true)
+        if triggerId.size == 0
+            # Make a new params with the correct parameters
+            new_resource.parameters[:hostid] = hostId[0]['hostid']
+            new_resource.parameters[:applications] = [ appId[0]['applicationid'] ]
+            # Remove the bad parameter
+            new_resource.parameters.delete(:hostName)
+            new_resource.parameters.delete(:applicationNames)
+            # Send the creation request to the server
+            connection.query( :method => "trigger.create",
+                             :params => new_resource.parameters
+                            )
+           else
+               # Send the update request to the server
+               new_resource.parameters[:triggerid] = triggerId[0]['triggerid']
+               connection.query( :method => "trigger.update",
+                                 :params => new_resource.parameters
+                               )
+           end
+    end
+    new_resource.updated_by_last_action(true)
 end
