@@ -13,8 +13,6 @@ action :call do
 
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
-    puts "Method valid, sending stuff.."
-    puts new_resource.parameters
     connection.query( :method => new_resource.method, 
                       :params => new_resource.parameters,
                     )

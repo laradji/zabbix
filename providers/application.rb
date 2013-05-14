@@ -8,23 +8,21 @@ action :create do
     require 'zabbixapi'
 
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+       # Convert the "hostname" (a template name) into a hostid
+       hostId = connection.query( :method => "template.get",
+                                  :params => {
+                                      :filter => {
+                                           :host => new_resource.parameters[:hostName],},
+                                             })
 
         # Test to see if the application already exists
         appId =  connection.query( :method => "application.get",
                                    :params => {
+                                       :hostids => hostId[0]['hostid'],
                                        :filter => {
-                                           :name => new_resource.parameters[:name]}
-                                              })
+                                           :name => new_resource.parameters[:name],}
+                                             }) 
         if appId.size == 0
-            # Convert the "hostname" (a template name) into a hostid
-            puts new_resource.parameters[:hostName]
-            hostId = connection.query( :method => "template.get",
-                                       :params => {
-                                           :filter => {
-                                               :host => new_resource.parameters[:hostName],},
-                                                  })
-            puts "Host Id? -> "
-            puts hostId[0]
             # Make a new params with the correct parameters
             new_resource.parameters[:hostid] = hostId[0]['hostid']
             # Send the creation request to the server

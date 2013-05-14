@@ -14,32 +14,44 @@ action :create do
                                        :filter => {
                                            :host => new_resource.parameters[:hostName]}
                                               })
-        appId = connection.query( :method => "application.get",
-                                  :params => {
-                                      :filter => {
-                                           :name => new_resource.parameters[:applicationNames]}
-                                             })
+        new_resource.parameters[:applicationNames].each do |application|
+            appId =  connection.query( :method => "application.get",
+                                   :params => {
+                                       :hostids => hostId[0]['hostid'],
+                                       :filter => {
+                                           :name => application[:applicationName]},
+                                              })
+ 
+            puts appId[0]['applicationid']
+            application[:applicationid] = appId[0]['applicationid']
+            # remove the unused data
+            application.delete(:applicationName)
+        end
+
 
         itemId = connection.query( :method => "item.get",
                                    :params => {
+                                       :hostids => hostId[0]['hostid'],
                                        :filter => { 
                                            :name => new_resource.parameters[:name],},
                                        :search => {
-                                           :hostid => hostId,
                                            :key_ => new_resource.parameters[:key_],},
                                               })
+        puts itemId[0]
         if itemId.size == 0
             # Make a new params with the correct parameters
             new_resource.parameters[:hostid] = hostId[0]['hostid']
-            new_resource.parameters[:applications] = [ appId[0]['applicationid'] ]
             # Remove the bad parameter
             new_resource.parameters.delete(:hostName)
             new_resource.parameters.delete(:applicationNames)
             # Send the creation request to the server
+            puts "Create Item"
+            puts new_resource.parameters
             connection.query( :method => "item.create",
                               :params => new_resource.parameters
                             )
         else
+            puts new_resource.parameters
             # Add the item ID to params and send the udate
             new_resource.parameters[:itemid] = itemId[0]['itemid']
             connection.query( :method => "item.update",

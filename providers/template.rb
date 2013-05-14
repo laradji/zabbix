@@ -13,8 +13,6 @@ action :create do
                                            :filter => {
                                                :host => new_resource.parameters[:host]}
                                                       })
-        puts "templateID.."
-        puts templateId
         if templateId.size == 0
             connection.query( :method => "template.create",
                               :params => new_resource.parameters,

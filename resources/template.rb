@@ -1,4 +1,4 @@
-actions :create
+actions :create, :delete
 default_action :create
 
 attribute :server_connection, :kind_of => Hash, :required => true
