@@ -63,7 +63,7 @@ def create_new_database
     branch              new_resource.server_branch
     version             new_resource.server_version
     code_dir            new_resource.source_dir
-    target_dir          "zabbix-#{new_resource.server_version}-database"  
+    target_dir          "zabbix-#{new_resource.server_version}"  
     install_dir         new_resource.install_dir
 
     action :extract_only
@@ -96,7 +96,7 @@ def create_new_database
   dbname = new_resource.dbname
   sql_command = "#{executable} #{root_username} #{root_password} #{host} #{port} #{dbname}"
 
-  zabbix_path = ::File.join(new_resource.source_dir, "zabbix-#{new_resource.server_version}-database")
+  zabbix_path = ::File.join(new_resource.source_dir, "zabbix-#{new_resource.server_version}")
   sql_scripts = if new_resource.server_version.to_f < 2.0
                   Chef::Log.info "Version 1.x branch of zabbix in use"
                   [

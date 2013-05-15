@@ -7,6 +7,8 @@
 # Apache 2.0
 #
 
+include_recipe "zabbix::common"
+
 # Install prerequisite RPM
 if node['platform_family'] == "rhel"
   package "redhat-lsb"
