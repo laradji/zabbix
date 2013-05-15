@@ -29,7 +29,7 @@ zabbix_host node['zabbix']['agent']['hostname'] do
   parameters            ({
                         :host => node['hostname'],
                         :groupNames => node['zabbix']['agent']['groups'],
-                        :interfaces => {
+                        :interfaces => [{
                                        :type => 1,
                                        :main => 1,
                                        :useip => 1,
@@ -37,6 +37,14 @@ zabbix_host node['zabbix']['agent']['hostname'] do
                                        :dns => node['fqdn'],
                                        :port => "10050",
                                        },
+                                       {
+                                       :type => 2,
+                                       :main => 1,
+                                       :useip => 1,
+                                       :ip => node['ipaddress'],
+                                       :dns => node['fqdn'],
+                                       :port => "161",
+                                       },]
                         })
   action :nothing
 end
