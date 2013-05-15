@@ -22,7 +22,6 @@ action :create do
                                            :name => application[:applicationName]},
                                               })
  
-            puts appId[0]['applicationid']
             application[:applicationid] = appId[0]['applicationid']
             # remove the unused data
             application.delete(:applicationName)
@@ -37,7 +36,6 @@ action :create do
                                        :search => {
                                            :key_ => new_resource.parameters[:key_],},
                                               })
-        puts itemId[0]
         if itemId.size == 0
             # Make a new params with the correct parameters
             new_resource.parameters[:hostid] = hostId[0]['hostid']
@@ -45,15 +43,13 @@ action :create do
             new_resource.parameters.delete(:hostName)
             new_resource.parameters.delete(:applicationNames)
             # Send the creation request to the server
-            puts "Create Item"
-            puts new_resource.parameters
             connection.query( :method => "item.create",
                               :params => new_resource.parameters
                             )
         else
-            puts new_resource.parameters
             # Add the item ID to params and send the udate
             new_resource.parameters[:itemid] = itemId[0]['itemid']
+            puts new_resource.parameters
             connection.query( :method => "item.update",
                               :params => new_resource.parameters
                             )

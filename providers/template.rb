@@ -21,3 +21,32 @@ action :create do
     end
     new_resource.updated_by_last_action(true)
 end
+
+action :delete do
+    chef_gem "zabbixapi" do
+        action :install
+        version "~> 0.5.9"
+    end
+
+    require 'zabbixapi'
+
+    Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+        # Check to see if the Template exists
+        templateId = connection.query( :method => "template.get",
+                                       :params => {
+                                           :filter => {
+                                               :host => new_resource.parameters[:host]}
+                                                  })
+         if templateId.size > 0
+             puts templateId[0]['templateid']
+             params = [ templateId[0]['templateid'] ]
+             puts params
+             connection.query( :method => "template.delete",
+                               :params => params,
+                                )
+        end
+    end
+    new_resource.updated_by_last_action(true)
+end
+
+

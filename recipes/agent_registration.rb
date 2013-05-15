@@ -24,9 +24,20 @@ connection_info = {
 }
 
 zabbix_host node['zabbix']['agent']['hostname'] do
-  groups                node['zabbix']['agent']['groups']
   create_missing_groups true
   server_connection     connection_info
+  parameters            ({
+                        :host => node['hostname'],
+                        :groupNames => node['zabbix']['agent']['groups'],
+                        :interfaces => {
+                                       :type => 1,
+                                       :main => 1,
+                                       :useip => 1,
+                                       :ip => node['ipaddress'],
+                                       :dns => node['fqdn'],
+                                       :port => "10050",
+                                       },
+                        })
   action :nothing
 end
 

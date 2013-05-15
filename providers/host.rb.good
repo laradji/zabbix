@@ -18,9 +18,10 @@ action :create_or_update do
                                        }
                                    })
         if hostId.size == 0
-            run_action :create
+            action :create
         else
-            run_action :update
+            puts "doing an update"
+            action :update
         end
     end 
 end
@@ -36,23 +37,21 @@ action :create do
 
 
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        new_resource.parameters[:groupNames].each do |group|
-            groupId = connection.query( :method => "hostgroup.get",
-                                        :params =>
-                                        {
-                                            :filter =>
-                                            {
-                                               :name => group
-                                            }
-                                        })
-            new_resource.parameters[:groups] = groupId[0]
-        end
-        new_resource.parameters.delete( :groupNames )
-
-
         
         connection.query( :method => "host.create",
-                          :params => new_resource.parameters,
+                          :params => {
+                              :host => new_resource.hostname,
+                              :interfaces => [
+                                  {
+                                      :type => 1,
+                                      :main => 1,
+                                      :useip => 1,
+                                      :ip => node['ipaddress'],
+                                      :dns => node['fqdn'],
+                                      :port => "10050",
+                                  }
+                              ]
+                          }
                        )
   end
   new_resource.updated_by_last_action(true)
@@ -66,21 +65,9 @@ action :update do
 
     require 'zabbixapi'
 
+    puts node['ipaddress']
 
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        new_resource.parameters[:groupNames].each do |group|
-            groupId = connection.query( :method => "hostgroup.get",
-                                        :params =>
-                                        {
-                                            :filter =>
-                                            {
-                                               :name => group
-                                            }
-                                        })
-            new_resource.parameters[:groups] = groupId[0]
-        end
-        new_resource.parameters.delete( :groupNames )
-
         # Update the host
         connection.query( :method => "host.update",
                           :params => new_resource.params
@@ -97,21 +84,26 @@ action :link do
 
     require 'zabbixapi'
   
+    puts node['ipaddress']
 
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+        puts new_resource.hostname
         hostId = connection.query( :method => "host.get",
                                    :params => { 
                                        :filter => {:host => new_resource.hostname} 
                                  })
+        puts hostId
         # get the IDS of the templates in the array
         templateId = []
         linkTo = []
         new_resource.templates.each do |template|
+            puts template
             templateId = connection.query( :method => "template.get",
                                            :params => {
                                                :filter => {
                                                    :host => template,},
                                                       })
+            puts templateId[0]['templateid']
             linkTo.push( :templateid => templateId[0]['templateid'] ) 
         end
         connection.query( :method => "host.update",
