@@ -35,14 +35,15 @@ Vagrant.configure("2") do |config|
           'servers_active' => ['127.0.0.1']
         },
         'web' => {
-          'install' => true
+          'install_method' => 'apache',
         },
         'server' => {
           'install' => true,
+          'ipaddress' => '127.0.0.1',
         },
         'database' => {
-          'dbport' => '5432',
-          'install_method' => 'postgres',
+          #'dbport' => '5432',
+          #'install_method' => 'postgres',
           'dbpassword' => 'password123'
         }
       }
@@ -50,14 +51,26 @@ Vagrant.configure("2") do |config|
 
     chef.run_list = [
       "recipe[yum::epel]",
+
+      "recipe[zabbix::default]",
+
       "recipe[database::mysql]",
       "recipe[mysql::server]",
-      "recipe[database::postgresql]",
-      "recipe[postgresql::server]",
-      "recipe[postgresql::client]",
-      "recipe[zabbix::default]",
+      #"recipe[database::postgresql]",
+      #"recipe[postgresql::server]",
       "recipe[zabbix::database]",
-      "recipe[zabbix::server]"
+
+      "recipe[mysql::client]",
+      #"recipe[postgresql::client]",
+      "recipe[zabbix::server]",
+
+      #"recipe[php-fpm]",
+      #"recipe[nginx]",
+      "recipe[apache2]",
+      "recipe[apache2::mod_php5]",
+      "recipe[zabbix::web]",
+
+      "recipe[zabbix::agent_registration]"
     ]
   end
 end

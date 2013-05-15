@@ -1,0 +1,20 @@
+server {
+
+  listen      <%= @web_port %>;
+  index       index.php;
+  root        <%= @web_dir %>;
+  server_name "";
+  
+  access_log /var/log/nginx/zabbix.access.log;
+
+  location ~ .*\.php$ {
+    include /etc/nginx/fastcgi_params;
+    fastcgi_read_timeout 60000;
+    fastcgi_buffers 512 16k;
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index   index.php;
+    <% php_values = @php_settings.map { |name, value| "#{name}=#{value}"}.join("\n") %>
+    fastcgi_param PHP_VALUE "<%=php_values%>";
+    fastcgi_param SCRIPT_FILENAME <%=@web_dir%>$fastcgi_script_name;
+  }
+}

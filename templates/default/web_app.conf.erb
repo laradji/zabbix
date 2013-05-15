@@ -9,12 +9,9 @@
     AllowOverride None
     Order allow,deny
     Allow from all
-    php_admin_value memory_limit 256M
-    php_admin_value post_max_size 32M
-    php_admin_value upload_max_filesize 16M
-    php_admin_value max_execution_time 600
-    php_admin_value max_input_time 600
-    php_admin_value date.timezone "Europe/Paris"
+    <% @params[:php_settings].each do |name, value| %>
+    php_admin_value <%=name%> <%=value%>
+    <%end%>
   </Directory>
   
   <Directory />
