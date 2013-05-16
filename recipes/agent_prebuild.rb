@@ -8,7 +8,6 @@
 #
 
 include_recipe "zabbix::common"
-include_recipe "zabbix::agent_common"
 
 # Install prerequisite RPM
 if node['platform_family'] == "rhel"
