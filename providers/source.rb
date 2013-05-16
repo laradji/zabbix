@@ -12,12 +12,11 @@ end
 
 action :extract_only do
   tar_path = zabbix_tar_path(new_resource.code_dir, new_resource.branch, new_resource.version)
-  source_url = zabbix_source_url(new_resource.branch, new_resource.version, new_resource.url)
 
   unless ::File.exists?(tar_path)
     Chef::Log.info("Zabbix tar: #{tar_path} does't exist")
     remote_file tar_path do
-      source source_url
+      source new_resource.source_url
       mode "0644"
       action :create
     end
