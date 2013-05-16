@@ -8,6 +8,7 @@
 #
 
 include_recipe "zabbix::common"
+include_recipe "zabbix::server_common"
 
 packages = Array.new
 case node['platform']
