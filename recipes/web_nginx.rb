@@ -73,10 +73,10 @@ template "/etc/nginx/sites-available/zabbix" do
   group "root"
   mode "754"
   variables ({
-    :php_settings => node['zabbix']['web']['php_settings'],
+    :php_settings => node['zabbix']['web']['php']['settings'],
     :web_port => node['zabbix']['web']['port'],
     :web_dir => node['zabbix']['web_dir'],
-    :php_listen => node['zabbix']['web']['php_listen']
+    :fastcgi_listen => node['zabbix']['web']['php']['fastcgi_listen']
   })
   notifies :reload, "service[nginx]"
 end
