@@ -1,6 +1,6 @@
 # Author:: Nacer Laradji (<nacer.laradji@gmail.com>)
 # Cookbook Name:: zabbix
-# Recipe:: default
+# Recipe:: common
 #
 # Copyright 2011, Efactures
 #
