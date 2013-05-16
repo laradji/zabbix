@@ -36,16 +36,29 @@ action :create do
 
 
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        new_resource.parameters[:groupNames].each do |group|
-            groupId = connection.query( :method => "hostgroup.get",
-                                        :params =>
+        groupId = connection.query( :method => "hostgroup.get",
+                                    :params =>
+                                    {
+                                        :filter =>
                                         {
-                                            :filter =>
-                                            {
-                                               :name => group
-                                            }
-                                        })
-            new_resource.parameters[:groups] = groupId[0]
+                                           :name => new_resource.parameters[:groupNames] 
+                                        }
+                                    })
+        # create groups if they don't exist
+        new_resource.parameters[:groups] = []
+        if groupId.size < 1 
+            Chef::Log.info( "Groups not found, creating groups for you.." )
+            new_resource.parameters[:groupNames].each do |group|
+                groupId = connection.query( :method => "hostgroup.create",
+                                  :params =>
+                                  {
+                                      :name => group
+                                  }
+                               )
+                new_resource.parameters[:groups].push( { :groupid => groupId['groupids'][0] } )
+            end
+        else
+            new_resource.parameters[:groups] = groupId
         end
         new_resource.parameters.delete( :groupNames )
 
@@ -68,19 +81,32 @@ action :update do
 
     Chef::Log.info("Found a server with that name, updating..")
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        new_resource.parameters[:groupNames].each do |group|
-            groupId = connection.query( :method => "hostgroup.get",
+        groupId = connection.query( :method => "hostgroup.get",
                                         :params =>
                                         {
                                             :filter =>
                                             {
-                                               :name => group
+                                               :name => new_resource.parameters[:groupNames]
                                             }
                                         })
-            new_resource.parameters[:groups] = groupId[0]
+        # create groups if they don't exist
+        new_resource.parameters[:groups] = []
+        if groupId.size < 1
+            Chef::Log.info( "Groups not found, creating groups for you.." )
+            new_resource.parameters[:groupNames].each do |group|
+                groupId = connection.query( :method => "hostgroup.create",
+                                  :params =>
+                                  {
+                                      :name => group
+                                  }
+                               )
+                new_resource.parameters[:groups].push( { :groupid => groupId['groupids'][0] } )
+            end
+        else
+            new_resource.parameters[:groups] = groupId
         end
         new_resource.parameters.delete( :groupNames )
-  
+
         hostId = connection.query( :method => "host.get",
                                    :params =>
                                    {
