@@ -1,8 +1,14 @@
 #
 # Cookbook Name:: zabbix
 # Attributes:: default
+
+case node['platform_family']
+when "windows"
+  default['zabbix']['etc_dir']    = File.join(ENV['ProgramFiles'], "Zabbix Agent")
+else
+  default['zabbix']['etc_dir']    = "/etc/zabbix"
+end
 default['zabbix']['install_dir']  = "/opt/zabbix"
-default['zabbix']['etc_dir']      = "/etc/zabbix"
 default['zabbix']['web_dir']      = "/opt/zabbix/web"
 default['zabbix']['external_dir'] = "/opt/zabbix/externalscripts"
 default['zabbix']['alert_dir']    = "/opt/zabbix/AlertScriptsPath"

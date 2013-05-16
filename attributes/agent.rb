@@ -9,14 +9,15 @@ default['zabbix']['agent']['servers']           = []
 default['zabbix']['agent']['servers_active']    = []
 default['zabbix']['agent']['hostname']          = node['fqdn']
 default['zabbix']['agent']['configure_options'] = [ "--with-libcurl" ]
-default['zabbix']['agent']['install_method']    = "prebuild"
 default['zabbix']['agent']['include_dir']       = File.join( node['zabbix']['etc_dir'] , "agent_include")
 
 default['zabbix']['agent']['groups']            = [ "chef-agent" ]
 
-case node['platform']
+case node['platform_family']
 when "rhel", "debian"
   default['zabbix']['agent']['init_style']      = "sysvinit"
-else
+  default['zabbix']['agent']['install_method']  = "prebuild"
+when "windows"
   default['zabbix']['agent']['init_style']      = nil
+  default['zabbix']['agent']['install_method']  = "chocolatey"
 end
