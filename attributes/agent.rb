@@ -13,3 +13,10 @@ default['zabbix']['agent']['install_method']    = "prebuild"
 default['zabbix']['agent']['include_dir']       = File.join( node['zabbix']['etc_dir'] , "agent_include")
 
 default['zabbix']['agent']['groups']            = [ "chef-agent" ]
+
+case node['platform']
+when "rhel", "debian"
+  default['zabbix']['agent']['init_style']      = "sysvinit"
+else
+  default['zabbix']['agent']['init_style']      = nil
+end

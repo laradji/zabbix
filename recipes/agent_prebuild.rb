@@ -15,29 +15,6 @@ if node['platform_family'] == "rhel"
   package "redhat-lsb"
 end
 
-# Install Init script
-template "/etc/init.d/zabbix_agentd" do
-  source value_for_platform([ "centos", "redhat", "scientific", "oracle" ] => {"default" => "zabbix_agentd.init-rh.erb"}, "default" => "zabbix_agentd.init.erb")
-  owner "root"
-  group "root"
-  mode "754"
-end
-
-# Define zabbix_agentd service
-service "zabbix_agentd" do
-  supports :status => true, :start => true, :stop => true, :restart => true
-  action [ :enable ]
-end
-
-# Install configuration
-template "#{node['zabbix']['etc_dir']}/zabbix_agentd.conf" do
-  source "zabbix_agentd.conf.erb"
-  owner "root"
-  group "root"
-  mode "644"
-  notifies :restart, "service[zabbix_agentd]"
-end
-
 # Define arch for binaries
 if node['kernel']['machine'] == "x86_64"
   $zabbix_arch = "amd64"
@@ -64,5 +41,3 @@ remote_file "#{node['zabbix']['src_dir']}/zabbix_agents_#{node['zabbix']['agent'
   action :create_if_missing
   notifies :run, "script[install_zabbix_agent]", :immediately
 end
-
-
