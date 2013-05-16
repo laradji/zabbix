@@ -66,7 +66,7 @@ web_app node['zabbix']['web']['fqdn'] do
   server_aliases node['zabbix']['web']['aliases']
   docroot node['zabbix']['web_dir']
   only_if { node['zabbix']['web']['fqdn'] != nil }
-  php_settings node['zabbix']['web']['php_settings']
+  php_settings node['zabbix']['web']['php']['settings']
   #notifies :restart, "service[apache2]", :immediately 
   notifies :restart, resources(:service => "apache2"), :immediately
 end  
