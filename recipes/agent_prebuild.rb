@@ -22,22 +22,14 @@ elsif node['kernel']['machine'] == "i686"
   $zabbix_arch = "i386"
 end
 
-# installation of zabbix bin
-script "install_zabbix_agent" do
-  interpreter "bash"
-  user "root"
-  cwd node['zabbix']['install_dir']
-  action :nothing
+ark "zabbix_agent" do
+  name "zabbix"
+  url "http://www.zabbix.com/downloads/#{node['zabbix']['agent']['version']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz"
+  owner node['zabbix']['login']
+  group node['zabbix']['group']
+  action :put
+  path  "/opt"
+  strip_leading_dir false
+  has_binaries [ 'bin/zabbix_sender', 'bin/zabbix_get' ]
   notifies :restart, "service[zabbix_agentd]"
-  code <<-EOH
-  tar xvfz #{node['zabbix']['src_dir']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz
-  EOH
-end
-  
-# Download and intall zabbix agent bins.
-remote_file "#{node['zabbix']['src_dir']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz" do
-  source "http://www.zabbix.com/downloads/#{node['zabbix']['agent']['version']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz"
-  mode "0644"
-  action :create_if_missing
-  notifies :run, "script[install_zabbix_agent]", :immediately
 end
