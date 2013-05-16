@@ -8,6 +8,7 @@
 #
 
 include_recipe "zabbix::common"
+include_recipe "zabbix::agent_common"
 
 case node['platform']
 when "ubuntu","debian"

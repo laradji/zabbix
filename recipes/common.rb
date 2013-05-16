@@ -29,15 +29,6 @@ end
 # Define root owned folders
 root_dirs = [
   node['zabbix']['etc_dir'],
-  node['zabbix']['install_dir'],
-  "#{node['zabbix']['install_dir']}/bin",
-  "#{node['zabbix']['install_dir']}/sbin",
-  "#{node['zabbix']['install_dir']}/share",
-  node['zabbix']['external_dir'],
-  node['zabbix']['server']['include_dir'],
-  node['zabbix']['agent']['include_dir'],
-  node['zabbix']['alert_dir'],
-  node['zabbix']['src_dir']
 ]
 
 # Create root folders
