@@ -4,7 +4,11 @@
 
 case node['platform_family']
 when "windows"
-  default['zabbix']['etc_dir']    = File.join(ENV['ProgramFiles'], "Zabbix Agent")
+  if ENV['ProgramFiles'] == ENV['ProgramFiles(x86)']
+    default['zabbix']['etc_dir']    = File.join(ENV['homedrive'], "Program Files", "Zabbix Agent")
+  else
+    default['zabbix']['etc_dir']    = File.join(ENV['ProgramFiles'], "Zabbix Agent")
+  end
 else
   default['zabbix']['etc_dir']    = "/etc/zabbix"
 end
