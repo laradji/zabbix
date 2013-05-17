@@ -14,16 +14,9 @@ if node['platform_family'] == "rhel"
   package "redhat-lsb"
 end
 
-# Define arch for binaries
-if node['kernel']['machine'] == "x86_64"
-  $zabbix_arch = "amd64"
-elsif node['kernel']['machine'] == "i686"
-  $zabbix_arch = "i386"
-end
-
 ark "zabbix_agent" do
   name "zabbix"
-  url "http://www.zabbix.com/downloads/#{node['zabbix']['agent']['version']}/zabbix_agents_#{node['zabbix']['agent']['version']}.linux2_6.#{$zabbix_arch}.tar.gz"
+  url node['zabbix']['agent']['prebuild']['url']
   owner node['zabbix']['login']
   group node['zabbix']['group']
   action :put
