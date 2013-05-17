@@ -2,7 +2,7 @@ include_recipe "zabbix::agent_#{node['zabbix']['agent']['install_method']}"
 
 # Install configuration
 template "zabbix_agentd.conf" do
-  path File.join( node['zabbix']['etc_dir'], "zabbix_agentd.conf")
+  path ::File.join( node['zabbix']['etc_dir'], "zabbix_agentd.conf")
   source "zabbix_agentd.conf.erb"
   owner "root"
   group "root"
