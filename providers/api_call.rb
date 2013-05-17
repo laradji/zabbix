@@ -14,7 +14,7 @@ action :call do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     connection.query( :method => new_resource.method, 
-                      :params => new_resource.parameters,
+                      :params => new_resource.parameters
                     )
   end
 
