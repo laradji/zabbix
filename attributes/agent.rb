@@ -18,6 +18,6 @@ when "rhel", "debian"
   default['zabbix']['agent']['init_style']      = "sysvinit"
   default['zabbix']['agent']['install_method']  = "prebuild"
 when "windows"
-  default['zabbix']['agent']['init_style']      = nil
+  default['zabbix']['agent']['init_style']      = "windows"
   default['zabbix']['agent']['install_method']  = "chocolatey"
 end
