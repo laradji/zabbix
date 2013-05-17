@@ -1,2 +1,2 @@
-action :include
+actions :include
 default_action :include
