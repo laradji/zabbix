@@ -49,7 +49,6 @@ action :create do
         else
             # Add the item ID to params and send the udate
             new_resource.parameters[:itemid] = itemId[0]['itemid']
-            puts new_resource.parameters
             connection.query( :method => "item.update",
                               :params => new_resource.parameters
                             )

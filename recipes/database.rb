@@ -45,4 +45,6 @@ zabbix_database node['zabbix']['database']['dbname'] do
   server_version          node['zabbix']['server']['version']
   source_dir              node['zabbix']['src_dir']
   install_dir             node['zabbix']['install_dir']
+  branch                  node['zabbix']['server']['branch']
+  version                 node['zabbix']['server']['version']
 end

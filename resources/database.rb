@@ -21,4 +21,6 @@ attribute :server_version, :kind_of => String, :required => true
 attribute :source_url, :kind_of => String, :required => true
 attribute :source_dir, :kind_of => String, :required => true
 attribute :install_dir, :kind_of => String, :required => true
+attribute :branch, :kind_of => String, :required => false
+attribute :version, :kind_of => String, :required => false
 

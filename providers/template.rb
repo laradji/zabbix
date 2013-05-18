@@ -38,9 +38,7 @@ action :delete do
                                                :host => new_resource.parameters[:host]}
                                                   })
          if templateId.size > 0
-             puts templateId[0]['templateid']
              params = [ templateId[0]['templateid'] ]
-             puts params
              connection.query( :method => "template.delete",
                                :params => params,
                                 )
