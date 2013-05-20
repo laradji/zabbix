@@ -49,9 +49,18 @@ packages.each do |pck|
   end
 end
 
-configure_options = (node['zabbix']['server']['configure_options'] || Array.new).delete_if do |option|
-  option.match(/\s*--prefix(\s|=).+/)
+node_options = node['zabbix']['server']['configure_options']
+configure_options  = Array.new
+
+if node_options
+  node.set['zabbix']['server']['configure_options'].delete_if do |option|
+    option.match(/\s*--prefix(\s|=).+/)
+  end
+  node_options.each do |item|
+    configure_options << item
+  end
 end
+
 case node['zabbix']['database']['install_method']
 when 'mysql', 'rds_mysql'
   with_mysql = "--with-mysql"
