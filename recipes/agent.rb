@@ -1,5 +1,20 @@
 include_recipe "zabbix::agent_#{node['zabbix']['agent']['install_method']}"
 
+root_dirs = [
+  node['zabbix']['agent']['include_dir']
+]
+
+# Create root folders
+root_dirs.each do |dir|
+  directory dir do
+    owner "root"
+    group "root"
+    mode "755"
+    recursive true
+    notifies :restart, "service[zabbix_agentd]"
+  end
+end
+
 # Install configuration
 template "zabbix_agentd.conf" do
   path ::File.join( node['zabbix']['etc_dir'], "zabbix_agentd.conf")
@@ -30,20 +45,5 @@ when "windows"
     provider Chef::Provider::Service::Windows
     supports :restart => true
     action [ :enable, :start ]
-  end
-end
-
-root_dirs = [
-  node['zabbix']['agent']['include_dir']
-]
-
-# Create root folders
-root_dirs.each do |dir|
-  directory dir do
-    owner "root"
-    group "root"
-    mode "755"
-    recursive true
-    notifies :restart, "service[zabbix_agentd]"
   end
 end
