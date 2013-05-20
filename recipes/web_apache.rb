@@ -65,8 +65,7 @@ web_app node['zabbix']['web']['fqdn'] do
   docroot node['zabbix']['web_dir']
   only_if { node['zabbix']['web']['fqdn'] != nil }
   php_settings node['zabbix']['web']['php']['settings']
-  #notifies :restart, "service[apache2]", :immediately 
-  notifies :restart, resources(:service => "apache2"), :immediately
+  notifies :restart, "service[apache2]", :immediately 
 end  
 
 apache_site "000-default" do

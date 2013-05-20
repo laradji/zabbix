@@ -35,7 +35,7 @@ zabbix_host node['zabbix']['agent']['hostname'] do
                                        :useip => 1,
                                        :ip => node['ipaddress'],
                                        :dns => node['fqdn'],
-                                       :port => "10050",
+                                       :port => "10050"
                                        },
                                        {
                                        :type => 2,
@@ -43,8 +43,8 @@ zabbix_host node['zabbix']['agent']['hostname'] do
                                        :useip => 1,
                                        :ip => node['ipaddress'],
                                        :dns => node['fqdn'],
-                                       :port => "161",
-                                       },]
+                                       :port => "161"
+                                       }]
                         })
   action :nothing
 end

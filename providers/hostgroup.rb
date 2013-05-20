@@ -17,7 +17,7 @@ action :create do
                            })
      if hostgroupId.size == 0
         connection.query( :method => "hostgroup.create", 
-                          :params => new_resource.parameters,
+                          :params => new_resource.parameters
                         )
      end
   end

@@ -15,7 +15,7 @@ action :create do
                                                       })
         if templateId.size == 0
             connection.query( :method => "template.create",
-                              :params => new_resource.parameters,
+                              :params => new_resource.parameters
                             )
         end
     end
@@ -42,7 +42,7 @@ action :delete do
              params = [ templateId[0]['templateid'] ]
              puts params
              connection.query( :method => "template.delete",
-                               :params => params,
+                               :params => params
                                 )
         end
     end
