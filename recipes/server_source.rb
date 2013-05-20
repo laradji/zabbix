@@ -60,7 +60,7 @@ when 'postgres'
   with_postgresql = "--with-postgresql"
   configure_options << with_postgresql unless configure_options.include?(with_postgresql)
 end
-node.set['zabbix']['server']['configure_options'] = configure_options
+node.normal['zabbix']['server']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_server" do
   branch              node['zabbix']['server']['branch']
