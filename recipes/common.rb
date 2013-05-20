@@ -19,8 +19,9 @@ end
 
 
 directory node['zabbix']['install_dir'] do
-  mode "0755"
-  action :create
+  mode       "0755"
+  recursive  true
+  action     :create
 end
 
 # Create zabbix User
