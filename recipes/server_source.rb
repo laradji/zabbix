@@ -49,7 +49,8 @@ packages.each do |pck|
   end
 end
 
-configure_options = (node['zabbix']['server']['configure_options'] || Array.new).delete_if do |option|
+configure_options = node['zabbix']['server']['configure_options'].dup
+configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 case node['zabbix']['database']['install_method']
@@ -60,7 +61,7 @@ when 'postgres'
   with_postgresql = "--with-postgresql"
   configure_options << with_postgresql unless configure_options.include?(with_postgresql)
 end
-node.set['zabbix']['server']['configure_options'] = configure_options
+node.normal['zabbix']['server']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_server" do
   branch              node['zabbix']['server']['branch']
