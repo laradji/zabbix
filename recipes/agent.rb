@@ -7,9 +7,11 @@ root_dirs = [
 # Create root folders
 root_dirs.each do |dir|
   directory dir do
-    owner "root"
-    group "root"
-    mode "755"
+    unless node['platform_family'] == "windows"
+      owner "root"
+      group "root"
+      mode "755"
+    end
     recursive true
     notifies :restart, "service[zabbix_agentd]"
   end
@@ -19,9 +21,11 @@ end
 template "zabbix_agentd.conf" do
   path ::File.join( node['zabbix']['etc_dir'], "zabbix_agentd.conf")
   source "zabbix_agentd.conf.erb"
-  owner "root"
-  group "root"
-  mode "644"
+  unless node['platform_family'] == "windows"
+    owner "root"
+    group "root"
+    mode "644"
+  end
   notifies :restart, "service[zabbix_agentd]"
 end
 
