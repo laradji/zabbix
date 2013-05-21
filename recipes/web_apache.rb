@@ -9,7 +9,10 @@
 
 include_recipe "zabbix::common"
 
-node.set['zabbix']['web']['user'] = "apache"
+node.normal['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
+unless node['zabbix']['web']['user']
+  node.normal['zabbix']['web']['user'] = "apache"
+end
 
 user node['zabbix']['web']['user']
 
