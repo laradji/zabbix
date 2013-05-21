@@ -29,10 +29,11 @@ when "redhat","centos","scientific","amazon"
 end
 
 # --prefix is controlled by install_dir
-configure_options = (node['zabbix']['agent']['configure_options'] || Array.new).delete_if do |option|
+configure_options = node['zabbix']['agent']['configure_options'].dup
+configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
-node.set['zabbix']['agent']['configure_options'] = configure_options
+node.normal['zabbix']['agent']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_agent" do
   branch              node['zabbix']['agent']['branch']
