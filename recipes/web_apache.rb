@@ -33,7 +33,7 @@ when "rhel"
       end
     end
   else
-    %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
+    %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
       package pck do
         action :install
         notifies :restart, "service[apache2]"
