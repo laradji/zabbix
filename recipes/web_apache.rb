@@ -9,9 +9,10 @@
 
 include_recipe "zabbix::common"
 
-
-node.set['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
-node.set['zabbix']['web']['user'] = "apache"
+node.normal['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
+unless node['zabbix']['web']['user']
+  node.normal['zabbix']['web']['user'] = "apache"
+end
 
 user node['zabbix']['web']['user']
 
@@ -32,7 +33,7 @@ when "rhel"
       end
     end
   else
-    %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
+    %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
       package pck do
         action :install
         notifies :restart, "service[apache2]"
@@ -67,8 +68,7 @@ web_app node['zabbix']['web']['fqdn'] do
   docroot node['zabbix']['web_dir']
   only_if { node['zabbix']['web']['fqdn'] != nil }
   php_settings node['zabbix']['web']['php']['settings']
-  #notifies :restart, "service[apache2]", :immediately 
-  notifies :restart, resources(:service => "apache2"), :immediately
+  notifies :restart, "service[apache2]", :immediately 
 end  
 
 apache_site "000-default" do

@@ -52,7 +52,7 @@ action :create do
 
         
         connection.query( :method => "host.create",
-                          :params => new_resource.parameters,
+                          :params => new_resource.parameters
                        )
   end
   new_resource.updated_by_last_action(true)
@@ -122,14 +122,14 @@ action :link do
             templateId = connection.query( :method => "template.get",
                                            :params => {
                                                :filter => {
-                                                   :host => template,},
+                                                   :host => template,}
                                                       })
             linkTo.push( :templateid => templateId[0]['templateid'] ) 
         end
         connection.query( :method => "host.update",
                           :params => {
                               :hostid => hostId[0]['hostid'],
-                              :templates =>  linkTo, 
+                              :templates =>  linkTo
                         })
     end
     new_resource.updated_by_last_action(true)

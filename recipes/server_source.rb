@@ -31,13 +31,13 @@ when "redhat","centos","scientific","amazon","oracle"
   when 'mysql', 'rds_mysql'
     php_packages = (node['platform_version'].to_i < 6)?
       %w{ php53-mysql php53-gd php53-bcmath php53-mbstring php53-xml } :
-      %w{ php-mysql php-gd php-bcmath php-mbstring php-xml php-xmlwriter }
+      %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }
     packages.push('mysql-devel')
     packages.push(*php_packages)
   when 'postgres'
     php_packages = (node['platform_version'].to_i < 6)?
       %w{ php5-pgsql php5-gd php5-xml } :
-      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml php-xmlwriter } 
+      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml } 
     packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init-rh.erb'
@@ -49,7 +49,8 @@ packages.each do |pck|
   end
 end
 
-configure_options = (node['zabbix']['server']['configure_options'] || Array.new).delete_if do |option|
+configure_options = node['zabbix']['server']['configure_options'].dup
+configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 case node['zabbix']['database']['install_method']
@@ -60,7 +61,7 @@ when 'postgres'
   with_postgresql = "--with-postgresql"
   configure_options << with_postgresql unless configure_options.include?(with_postgresql)
 end
-node.set['zabbix']['server']['configure_options'] = configure_options
+node.normal['zabbix']['server']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_server" do
   branch              node['zabbix']['server']['branch']

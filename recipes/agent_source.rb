@@ -8,7 +8,6 @@
 #
 
 include_recipe "zabbix::common"
-include_recipe "zabbix::agent_common"
 
 case node['platform']
 when "ubuntu","debian"
@@ -29,34 +28,12 @@ when "redhat","centos","scientific","amazon"
   init_template = 'zabbix_agentd.init-rh.erb'
 end
 
-# Install configuration
-template "#{node['zabbix']['etc_dir']}/zabbix_agentd.conf" do
-  source "zabbix_agentd.conf.erb"
-  owner "root"
-  group "root"
-  mode "644"
-  notifies :restart, "service[zabbix_agentd]"
-end
-
-# Install Init script
-template "/etc/init.d/zabbix_agentd" do
-  source init_template
-  owner "root"
-  group "root"
-  mode "754"
-end
-
-# Define zabbix_agentd service
-service "zabbix_agentd" do
-  supports :status => true, :start => true, :stop => true, :restart => true
-  action [ :enable ]
-end
-
 # --prefix is controlled by install_dir
-configure_options = (node['zabbix']['agent']['configure_options'] || Array.new).delete_if do |option|
+configure_options = node['zabbix']['agent']['configure_options'].dup
+configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
-node.set['zabbix']['agent']['configure_options'] = configure_options
+node.normal['zabbix']['agent']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_agent" do
   branch              node['zabbix']['agent']['branch']
