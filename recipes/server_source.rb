@@ -31,13 +31,13 @@ when "redhat","centos","scientific","amazon","oracle"
   when 'mysql', 'rds_mysql'
     php_packages = (node['platform_version'].to_i < 6)?
       %w{ php53-mysql php53-gd php53-bcmath php53-mbstring php53-xml } :
-      %w{ php-mysql php-gd php-bcmath php-mbstring php-xml php-xmlwriter }
+      %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }
     packages.push('mysql-devel')
     packages.push(*php_packages)
   when 'postgres'
     php_packages = (node['platform_version'].to_i < 6)?
       %w{ php5-pgsql php5-gd php5-xml } :
-      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml php-xmlwriter } 
+      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml } 
     packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init-rh.erb'
