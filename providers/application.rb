@@ -15,7 +15,7 @@ action :create do
       Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
     end
 
-    application_ids = Zabbix::API.find_applicaiton_ids(connection, new_resource.name, template_ids.first)
+    application_ids = Zabbix::API.find_application_ids(connection, new_resource.name, template_ids.first)
 
     if application_ids.empty?
       request = {
