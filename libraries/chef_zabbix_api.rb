@@ -7,7 +7,7 @@ class Chef
             :method => "hostgroup.get",
             :params => { 
               :filter => {
-                :name => new_resource.group
+                :name => hostgroup
               }
             }
           }
@@ -45,9 +45,10 @@ class Chef
             :params => {
               :hostids => template_id,
               :filter => {
-                :search => {
-                  :key_ => key
-                }
+                :name => name
+              },
+              :search => {
+                :key_ => key
               }
             }
           }

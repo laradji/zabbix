@@ -23,6 +23,7 @@ action :create do
         app_ids.map { |app_id| app_id['applicationid'] }
       end.flatten
 
+      method = "item.create"
       params = {
         :name => new_resource.name,
         :description => new_resource.description,
@@ -38,10 +39,15 @@ action :create do
 
       item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.name, new_resource.key)
       unless item_ids.empty?
-        params[:itemid] = item_ids.first['itemid']
+        method = "item.update"
+        params[:itemid] = "#{item_ids.first['itemid']}"
       end
 
-      connection.query(:method => "item.create",
+      Chef::Log.info("Handling item #{new_resource.name}")
+      Chef::Log.info(method)
+      Chef::Log.info(params)
+
+      connection.query(:method => method,
                        :params => params)
     end
 
