@@ -43,10 +43,6 @@ action :create do
         params[:itemid] = "#{item_ids.first['itemid']}"
       end
 
-      Chef::Log.info("Handling item #{new_resource.name}")
-      Chef::Log.info(method)
-      Chef::Log.info(params)
-
       connection.query(:method => method,
                        :params => params)
     end
