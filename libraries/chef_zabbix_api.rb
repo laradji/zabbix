@@ -115,6 +115,29 @@ class Chef
         enum :text, 4
       end
 
+      class TriggerPriority
+        include Enumeration
+
+         enum :not_classified, 0 
+         enum :information, 1
+         enum :warning, 2
+         enum :average, 3
+         enum :high, 4
+         enum :disaster, 5
+      end
+
+      class TriggerStatus
+        include Enumeration
+        enum :active, 0
+        enum :disabled, 1
+      end
+
+      class TriggerType
+        include Enumeration
+        enum :normal, 0
+        enum :multiple, 1
+      end
+
 
     end
   end
