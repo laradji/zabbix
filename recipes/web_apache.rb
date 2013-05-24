@@ -75,6 +75,10 @@ template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['versio
   owner "root"
   group "root"
   mode "754"
+  variables({
+    :database => node['zabbix']['database'],
+    :server => node['zabbix']['server']
+  })
 end
 
 # install vhost for zabbix frontend
