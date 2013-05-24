@@ -67,3 +67,13 @@ zabbix_dirs.each do |dir|
     not_if "su #{node['zabbix']['login']} -c \"test -d #{dir} && test -w #{dir}\""
   end
 end
+
+unless node['zabbix']['agent']['source_url']
+  node.set['zabbix']['agent']['source_url'] = Chef::Zabbix.default_download_url(node['zabbix']['agent']['branch'], node['zabbix']['agent']['version'])
+end
+
+unless node['zabbix']['server']['source_url']
+  node.set['zabbix']['server']['source_url'] = Chef::Zabbix.default_download_url(node['zabbix']['server']['branch'], node['zabbix']['server']['version'])
+end
+
+
