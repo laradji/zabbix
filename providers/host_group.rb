@@ -26,13 +26,13 @@ action :create do
     Chef::Log.info("Create: Host Group '#{new_resource.group}' already exists")
   else
     converge_by("Creating Host Group '#{new_resource.group}'") do
-      create_group
+      create_group(new_resource.group)
     end
   end
 end
 
-def create_group
-  Chef::Zabbix.with_connection(new_resource.connection) do |connection|
-    connection.hostgroups.create(:host => group)
+def create_group(group)
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    connection.hostgroups.create(:name => group)
   end
 end

@@ -7,50 +7,50 @@ action :create do
 
     require 'zabbixapi'
 
+
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        # Swap data around because the trigger API is different
-        new_resource.parameters[:comments] = new_resource.parameters[:description]
-        new_resource.parameters[:description] = new_resource.parameters[:name]
-        new_resource.parameters[:priority] = new_resource.parameters[:priority].to_i - 1
+      # NOTE: Triggers in the zabbix api don't really have a "name"
+      # Instead we call it name so that lwrp users don't lose their minds
+      # and we just treat it as the description field the api wants
+      # 
+      # The description on the lwrp becomes comments in the api
 
-        # Convert the "hostname" (a template name) into a hostid
-        hostId = connection.query( :method => "template.get",
-                                   :params => {
-                                       :filter => {
-                                           :host => new_resource.parameters[:hostName]}
-                                              })
-        appId = connection.query( :method => "application.get",
-                                  :params => {
-                                      :filter => {
-                                          :name => new_resource.parameters[:applicationNames]}
-                                             })
+      template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
+      application_ids = Zabbix::API.find_application_ids(connection, new_resource.application, template_ids.first['templateid'])
 
-        triggerId = connection.query( :method => "trigger.get",
-                                     :params => {
-                                         :filter => {
-                                             :description => new_resource.parameters[:description]},
-                                         :search => {
-                                             :hostid => hostId,},
-                                                })
+      get_trigger_request = {
+        :method => "trigger.get",
+        :params => {
+          :filter => {
+            :hostid => template_ids.first['templateid'],
+            :description => new_resource.name
+          }
 
-        if triggerId.size == 0
-            # Make a new params with the correct parameters
-            new_resource.parameters[:hostid] = hostId[0]['hostid']
-            new_resource.parameters[:applications] = [ appId[0]['applicationid'] ]
-            # Remove the bad parameter
-            new_resource.parameters.delete(:hostName)
-            new_resource.parameters.delete(:applicationNames)
-            # Send the creation request to the server
-            connection.query( :method => "trigger.create",
-                             :params => new_resource.parameters
-                            )
-           else
-               # Send the update request to the server
-               new_resource.parameters[:triggerid] = triggerId[0]['triggerid']
-               connection.query( :method => "trigger.update",
-                                 :params => new_resource.parameters
-                               )
-           end
+        }
+      }
+      trigger_ids = connection.query(get_trigger_request)
+
+
+      params = {
+        # For whatever reason triggers have a description and comments
+        # instead of a name and description...
+        :description => new_resource.name,
+        :comments => new_resource.description,
+        :expression => new_resource.expression,
+        :priority => new_resource.priority.value, #possibly -1?
+        :status => new_resource.status.value,
+        :hostid => template_ids.first['hostid'],
+        :applications => application_ids.map { |app_id| app_id['applicationid'] }
+      }
+      method = "trigger.create"
+
+      unless trigger_ids.empty?
+        # Send the update request to the server
+        params[:triggerid] = trigger_ids.first['triggerid']
+        method = 'trigger.update'
+      end
+      connection.query(:method => method,
+                       :params => params)
     end
     new_resource.updated_by_last_action(true)
 end
