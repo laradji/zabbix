@@ -24,7 +24,6 @@ action :create do
                                       :filter => {
                                            :host => new_resource.parameters[:hostName],},
                                              })
-        puts hostId[0]['hostid']
 
         interfaceId = connection.query( :method => "hostinterface.get",
                                         :params => {
