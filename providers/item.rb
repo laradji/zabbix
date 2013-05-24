@@ -36,8 +36,11 @@ action :create do
         :snmp_community => new_resource.snmp_community,
         :snmp_oid => new_resource.snmp_oid,
       }
+      unless new_resource.port.to_s.empty?
+        params[:port] = new_resource.port.to_s
+      end
 
-      item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.name, new_resource.key)
+      item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
       unless item_ids.empty?
         method = "item.update"
         params[:itemid] = "#{item_ids.first['itemid']}"

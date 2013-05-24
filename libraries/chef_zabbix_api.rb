@@ -1,6 +1,34 @@
+require 'forwardable'
+
 class Chef
   module Zabbix
     module API
+
+      class GraphItem
+        extend Forwardable
+        def_delegators :@options, :[], :[]=, :delete
+        def initialize(options)
+          Chef::Application.fatal! ":item_template is required" if options[:item_template].to_s.empty?
+          Chef::Application.fatal! ":item_key is required" if options[:item_key].to_s.empty?
+          Chef::Application.fatal! ":calc_function must be a Zabbix::API::GraphItemCalcFunction" unless options[:calc_function].kind_of?(GraphItemCalcFunction)
+          Chef::Application.fatal! ":type must be a Zabbix::API::GraphItemType" unless options[:type].kind_of?(GraphItemType)
+          @options = options
+        end
+
+        def to_hash
+          unless @options[:itemid]
+            Chef::Application.fatal! ":itemid was never set. This probably means that an item with key '#{@options[:item_key]}' couldn't be found on template '#{@options[:item_template]}'"
+          end
+          {
+            :itemid => @options[:itemid],
+            :color => @options[:color],
+            :calc_fnc => @options[:calc_function].value,
+            :type => @options[:type].value,
+            :periods_cnt => @options[:period_count]
+          }
+        end
+      end
+
       class << self
         def find_hostgroup_ids(connection, hostgroup)
           group_id_request = {
@@ -39,20 +67,37 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_ids(connection, template_id, name, key)
+        def find_item_ids(connection, template_id, key, name=nil)
           request = {
             :method => "item.get",
             :params => {
               :hostids => template_id,
-              :filter => {
-                :name => name
-              },
               :search => {
                 :key_ => key
               }
             }
           }
+          unless name.to_s.empty?
+            request[:filter] = {
+              :name => name
+            }
+          end
 
+          connection.query(request)
+        end
+
+        def find_graph_ids(connection, template_id, name)
+          request = {
+            :method => "graph.get",
+            :params => {
+              :filter => {
+                :name => name
+              },
+              :search => {
+                :hostid => template_id
+              }
+            }
+          }
           connection.query(request)
         end
       end
@@ -70,21 +115,21 @@ class Chef
         end 
 
         module ClassMethods
-
-          attr_reader :value
-          def initialize(value)
-            @value = value
-          end 
-
+          attr_reader :enumeration_values
           def enum(name, val)
-            klass = class << self; self; end 
-            klass.send(:define_method, name) do
-              @values ||= {}
-              @values[name] ||= new(val)
-            end 
-          end 
+            @enumeration_values ||= {}
+            @enumeration_values[name] ||= new(val)
+            define_singleton_method(name) do
+              @enumeration_values[name]
+            end
+          end
+        end
+
+        attr_reader :value
+        def initialize(value)
+          @value = value
         end 
-      end
+      end 
 
       class ItemType
         include Enumeration
@@ -118,12 +163,12 @@ class Chef
       class TriggerPriority
         include Enumeration
 
-         enum :not_classified, 0 
-         enum :information, 1
-         enum :warning, 2
-         enum :average, 3
-         enum :high, 4
-         enum :disaster, 5
+        enum :not_classified, 0 
+        enum :information, 1
+        enum :warning, 2
+        enum :average, 3
+        enum :high, 4
+        enum :disaster, 5
       end
 
       class TriggerStatus
@@ -138,7 +183,20 @@ class Chef
         enum :multiple, 1
       end
 
+      class GraphItemCalcFunction
+        include Enumeration
+        enum :min,      1
+        enum :max,      2
+        enum :average,  4
+        enum :all,      7
+      end
 
+      class GraphItemType
+        include Enumeration
+        enum :simple,     0
+        enum :aggregated, 1
+        enum :graph,      2
+      end
     end
   end
 end
