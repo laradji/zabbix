@@ -36,6 +36,8 @@ end
 node.normal['zabbix']['agent']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_agent" do
+  branch              node['zabbix']['server']['branch']
+  version             node['zabbix']['server']['version']
   source_url          node['zabbix']['agent']['source_url']
   code_dir            node['zabbix']['src_dir']
   target_dir          "zabbix-#{node['zabbix']['agent']['version']}-agent"  
