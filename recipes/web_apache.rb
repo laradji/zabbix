@@ -42,6 +42,16 @@ when "rhel"
   end
 end
 
+zabbix_source "extract_zabbix_web" do
+  source_url          node['zabbix']['server']['source_url']
+  code_dir            node['zabbix']['src_dir']
+  target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
+  install_dir         node['zabbix']['install_dir']
+
+  action :extract_only
+
+end
+
 link node['zabbix']['web_dir'] do
   to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
 end
