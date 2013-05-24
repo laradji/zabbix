@@ -1,55 +1,40 @@
 action :create do
 
-    chef_gem "zabbixapi" do
-        action :install
-        version "~> 0.5.9"
+  chef_gem "zabbixapi" do
+    action :install
+    version "~> 0.5.9"
+  end
+
+  require 'zabbixapi'
+
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    template_id = Zabbix::API.find_template_ids(connection, new_resource.template).first['templateid']
+
+    new_resource.graph_items.each do |graph_item|
+      item_ids = Zabbix::API.find_item_ids(connection, template_id, graph_item[:item_key])
+      graph_item[:itemid] = item_ids.first['itemid']
     end
 
-    require 'zabbixapi'
+    graph_ids = Zabbix::API.find_graph_ids(connection, template_id, new_resource.name)
 
-    Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        # turn the name into an Id
-        new_resource.parameters[:gitems].each do |gitem|
-            itemId = connection.query( :method => "item.get",
-                                       :params => {
-                                           :hostids => connection.templates.get_id( :name => gitem[:hostName] ),
-                                           :search => {
-                                               :key_ => gitem[:key],
-                                               :hostname => gitem[:hostName] }
-                                              })
-            gitem[:itemid] = itemId[0]['itemid']
-            # remove the unused data
-            gitem.delete(:key)
-            gitem.delete(:hostName)
-        end
+    params = {
+      :name => new_resource.name,
+      :show_triggers => new_resource.show_triggers ? '1' : '0',
+      :width => new_resource.width,
+      :height => new_resource.height,
+      :gitems => new_resource.graph_items.map(&:to_hash)
+    }
+    method = 'graph.create'
 
-        # Convert the "hostname" (a template name) into a hostid
-        hostId = connection.query( :method => "template.get",
-                                   :params => {
-                                       :filter => {
-                                           :host => new_resource.parameters[:hostName]}
-                                              })
-        # does this graph exist?
-        graphId = connection.query( :method => "graph.get",
-                                    :params => {
-                                        :filter => {
-                                            :name => new_resource.parameters[:name]},
-                                        :search => {
-                                            :hostid => hostId,},
-                                                   })
-
-        if graphId.size == 0
-            # Send the creation request to the server
-            connection.query( :method => "graph.create",
-                             :params => new_resource.parameters
-                            )
-           else
-               # Send the update request to the server
-               new_resource.parameters[:graphid] = graphId[0]['graphid']
-               connection.query( :method => "graph.update",
-                                 :params => new_resource.parameters
-                               )
-        end
+    unless graph_ids.empty?
+      method = 'graph.update'
+      params[:graphid] = graph_ids.first['graphid']
     end
-    new_resource.updated_by_last_action(true)
+
+    connection.query({
+      :method => method,
+      :params => params
+    })
+  end
+  new_resource.updated_by_last_action(true)
 end

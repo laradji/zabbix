@@ -1,6 +1,5 @@
 #
 # Cookbook Name:: zabbix
-# Recipe:: agent_common
 # Author:: Guilhem Lettron <guilhem.lettron@youscribe.com>
 #
 # Copyright 2013, Youscribe
@@ -18,16 +17,6 @@
 # limitations under the License.
 #
 
-root_dirs = [
-  node['zabbix']['agent']['include_dir']
-]
+include_recipe "chocolatey"
 
-# Create root folders
-root_dirs.each do |dir|
-  directory dir do
-    owner "root"
-    group "root"
-    mode "755"
-    recursive true
-  end
-end
+chocolatey "zabbix-agent"
