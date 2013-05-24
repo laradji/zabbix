@@ -6,22 +6,17 @@ def zabbix_tar_path(code_dir, branch, version)
   ::File.join(code_dir, "zabbix-#{zabbix_source_identifier(branch, version)}.tar.gz")
 end
 
-def zabbix_source_url(branch, version)
-  "http://downloads.sourceforge.net/project/zabbix/#{branch}/#{version}/zabbix-#{version}.tar.gz"
-end
-
 def extract_dir(code_dir, target_dir)
   ::File.join(code_dir, target_dir)
 end
 
 action :extract_only do
   tar_path = zabbix_tar_path(new_resource.code_dir, new_resource.branch, new_resource.version)
-  source_url = zabbix_source_url(new_resource.branch, new_resource.version)
 
   unless ::File.exists?(tar_path)
     Chef::Log.info("Zabbix tar: #{tar_path} does't exist")
     remote_file tar_path do
-      source source_url
+      source new_resource.source_url
       mode "0644"
       action :create
     end
