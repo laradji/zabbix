@@ -69,6 +69,8 @@ def create_new_database
     code_dir            new_resource.source_dir
     target_dir          "zabbix-#{new_resource.server_version}"  
     install_dir         new_resource.install_dir
+    branch              new_resource.branch
+    version             new_resource.version
 
     action :extract_only
   end
