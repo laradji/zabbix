@@ -3,7 +3,7 @@ server {
   listen      <%= @web_port %>;
   index       index.php;
   root        <%= @web_dir %>;
-  server_name "";
+  server_name "<%=@server_name%>";
   
   access_log /var/log/nginx/zabbix.access.log;
 
