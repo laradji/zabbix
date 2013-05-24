@@ -8,53 +8,47 @@ action :create do
     require 'zabbixapi'
 
     Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-        # Convert the "hostname" (a template name) into a hostid
-        hostId = connection.query( :method => "template.get",
-                                   :params => {
-                                       :filter => {
-                                           :host => new_resource.parameters[:hostName]}
-                                              })
-        new_resource.parameters[:applicationNames].each do |application|
-            appId =  connection.query( :method => "application.get",
-                                   :params => {
-                                       :hostids => hostId[0]['hostid'],
-                                       :filter => {
-                                           :name => application[:applicationName]},
-                                              })
- 
-            application[:applicationid] = appId[0]['applicationid']
-            # remove the unused data
-            application.delete(:applicationName)
+      template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
+      if template_ids.empty?
+        Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
+      end
+
+      template_id = template_ids.first['hostid']
+
+      application_ids = new_resource.applications.map do |application|
+        app_ids = Zabbix::API.find_application_ids(connection, application, template_id) 
+        if app_ids.empty?
+          Chef::Application.fatal! "Could not find an application named #{application}"
         end
+        app_ids.map { |app_id| app_id['applicationid'] }
+      end.flatten
 
+      method = "item.create"
+      params = {
+        :name => new_resource.name,
+        :description => new_resource.description,
+        :key_ => new_resource.key,
+        :hostid => template_id,
+        :applications => application_ids,
+        :type => new_resource.type.value,
+        :value_type => new_resource.value_type.value, 
+        :delay => new_resource.delay,
+        :snmp_community => new_resource.snmp_community,
+        :snmp_oid => new_resource.snmp_oid,
+      }
+      unless new_resource.port.to_s.empty?
+        params[:port] = new_resource.port.to_s
+      end
 
-        itemId = connection.query( :method => "item.get",
-                                   :params => {
-                                       :hostids => hostId[0]['hostid'],
-                                       :filter => { 
-                                           :name => new_resource.parameters[:name],},
-                                       :search => {
-                                           :key_ => new_resource.parameters[:key_],},
-                                              })
-        if itemId.size == 0
-            # Make a new params with the correct parameters
-            new_resource.parameters[:hostid] = hostId[0]['hostid']
-            # Remove the bad parameter
-            new_resource.parameters.delete(:hostName)
-            new_resource.parameters.delete(:applicationNames)
-            # Send the creation request to the server
-            connection.query( :method => "item.create",
-                              :params => new_resource.parameters
-                            )
-        else
-            # Add the item ID to params and send the udate
-            new_resource.parameters[:itemid] = itemId[0]['itemid']
-            puts new_resource.parameters
-            connection.query( :method => "item.update",
-                              :params => new_resource.parameters
-                            )
-        end
-  end
+      item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
+      unless item_ids.empty?
+        method = "item.update"
+        params[:itemid] = "#{item_ids.first['itemid']}"
+      end
 
-  new_resource.updated_by_last_action(true)
+      connection.query(:method => method,
+                       :params => params)
+    end
+
+    new_resource.updated_by_last_action(true)
 end

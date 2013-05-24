@@ -83,8 +83,4 @@ template "/etc/nginx/sites-available/zabbix" do
   notifies :reload, "service[nginx]"
 end
 
-nginx_site "000-default" do
-  enable false
-end
-
 nginx_site "zabbix"
