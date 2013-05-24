@@ -48,8 +48,10 @@ zabbix_database node['zabbix']['database']['dbname'] do
   root_username           root_username
   root_password           root_password
   allowed_user_hosts      allowed_user_hosts
-  server_branch           node['zabbix']['server']['branch']
+  source_url              node['zabbix']['server']['source_url']
   server_version          node['zabbix']['server']['version']
   source_dir              node['zabbix']['src_dir']
   install_dir             node['zabbix']['install_dir']
+  branch                  node['zabbix']['server']['branch']
+  version                 node['zabbix']['server']['version']
 end
