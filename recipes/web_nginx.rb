@@ -36,6 +36,8 @@ when "rhel"
 end
 
 zabbix_source "extract_zabbix_web" do
+  branch              node['zabbix']['server']['branch']
+  version             node['zabbix']['server']['version']
   source_url          node['zabbix']['server']['source_url']
   code_dir            node['zabbix']['src_dir']
   target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
