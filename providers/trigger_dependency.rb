@@ -50,7 +50,7 @@ action :create do
           :dependsOnTriggerid => dependency_id,
         }
       }
-      connection.request(add_dependency_request)
+      connection.query(add_dependency_request)
 
     end
 end
