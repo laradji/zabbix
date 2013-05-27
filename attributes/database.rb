@@ -9,4 +9,5 @@ default['zabbix']['database']['allowed_user_hosts'] = "localhost"
 default['zabbix']['database']['rds_master_user']      = nil
 default['zabbix']['database']['rds_master_password']  = nil
 
-
+# SCHEMA is relevant only for IBM_DB2 database
+default['zabbix']['database']['schema'] = nil
