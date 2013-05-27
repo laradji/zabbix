@@ -29,6 +29,19 @@ action :create do
       end
       trigger_id = trigger_ids.first['triggerid']
 
+      Chef::Log.info "CHICKEN"
+      Chef::Log.info trigger_ids.first
+
+      go_req = { 
+        :method => "trigger.getobjects",
+        :param => {
+          :triggerid => trigger_id
+        }
+      }
+      Chef::Log.info "CHICKEN"
+      Chef::Log.info connection.query(go_req)
+
+
       get_dependency_request = {
         :method => "trigger.get",
         :params => {
