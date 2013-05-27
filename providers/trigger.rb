@@ -15,21 +15,15 @@ action :create do
       # 
       # The description on the lwrp becomes comments in the api
 
-      template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
-      application_ids = Zabbix::API.find_application_ids(connection, new_resource.application, template_ids.first['templateid'])
-
       get_trigger_request = {
         :method => "trigger.get",
         :params => {
-          :filter => {
-            :hostid => template_ids.first['templateid'],
+          :search => {
             :description => new_resource.name
           }
-
         }
       }
       trigger_ids = connection.query(get_trigger_request)
-
 
       params = {
         # For whatever reason triggers have a description and comments
@@ -37,14 +31,13 @@ action :create do
         :description => new_resource.name,
         :comments => new_resource.description,
         :expression => new_resource.expression,
-        :priority => new_resource.priority.value, #possibly -1?
+        :priority => new_resource.priority.value,
         :status => new_resource.status.value,
-        :hostid => template_ids.first['hostid'],
-        :applications => application_ids.map { |app_id| app_id['applicationid'] }
       }
       method = "trigger.create"
 
       unless trigger_ids.empty?
+        10.times { Chef::Log.info("Found #{trigger_ids.first['triggerid']}") }
         # Send the update request to the server
         params[:triggerid] = trigger_ids.first['triggerid']
         method = 'trigger.update'
