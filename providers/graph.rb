@@ -19,9 +19,25 @@ action :create do
 
     params = {
       :name => new_resource.name,
-      :show_triggers => new_resource.show_triggers ? '1' : '0',
+
       :width => new_resource.width,
       :height => new_resource.height,
+      :yaxismin => new_resource.yaxismin,
+      :yaxismax => new_resource.yaxismax,
+      :percent_left => new_resource.percent_left,
+      :percent_right => new_resource.percent_right,
+
+      :show_work_period => new_resource.show_work_period ? '1' : '0',
+      :show_triggers => new_resource.show_triggers ? '1' : '0',
+      :show_legend => new_resource.show_legend ? '1' : '0',
+      :show_3d => new_resource.show_3d ? '1' : '0',
+
+      :type => new_resource.type.value,
+      :ymin_type => new_resource.ymin_type.value,
+      :ymax_type => new_resource.ymax_type.value,
+      :ymin_item => new_resource.ymin_item.to_s,
+      :ymax_item => new_resource.ymax_item.to_s,
+
       :gitems => new_resource.graph_items.map(&:to_hash)
     }
     method = 'graph.create'
