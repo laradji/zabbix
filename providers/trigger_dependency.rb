@@ -48,7 +48,7 @@ action :create do
         add_dependency_request = {
           :method => "trigger.adddependencies",
           :params => {
-            :triggerid => trigger_id,
+            :triggerid => trigger['triggerid'],
             :dependsOnTriggerid => dependency_id,
           }
         }
