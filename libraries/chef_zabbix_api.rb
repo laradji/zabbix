@@ -197,6 +197,24 @@ class Chef
         enum :aggregated, 1
         enum :graph,      2
       end
+
+      class GraphType
+        include Enumeration
+        enum :normal, 0
+        enum :stacked, 1
+        enum :pie, 2
+        enum :exploded, 3
+      end
+
+      class GraphAxisType
+        include Enumeration
+        enum :calculated, 0
+        enum :fixed, 1
+        # TODO: Update the graph provider to do an update after it has created
+        # all of its item so that you can map an item id and support this value
+        #enum :item, 2
+      end
     end
+
   end
 end
