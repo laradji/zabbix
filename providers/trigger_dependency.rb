@@ -34,7 +34,7 @@ action :create do
 
       go_req = { 
         :method => "trigger.getobjects",
-        :param => {
+        :params => {
           :triggerid => trigger_id
         }
       }
