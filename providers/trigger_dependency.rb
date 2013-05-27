@@ -20,27 +20,15 @@ action :create do
         :params => {
           :filter => {
             :description => new_resource.trigger_name
-          }
+          },
+          :selectDependencies => "refer"
         }
       }
-      trigger_ids = connection.query(get_trigger_request)
-      if trigger_ids.empty?
+      triggers = connection.query(get_trigger_request)
+      if triggers.empty?
         Chef::Application.fatal! "No trigger named '#{new_resource.trigger_name}' found"
       end
-      trigger_id = trigger_ids.first['triggerid']
-
-      Chef::Log.info "CHICKEN"
-      Chef::Log.info trigger_ids.first
-
-      go_req = { 
-        :method => "trigger.getobjects",
-        :params => {
-          :triggerid => trigger_id
-        }
-      }
-      Chef::Log.info "CHICKEN"
-      Chef::Log.info connection.query(go_req)
-
+      trigger = triggers.first
 
       get_dependency_request = {
         :method => "trigger.get",
@@ -56,14 +44,18 @@ action :create do
       end
       dependency_id = dependency_ids.first['triggerid']
 
-      add_dependency_request = {
-        :method => "trigger.adddependencies",
-        :params => {
-          :triggerid => trigger_id,
-          :dependsOnTriggerid => dependency_id,
+      unless trigger['dependencies'].map { |dep| dep['triggerid'] }.include?(dependency_id)
+        add_dependency_request = {
+          :method => "trigger.adddependencies",
+          :params => {
+            :triggerid => trigger_id,
+            :dependsOnTriggerid => dependency_id,
+          }
         }
-      }
-      connection.query(add_dependency_request)
+        connection.query(add_dependency_request)
+      else
+        Chef::Log.info "Trigger '#{new_resource.trigger_name}' already depends on a trigger named '#{new_resource.dependency_name}'"
+      end
 
     end
 end
