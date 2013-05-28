@@ -133,22 +133,24 @@ class Chef
 
       class ItemType
         include Enumeration
-        enum :agent,            0
-        enum :snmp_v1,          1
-        enum :trapper,          2
-        enum :simple_check,     3
-        enum :snmp_v2,          4
-        enum :internal,         5
-        enum :snmp_v3,          6
-        enum :active_check,     7
-        enum :aggregate,        8
-        enum :http_test,        9
-        enum :external,         10
-        enum :database_monitor, 11
-        enum :ipmi,             12
-        enum :ssh,              13
-        enum :telnet,           14
-        enum :calculated,       15
+        enum :zabbix_agent,               0
+        enum :snmp_v1_agent,              1
+        enum :zabbix_trapper,             2
+        enum :simple_check,               3
+        enum :snmp_v2_agent,              4
+        enum :zabbix_internal,            5
+        enum :snmp_v3_agent,              6
+        enum :zabbix_agent_active_check,  7
+        enum :zabbix_aggregate,           8
+        enum :web_item,                   9
+        enum :externali_check ,           10
+        enum :database_monitor,           11
+        enum :ipmi_agent,                 12
+        enum :ssh_agent,                  13
+        enum :telnet_agent,               14
+        enum :calculated,                 15
+        enum :jmx_agent,                  16
+        enum :snmp_trap,                  17
       end
 
       class ItemValueType
