@@ -43,7 +43,7 @@ action :create do
       item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
       unless item_ids.empty?
         method = "item.update"
-        params[:itemid] = "#{item_ids.first['itemid']}"
+        params[:itemid] = item_ids.first['itemid']
       end
 
       connection.query(:method => method,
