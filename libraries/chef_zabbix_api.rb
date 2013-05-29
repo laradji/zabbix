@@ -119,7 +119,8 @@ class Chef
           def enum(name, val)
             @enumeration_values ||= {}
             @enumeration_values[name] ||= new(val)
-            define_singleton_method(name) do
+            eigen_class = class << self; self; end
+            eigen_class.send(:define_method, name) do
               @enumeration_values[name]
             end
           end
