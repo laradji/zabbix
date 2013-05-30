@@ -12,3 +12,10 @@ template "zabbix_agentd.conf" do
   end
   notifies :restart, "service[zabbix_agentd]"
 end
+
+ruby_block "start service" do
+  block do
+    resources(:service => "zabbix_agentd").run_action(:start)
+    resources(:service => "zabbix_agentd").run_action(:enable)
+  end
+end
