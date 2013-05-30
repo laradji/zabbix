@@ -14,16 +14,18 @@
 # Add status support by Ovea Inc.
 
 NAME=zabbix_agentd
-PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin:<%= node.zabbix.install_dir %>/bin
-DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node['zabbix']['install_dir'] %>/sbin:<%= node['zabbix']['install_dir'] %>/bin
+DAEMON=<%= node['zabbix']['install_dir'] %>/sbin/${NAME}
 DESC="Zabbix agent daemon"
-DIR=<%= node.zabbix.run_dir %>
-PID=<%= node.zabbix.run_dir %>/$NAME.pid
+DIR=<%= node['zabbix']['run_dir'] %>
+PID=<%= node['zabbix']['agent']['pid_file'] %>
+USER=<%= node['zabbix']['agent']['user'] %>
+GROUP=<%= node['zabbix']['agent']['group'] %>
 
 test -f $DAEMON || exit 0
 
 [ -d "$DIR" ] || mkdir "$DIR"
-chown -R zabbix:zabbix "$DIR"
+chown -R $USER:$GROUP "$DIR"
 
 set -e
 
@@ -31,7 +33,8 @@ case "$1" in
   start)
 	echo "Starting $DESC: $NAME"
 	start-stop-daemon --oknodo --start --pidfile $PID \
-		--exec $DAEMON -- -c <%= node.zabbix.etc_dir %>/zabbix_agentd.conf
+		--user $USER \
+		--exec $DAEMON -- -c <%= node['zabbix']['agent']['config_file'] %>
 	;;
 
   stop)
@@ -50,10 +53,10 @@ case "$1" in
 	sleep 5
 	$0 start
 #	start-stop-daemon --stop --quiet --pidfile \
-#		<%= node.zabbix.run_dir %>/$NAME.pid --user zabbix --exec $DAEMON
+#		$PID --user zabbix --exec $DAEMON
 #	sleep 1
 #	start-stop-daemon --start --quiet --pidfile \
-#		<%= node.zabbix.run_dir %>/$NAME.pid --user zabbix --exec $DAEMON
+#		$PID --user zabbix --exec $DAEMON
 #	echo "$NAME."
 	;;
   status)
