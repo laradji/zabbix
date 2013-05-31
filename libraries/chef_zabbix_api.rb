@@ -33,20 +33,11 @@ class Chef
 
         class << self
           def from_api_response(options)
-            options = symbolize(options)
-            options[:type] = Zabbix::API::HostInterfaceType.enumeration_values.detect { |value| value == options[:type].to_i }
+            options["type"] = Zabbix::API::HostInterfaceType.enumeration_values.detect { |value| value[1].value == options["type"].to_i }[1]
+            options["main"] = (options["main"].to_i == 1)
+            options["useip"] = (options["useip"].to_i == 1)
             new(options)
           end
-
-          private
-            def symbolize(options)
-              symbolized = {}
-              options.each_key do |key|
-                symbolized[key.to_sym] = options[key]
-              end
-              synbolized
-            end
-
         end
 
         attr_reader :options
@@ -54,6 +45,9 @@ class Chef
         extend Forwardable
         def_delegators :@options, :[], :[]=, :delete
         def initialize(options)
+          options = symbolize(options)
+          if options[:type].is_a?(Fixnum)
+          end
           validate!(options)
           @options = options
         end
@@ -79,22 +73,32 @@ class Chef
             this[:type]  == other[:type].to_i
         end
 
+        private 
+          def validate!(options)
+            options = symbolize(options)
+            Chef::Application.fatal!(":main must be one of [true, false]") unless [true, false].include?(options[:main])
+            Chef::Application.fatal!(":useip must be one of [true, false]") unless [true, false].include?(options[:useip])
+            if options[:useip]
+              search = :ip
+            else
+              search = :dns
+            end
+            Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") if options[search].to_s.empty?
+            Chef::Application.fatal!(":port is required") if options[:port].to_s.empty?
+            Chef::Application.fatal!(":type must be a Chef::Zabbix::API:HostInterfaceType") unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
+          end
+
+          def symbolize(options)
+            symbolized = {}
+            options.each_key do |key|
+              symbolized[key.to_sym] = options[key]
+            end
+            symbolized
+          end
       end
 
       class << self
-        def validate!(options)
-          options = symbolize(options)
-          Chef::Application.fatal!(":main must be one of [true, false]") unless [true, false].include?(options[:main])
-          Chef::Application.fatal!(":useip must be one of [true, false]") unless [true, false].include?(options[:useip])
-          if options[:useip]
-            search = :ip
-          else
-            search = :dns
-          end
-          Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") if options[search].to_s.empty?
-          Chef::Application.fatal!(":port is required") if options[:port].to_s.empty?
-          Chef::Application.fatal!(":type must be a Chef::Zabbix::API:HostInterfaceType") unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
-        end
+
 
         def find_hostgroup_ids(connection, hostgroup)
           group_id_request = {
