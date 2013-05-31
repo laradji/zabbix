@@ -33,12 +33,6 @@ class Chef
 
         class << self
           def from_api_response(options)
-            100.times do
-              Chef::Log.info("CHICKEN")
-              Chef::Log.info(options)
-            end
-
-            
             options["type"] = Zabbix::API::HostInterfaceType.enumeration_values.detect { |value| value[1].value == options["type"].to_i }[1]
             options["main"] = (options["main"].to_i == 1)
             options["useip"] = (options["useip"].to_i == 1)

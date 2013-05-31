@@ -81,7 +81,6 @@ action :update do
 
   require 'zabbixapi'
 
-  Chef::Log.info("Found a server with that name, updating..")
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     get_host_request = {
