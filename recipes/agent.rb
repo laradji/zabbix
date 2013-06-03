@@ -15,7 +15,9 @@ end
 
 ruby_block "start service" do
   block do
-    resources(:service => "zabbix_agentd").run_action(:start)
-    resources(:service => "zabbix_agentd").run_action(:enable)
+    true
+  end
+  Array(node['zabbix']['agent']['service_state']).each do |action|
+    notifies action, "service[zabbix_agentd]"
   end
 end
