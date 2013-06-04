@@ -5,7 +5,7 @@ include_recipe "zabbix::agent_common"
 template "zabbix_agentd.conf" do
   path node['zabbix']['agent']['config_file']
   source "zabbix_agentd.conf.erb"
-  unless node['platform'] == ["windows"]
+  unless node['platform_family'] == "windows"
     owner "root"
     group "root"
     mode "644"
