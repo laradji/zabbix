@@ -1,0 +1,26 @@
+# Do not edit
+# Created by chef
+Hostname=<%= node['zabbix']['agent']['hostname'] %>
+<% ::Dir.foreach(node['zabbix']['agent']['include_dir']).sort.drop(2) do |dir| -%>
+Include=<%= dir %>
+<% end -%>
+Server=<%= node.zabbix.agent.servers.join(',') %>
+<% if node['zabbix']['agent']['log_file'] -%>
+LogFile=<%= node['zabbix']['agent']['log_file'] %>
+<% end -%>
+<% if node['zabbix']['agent']['debug_level'] -%>
+DebugLevel=<%= node['zabbix']['agent']['debug_level'] %>
+<% end -%>
+<% if node['zabbix']['agent']['enable_remote_commands'] -%>
+EnableRemoteCommands=1
+LogRemoteCommands=1
+<% end -%>
+<% if node['zabbix']['agent']['pid_file'] -%>
+PidFile=<%= node['zabbix']['agent']['pid_file'] %>
+<% end -%>
+<% if node.zabbix.agent.servers_active.first -%>
+ServerActive=<%= node.zabbix.agent.servers_active.join(',') %>
+<% end -%>
+<% if node['zabbix']['agent']['start_agents'] -%>
+StartAgents=<%= node['zabbix']['agent']['start_agents'] %>
+<% end -%>

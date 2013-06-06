@@ -186,7 +186,10 @@ class Chef
           def enum(name, val)
             @enumeration_values ||= {}
             @enumeration_values[name] ||= new(val)
-            define_singleton_method(name) do
+            # The better solution would be to just call define_singleton_method
+            # but that doesn't work in 1.8.x and we want 1.8.x compatibility
+            eigen_class = class << self; self; end
+            eigen_class.send(:define_method, name) do
               @enumeration_values[name]
             end
           end
