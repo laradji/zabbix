@@ -31,7 +31,7 @@ action :create do
         :description => new_resource.name,
         :comments => new_resource.description,
         :expression => new_resource.expression.gsub('\\', '\\\\\\\\'), # see providers/item.rb for why this is done
-        :priority => new_resource.priority.value, #possibly -1?
+        :priority => new_resource.priority.value, 
         :status => new_resource.status.value,
       }
       method = "trigger.create"
