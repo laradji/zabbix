@@ -8,6 +8,7 @@
 #
 
 include_recipe "zabbix::common"
+include_recipe "zabbix::agent_common"
 
 # Install prerequisite RPM
 if node['platform_family'] == "rhel"
@@ -17,8 +18,8 @@ end
 ark "zabbix_agent" do
   name "zabbix"
   url node['zabbix']['agent']['prebuild']['url']
-  owner node['zabbix']['login']
-  group node['zabbix']['group']
+  owner node['zabbix']['agent']['user']
+  group node['zabbix']['agent']['group']
   action :put
   path  "/opt"
   strip_leading_dir false
