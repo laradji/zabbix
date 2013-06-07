@@ -171,15 +171,12 @@ class Chef
           connection.query(request)
         end
 
-        def find_graph_ids(connection, template_id, name)
+        def find_graph_ids(connection, name)
           request = {
             :method => "graph.get",
             :params => {
               :filter => {
                 :name => name
-              },
-              :search => {
-                :hostid => template_id
               }
             }
           }
