@@ -30,8 +30,8 @@ action :create do
         # instead of a name and description...
         :description => new_resource.name,
         :comments => new_resource.description,
-        :expression => new_resource.expression,
-        :priority => new_resource.priority.value,
+        :expression => new_resource.expression.gsub('\\', '\\\\\\\\'), # see providers/item.rb for why this is done
+        :priority => new_resource.priority.value, #possibly -1?
         :status => new_resource.status.value,
       }
       method = "trigger.create"
