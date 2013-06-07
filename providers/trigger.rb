@@ -36,7 +36,7 @@ action :create do
         # instead of a name and description...
         :description => new_resource.name,
         :comments => new_resource.description,
-        :expression => new_resource.expression.gsub('\\', '\\\\\\\\'), # see providers/item.rb for why this is done
+        :expression => new_resource.expression,
         :priority => new_resource.priority.value, 
         :status => new_resource.status.value,
         :hostid => template_ids.first['hostid'],

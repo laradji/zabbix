@@ -27,11 +27,7 @@ action :create do
       params = {
         :name => new_resource.name,
         :description => new_resource.description,
-        # zabbix keys with containing a " (e.g. around a bean name for jmx items) need to escape the quote
-        # with a \
-        # In order to keep the \ literal from confusing json, it must be escaped, so we have to change it to \\
-        # see http://www.ruby-forum.com/topic/143645 for why this is the correct way to do this - ruby strings are hard
-        :key_ => new_resource.key.gsub('\\', '\\\\\\\\'),
+        :key_ => new_resource.key,
         :hostid => template_id,
         :applications => application_ids,
         :type => new_resource.type.value,
