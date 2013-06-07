@@ -31,7 +31,7 @@ action :create do
         # with a \
         # In order to keep the \ literal from confusing json, it must be escaped, so we have to change it to \\
         # see http://www.ruby-forum.com/topic/143645 for why this is the correct way to do this - ruby strings are hard
-        :key_ => new_resource.key.gsub('\\', '\\\\\\\\') 
+        :key_ => new_resource.key.gsub('\\', '\\\\\\\\'),
         :hostid => template_id,
         :applications => application_ids,
         :type => new_resource.type.value,
