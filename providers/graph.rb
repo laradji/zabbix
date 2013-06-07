@@ -12,9 +12,9 @@ action :create do
     new_resource.graph_items.each do |graph_item|
       if graph_item[:item_template].nil?
         template_id = Zabbix::API.find_template_ids(connection, graph_item[:item_template]).first['templateid']
-        item_ids = Zabbix::API.find_item_ids(connection, template_id, graph_item[:item_key])
+        graph_item = Zabbix::API.find_item_ids(connection, template_id, graph_item[:item_key])
       else
-        item_ids = Zabbix::API.find_item_ids_on_host(connection, host, graph_item[:item_key])
+        graph_item = Zabbix::API.find_item_ids_on_host(connection, host, graph_item[:item_key])
       end
       graph_item[:itemid] = item_ids.first['itemid']
     end
