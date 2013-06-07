@@ -16,6 +16,8 @@ action :create do
       else
         item_ids = Zabbix::API.find_item_ids_on_host(connection, graph_item[:host], graph_item[:item_key])
       end
+      Chef::Log.info("CHICKEN")
+      Chef::Log.info(item_ids)
       graph_item[:itemid] = item_ids.first['itemid']
     end
 

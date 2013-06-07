@@ -168,7 +168,11 @@ class Chef
               }
             }
           }
-          connection.query(request)
+          Chef::Log.info("CHICKEN")
+          Chef::Log.info(request)
+          res = connection.query(request)
+          Chef::Log.info(res)
+          res
         end
 
         def find_graph_ids(connection, name)
