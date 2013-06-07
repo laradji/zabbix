@@ -7,32 +7,6 @@
 # Apache 2.0
 #
 
-# Create zabbix group
-group node['zabbix']['login'] do
-  gid node['zabbix']['gid']
-  if node['zabbix']['gid'].nil? 
-    action :nothing
-  else
-    action :create
-  end
-end
-
-
-directory node['zabbix']['install_dir'] do
-  mode       "0755"
-  recursive  true
-  action     :create
-end
-
-# Create zabbix User
-user node['zabbix']['login'] do
-  comment "zabbix User"
-  home node['zabbix']['install_dir']
-  shell node['zabbix']['shell']
-  uid node['zabbix']['uid']
-  gid node['zabbix']['gid'] 
-end
-
 # Define root owned folders
 root_dirs = [
   node['zabbix']['etc_dir'],
