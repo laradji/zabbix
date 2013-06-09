@@ -148,7 +148,6 @@ action :update do
         :hostid => host["hostid"],
         :groups => desired_groups,
         :templates => desired_templates.flatten,
-        :macros => format_macros(new_resource.macros)
       }
     }
     connection.query(host_update_request)
