@@ -92,11 +92,14 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   group "root"
   mode "644"
   variables ({
-    :dbhost     => node['zabbix']['database']['dbhost'],
-    :dbname     => node['zabbix']['database']['dbname'],
-    :dbuser     => node['zabbix']['database']['dbuser'],
-    :dbpassword => node['zabbix']['database']['dbpassword'],
-    :dbport     => node['zabbix']['database']['dbport']
+    :dbhost             => node['zabbix']['database']['dbhost'],
+    :dbname             => node['zabbix']['database']['dbname'],
+    :dbuser             => node['zabbix']['database']['dbuser'],
+    :dbpassword         => node['zabbix']['database']['dbpassword'],
+    :dbport             => node['zabbix']['database']['dbport'],
+    :java_gateway       => node['zabbix']['server']['java_gateway'],
+    :java_gateway_port  => node['zabbix']['server']['java_gateway_port'],
+    :java_pollers       => node['zabbix']['server']['java_pollers']
   })
   notifies :restart, "service[zabbix_server]", :delayed
 end
