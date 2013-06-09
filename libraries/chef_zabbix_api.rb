@@ -8,7 +8,9 @@ class Chef
         extend Forwardable
         def_delegators :@options, :[], :[]=, :delete
         def initialize(options)
-          Chef::Application.fatal! ":item_template is required" if options[:item_template].to_s.empty?
+          if options[:item_template].to_s.empty? && options[:host].to_s.empty?
+            Chef::Application.fatal! ":item_template or :host is required"
+          end
           Chef::Application.fatal! ":item_key is required" if options[:item_key].to_s.empty?
           Chef::Application.fatal! ":calc_function must be a Zabbix::API::GraphItemCalcFunction" unless options[:calc_function].kind_of?(GraphItemCalcFunction)
           Chef::Application.fatal! ":type must be a Zabbix::API::GraphItemType" unless options[:type].kind_of?(GraphItemType)
@@ -156,15 +158,25 @@ class Chef
           connection.query(request)
         end
 
-        def find_graph_ids(connection, template_id, name)
+        def find_item_ids_on_host(connection, host, key) 
+          request = {
+            :method => "item.get",
+            :params => {
+              :host => host,
+              :search => {
+                :key_ => key
+              }
+            }
+          }
+          connection.query(request)
+        end
+
+        def find_graph_ids(connection, name)
           request = {
             :method => "graph.get",
             :params => {
               :filter => {
                 :name => name
-              },
-              :search => {
-                :hostid => template_id
               }
             }
           }
