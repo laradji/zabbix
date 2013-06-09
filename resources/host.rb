@@ -13,6 +13,7 @@ attribute :monitored, :kind_of => [TrueClass, FalseClass], :default => true
 attribute :interfaces, :kind_of => Array, :default => Array.new
 attribute :templates, :kind_of => Array, :default => Array.new
 attribute :groups, :kind_of => Array, :default => Array.new
+attribute :macros, :kind_of => Hash, :default => Hash.new
 
 # See https://www.zabbix.com/documentation/2.0/manual/appendix/api/host/definitions#host
 # for appropriate inventory hash keys (Property name from the table)

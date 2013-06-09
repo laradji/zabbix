@@ -60,13 +60,21 @@ action :create do
     
     templates = connection.query(get_templates_request).map { |template| template['templateid'] }
 
+    macros = new_resource.macros.map do |macro, value|
+      macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
+      {
+        :macro => macro_name,
+        :value => value
+      }
+    end
     request = {
       :method => "host.create",
       :params => {
         :host => new_resource.hostname,
         :groups => groups,
         :templates => templates,
-        :interfaces => new_resource.interfaces.map(&:to_hash)
+        :interfaces => new_resource.interfaces.map(&:to_hash),
+        :macros => macros
       }
     }
     connection.query(request) 
