@@ -11,7 +11,7 @@ if node['zabbix']['agent']['user']
     home node['zabbix']['install_dir']
     shell node['zabbix']['agent']['shell']
     uid node['zabbix']['agent']['uid'] if node['zabbix']['agent']['uid']
-    gid node['zabbix']['agent']['gid'] or node['zabbix']['agent']['group']
+    gid node['zabbix']['agent']['gid'] || node['zabbix']['agent']['group']
     system true
     supports :manage_home=>true
   end
