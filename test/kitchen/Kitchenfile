@@ -5,6 +5,7 @@ cookbook "zabbix" do
 	exclude :platform => 'debian'
 	exclude :platform => 'redhat'
 	run_list_extras ['mysql::server']
+	lint(:ignore => ["FC017"])
 
   runtimes []
 
