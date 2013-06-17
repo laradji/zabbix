@@ -35,6 +35,7 @@ action :create do
         :delay => new_resource.delay,
         :snmp_community => new_resource.snmp_community,
         :snmp_oid => new_resource.snmp_oid,
+        :params => new_resource.params,
       }
       unless new_resource.port.to_s.empty?
         params[:port] = new_resource.port.to_s
