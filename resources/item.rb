@@ -13,4 +13,4 @@ attribute :delay, :kind_of => Fixnum, :required => true
 attribute :snmp_community, :kind_of => String, :default => '{}' #investigate if there is a better way to do these two
 attribute :snmp_oid, :kind_of => String, :default => '{}'
 attribute :port, :kind_of => String
-attribute :params, :kind_of => String
+attribute :item_params, :kind_of => String
