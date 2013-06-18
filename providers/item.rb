@@ -48,8 +48,8 @@ action :create do
 
       params[:params] = new_resource.item_params
       params[:key_] = new_resource.key
-      params[:hostid] => template_id
-      params[:applications] => application_ids
+      params[:hostid] = template_id
+      params[:applications] = application_ids
 
       item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
       unless item_ids.empty?
