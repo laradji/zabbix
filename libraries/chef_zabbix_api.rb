@@ -220,6 +220,34 @@ class Chef
         end 
       end 
 
+      class AuthType
+        include Enumeration
+        enum :password,     0
+        enum :private_key,  1
+      end
+
+      class DataType
+        include Enumeration
+        enum :decimal,      0
+        enum :octal,        1
+        enum :hexidecimal,  2
+        enum :boolean,      3
+      end
+
+      class Delta
+        include Enumeration
+        enum :as_is,            0
+        enum :speed_per_second, 1
+        enum :simple_change,    2
+      end
+
+      class SNMPV3_SecurityLevel
+        include Enumeration
+        enum :no_auth_no_priv,  0
+        enum :auth_no_priv,     1
+        enum :auth_priv,        2
+      end
+
       class ItemType
         include Enumeration
         enum :zabbix_agent,               0
@@ -260,6 +288,13 @@ class Chef
         enum :average, 3
         enum :high, 4
         enum :disaster, 5
+      end
+
+      class ItemStatus
+        include Enumeration
+        enum :enabled,        0
+        enum :disabled,       1
+        enum :not_supported,  2
       end
 
       class TriggerStatus

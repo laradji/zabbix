@@ -1,8 +1,8 @@
 action :create do
 
     chef_gem "zabbixapi" do
-        action :install
-        version "~> 0.5.9"
+      action :install
+      version "~> 0.5.9"
     end
 
     require 'zabbixapi'
@@ -23,27 +23,37 @@ action :create do
         app_ids.map { |app_id| app_id['applicationid'] }
       end.flatten
 
-      method = "item.create"
-      params = {
-        :name => new_resource.name,
-        :description => new_resource.description,
-        :key_ => new_resource.key,
-        :hostid => template_id,
-        :applications => application_ids,
-        :type => new_resource.type.value,
-        :value_type => new_resource.value_type.value, 
-        :delay => new_resource.delay,
-        :snmp_community => new_resource.snmp_community,
-        :snmp_oid => new_resource.snmp_oid,
-        :params => new_resource.item_params,
-      }
-      unless new_resource.port.to_s.empty?
-        params[:port] = new_resource.port.to_s
+      noun = (new_resource.prototype) ? "itemprototype" : "item"
+
+      method = "#{noun}.create"
+      params = {}
+      simple_value_keys = [
+        :name, :delay, :description, :snmp_community, :snmp_oid, 
+        :port, :params, :multiplier, :history, :trends, :allowed_hosts,
+        :units, :snmpv3_securityname, :snmpv3_authpassphrase, :snmpv3_privpassphrase,
+        :formula, :delay_flex, :ipmi_sensor, :username, :password,
+        :publickey, :privatekey, :inventory_link, :valuemap,
+      ]
+      simple_value_keys.each do |key|
+        params[key] = new_resource.send(key)
       end
+
+      enum_value_keys = [
+        :type, :value_type, :status, :delta, :snmpv3_securitylevel,
+        :data_type, :authtype,
+      ]
+      enum_value_keys.each do |key|
+        params[key] = new_resource.send(key).value
+      end
+
+      params[:params] = new_resource.item_params
+      params[:key_] = new_resource.key
+      params[:hostid] => template_id
+      params[:applications] => application_ids
 
       item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
       unless item_ids.empty?
-        method = "item.update"
+        method = "#{noun}.update"
         params[:itemid] = item_ids.first['itemid']
       end
 
