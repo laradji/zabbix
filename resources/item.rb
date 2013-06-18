@@ -19,7 +19,7 @@ attribute :port, :kind_of => String
 attribute :item_params, :kind_of => String
 attribute :status, :kind_of => Chef::Zabbix::API::ItemStatus, :default => Chef::Zabbix::API::ItemStatus.enabled
 attribute :multiplier, :kind_of => Fixnum
-attribute :history, :kind_of => Fixnum, :defualt => 90
+attribute :history, :kind_of => Fixnum, :default => 90
 attribute :trends, :kind_of => Fixnum, :default => 365
 attribute :allowed_hosts, :kind_of => String
 attribute :units, :kind_of => String
