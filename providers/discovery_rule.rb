@@ -21,7 +21,7 @@ action :create do
     method = "discoveryrule.create"
     params = {}
     simple_value_keys = [
-      :name, :key, :delay, :lifetime, :delay_flex, :description,
+      :name, :delay, :lifetime, :delay_flex, :description,
       :filter, :ipmi_sensor, :password, :port, :privatekey,
       :publickey, :snmp_community, :snmp_oid, :snmpv3_securityname,
       :snmpv3_authpassphrase, :snmpv3_privpassphrase, :username
@@ -37,6 +37,8 @@ action :create do
       params[key] = new_resource.send(key).value
     end
 
+    params[:hostid] = template_id
+    params[:key_] = new_resource.key 
     params[:params] = new_resource.discovery_rule_params
     params[:trapper_hosts] = new_resource.allowed_hosts
 
