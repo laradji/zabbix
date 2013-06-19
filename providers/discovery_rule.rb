@@ -19,6 +19,7 @@ action :create do
     template_id = template_ids.first['hostid']
 
     method = "discoveryrule.create"
+    params = {}
     simple_value_keys = [
       :name, :key, :delay, :lifetime, :delay_flex, :description,
       :filter, :ipmi_sensor, :password, :port, :privatekey,
