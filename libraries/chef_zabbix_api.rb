@@ -139,6 +139,20 @@ class Chef
           connection.query(request)
         end
 
+        def find_lld_rule_ids(connection, template_id, key)
+          request = {
+            :method => "discoveryrule.get",
+            :params => {
+              :templated => true,
+              :templateids => template_id,
+              :search => {
+                :key_ => key
+              }
+            }
+          }
+          connection.query(request)
+        end
+
         def find_item_ids(connection, template_id, key, name=nil)
           request = {
             :method => "item.get",
