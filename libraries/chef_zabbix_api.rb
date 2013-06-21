@@ -172,6 +172,21 @@ class Chef
           connection.query(request)
         end
 
+        def find_item_prototype_ids(connection, template_id, discovery_rule_id, key)
+          request = {
+            :method => "item.get",
+            :params => {
+              :discoveryids => discovery_rule_id,
+              :templateids => template_id,
+              :search => {
+                :key_ => key
+              }
+            }
+          }
+          connection.query(request)
+        end
+
+
         def find_item_ids_on_host(connection, host, key) 
           request = {
             :method => "item.get",
