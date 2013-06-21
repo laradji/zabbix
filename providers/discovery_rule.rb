@@ -42,7 +42,7 @@ action :create do
     params[:params] = new_resource.discovery_rule_params
     params[:trapper_hosts] = new_resource.allowed_hosts
 
-    rule_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key)
+    rule_ids = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.key)
     unless rule_ids.empty?
       method = "discoveryrule.update"
       params[:itemid] = rule_ids.first['itemid']
