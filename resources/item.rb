@@ -1,8 +1,6 @@
 actions :create
 default_action :create
 
-attribute :prototype, :kind_of => [TrueClass, FalseClass], :default => false
-
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :template, :kind_of => String, :required => true
 attribute :applications, :kind_of => Array, :required => true
@@ -40,3 +38,5 @@ attribute :privatekey, :kind_of => String
 attribute :inventory_link, :kind_of => Fixnum, :default => 0 #TODO: Make an enumeration for this
 attribute :valuemap, :kind_of => String
 
+# Setting discovery_rule will cause the item to be created as a prototype
+attribute :discovery_rule_key, :kind_of => String, :default => nil
