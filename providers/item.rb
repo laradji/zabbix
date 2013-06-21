@@ -51,10 +51,16 @@ action :create do
       params[:hostid] = template_id
       params[:applications] = application_ids
       unless new_resource.discovery_rule_key.nil?
-        params[:ruleid] = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+        discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+        params[:ruleid] = discovery_rule_id
       end
 
-      item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
+      if new_resource.discovery_rule_key.nil?
+        item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
+      else
+        item_ids = Zabbix::API.find_item_prototype_ids(connection, template_id, discovery_rule_id, new_resource.key)
+      end
+
       unless item_ids.empty?
         verb = "update"
         params[:itemid] = item_ids.first['itemid']
