@@ -174,7 +174,7 @@ class Chef
 
         def find_item_prototype_ids(connection, template_id, discovery_rule_id, key)
           request = {
-            :method => "item.get",
+            :method => "itemprototype.get",
             :params => {
               :discoveryids => discovery_rule_id,
               :templateids => template_id,
