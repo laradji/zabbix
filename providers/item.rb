@@ -58,7 +58,7 @@ action :create do
       if new_resource.discovery_rule_key.nil?
         item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
       else
-        item_ids = Zabbix::API.find_item_prototype_ids(connection, template_id, discovery_rule_id, new_resource.key)
+        item_ids = Zabbix::API.find_item_prototype_ids(connection, template_id, new_resource.key, discovery_rule_id)
       end
 
       unless item_ids.empty?

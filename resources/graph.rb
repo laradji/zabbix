@@ -25,4 +25,5 @@ attribute :ymax_item, :kind_of => Float, :default => 0.000
 
 attribute :graph_items, :kind_of => Array, :required => true
 
+attribute :prototype, :kind_of => [TrueClass, FalseClass], :default => false
 attribute :server_connection, :kind_of => Hash, :required => true
