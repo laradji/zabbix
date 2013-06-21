@@ -51,7 +51,7 @@ action :create do
       params[:hostid] = template_id
       params[:applications] = application_ids
       unless new_resource.discovery_rule_key.nil?
-        params[:ruleid] = find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+        params[:ruleid] = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
       end
 
       item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
