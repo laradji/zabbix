@@ -166,7 +166,7 @@ class Chef
 
         def find_trigger_prototype_ids(connection, description)
           request = {
-            :method => "trigger.get",
+            :method => "triggerprototype.get",
             :params => {
               :search => {
                 :description => description
