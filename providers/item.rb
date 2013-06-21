@@ -23,9 +23,9 @@ action :create do
         app_ids.map { |app_id| app_id['applicationid'] }
       end.flatten
 
-      noun = (new_resource.prototype) ? "itemprototype" : "item"
+      noun = (new_resource.discovery_rule_key.nil?) ? "item" : "itemprototype"
+      verb = "create"
 
-      method = "#{noun}.create"
       params = {}
       simple_value_keys = [
         :name, :delay, :description, :snmp_community, :snmp_oid, 
@@ -50,14 +50,17 @@ action :create do
       params[:key_] = new_resource.key
       params[:hostid] = template_id
       params[:applications] = application_ids
+      unless new_resource.discovery_rule_key.nil?
+        params[:ruleid] = find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+      end
 
       item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
       unless item_ids.empty?
-        method = "#{noun}.update"
+        verb = "update"
         params[:itemid] = item_ids.first['itemid']
       end
 
-      connection.query(:method => method,
+      connection.query(:method => "#{noun}.#{verb}",
                        :params => params)
     end
 
