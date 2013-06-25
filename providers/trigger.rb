@@ -15,33 +15,31 @@ action :create do
       # 
       # The description on the lwrp becomes comments in the api
 
-      get_trigger_request = {
-        :method => "trigger.get",
-        :params => {
-          :search => {
-            :description => new_resource.name
-          }
-        }
-      }
-      trigger_ids = connection.query(get_trigger_request)
-
       params = {
         # For whatever reason triggers have a description and comments
         # instead of a name and description...
         :description => new_resource.name,
         :comments => new_resource.description,
         :expression => new_resource.expression,
-        :priority => new_resource.priority.value,
+        :priority => new_resource.priority.value, 
         :status => new_resource.status.value,
       }
-      method = "trigger.create"
+
+      noun = (new_resource.prototype) ? 'triggerprototype' : 'trigger'
+      verb = 'create'
+
+      if new_resource.prototype
+        trigger_ids = Zabbix::API.find_trigger_prototype_ids(connection, new_resource.name)
+      else
+        trigger_ids = Zabbix::API.find_trigger_ids(connection, new_resource.name)
+      end
 
       unless trigger_ids.empty?
-        10.times { Chef::Log.info("Found #{trigger_ids.first['triggerid']}") }
-        # Send the update request to the server
+        verb = 'update'
         params[:triggerid] = trigger_ids.first['triggerid']
-        method = 'trigger.update'
       end
+
+      method = "#{noun}.#{verb}"
       connection.query(:method => method,
                        :params => params)
     end
