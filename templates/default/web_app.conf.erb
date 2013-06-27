@@ -1,7 +1,7 @@
 <% if @params[:https_redirect] %>
 <VirtualHost *:80>
   ServerName <%= @params[:server_name] %>
-  Redirect permanent / https://<%=@params[:server_name]/%>
+  Redirect permanent / https://<%=@params[:server_name]%>/
 </VirtualHost>
 
 <VirtualHost _default_:443>
