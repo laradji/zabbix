@@ -86,6 +86,7 @@ web_app node['zabbix']['web']['fqdn'] do
   server_name node['zabbix']['web']['fqdn']
   server_aliases node['zabbix']['web']['aliases']
   docroot node['zabbix']['web_dir']
+  use_https node['zabbix']['web']['https_redirect']
   only_if { node['zabbix']['web']['fqdn'] != nil }
   php_settings node['zabbix']['web']['php']['settings']
   notifies :restart, "service[apache2]", :immediately 

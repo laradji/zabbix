@@ -1,4 +1,13 @@
+<% if @params[:https_redirect] %>
 <VirtualHost *:80>
+  ServerName <%= @params[:server_name] %>
+  Redirect permanent / https://<%=@params[:server_name]%>
+</VirtualHost>
+
+<VirtualHost _default_:443>
+<% else %>
+<VirtualHost *:80>
+<% end %>
   ServerName <%= @params[:server_name] %>
   ServerAlias <%= @params[:server_aliases].join(' ')%>
   DocumentRoot <%= @params[:docroot] %>
