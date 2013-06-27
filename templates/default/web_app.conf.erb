@@ -1,7 +1,7 @@
 <% if @params[:https_redirect] %>
 <VirtualHost *:80>
   ServerName <%= @params[:server_name] %>
-  Redirect permanent / https://<%=@params[:server_name]%>
+  Redirect permanent / https://<%=@params[:server_name]/%>
 </VirtualHost>
 
 <VirtualHost _default_:443>
@@ -12,6 +12,12 @@
   ServerAlias <%= @params[:server_aliases].join(' ')%>
   DocumentRoot <%= @params[:docroot] %>
   RewriteEngine On
+
+<% if @params[:https_redirect] %>
+  SSLEngine On
+  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+<% end %>
   
   <Directory <%= @params[:docroot] %>>
     Options +FollowSymLinks
