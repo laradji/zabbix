@@ -2,7 +2,9 @@
 
 ############ GENERAL PARAMETERS #################
 
-LogFile=<%= node['zabbix']['log_dir'] %>/zabbix_server.log
+<% if node['zabbix']['server']['log_file'] -%>
+LogFile=<%= node['zabbix']['server']['log_file'] %>
+<% end -%>
 
 DBHost=<%= @dbhost %>
 DBName=<%= @dbname %>
