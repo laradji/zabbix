@@ -7,7 +7,6 @@
 # Apache 2.0
 #
 
-include_recipe "zabbix::common"
 include_recipe "zabbix::agent_common"
 
 # Install prerequisite RPM

@@ -44,7 +44,7 @@ Installing all 3 - Database MUST come before Server
 
 NOTE:
 
-If you are running on Redhat, Centos, Scientific of Amazon, you will need packages from EPEL.
+If you are running on Redhat, Centos, Scientific or Amazon, you will need packages from EPEL.
 Include "recipe[yum::epel]" in your runlist or satisfy these requirements some other way.
 
     "recipe[yum::epel]"
