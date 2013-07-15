@@ -66,6 +66,10 @@ template ::File.join(conf_dir, "zabbix.conf.php") do
   owner "root"
   group "root"
   mode "754"
+  variables ({
+    :database => node['zabbix']['database'],
+    :server => node['zabbix']['server']
+  })
   notifies :restart, "service[php-fpm]", :delayed
 end
 
