@@ -32,7 +32,6 @@ when "redhat","centos","scientific","amazon","oracle"
     php_packages = (node['platform_version'].to_i < 6)?
       %w{ php53-mysql php53-gd php53-bcmath php53-mbstring php53-xml } :
       %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }
-    packages.push('mysql-devel')
     packages.push(*php_packages)
   when 'postgres'
     php_packages = (node['platform_version'].to_i < 6)?
@@ -93,11 +92,14 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   group "root"
   mode "644"
   variables ({
-    :dbhost     => node['zabbix']['database']['dbhost'],
-    :dbname     => node['zabbix']['database']['dbname'],
-    :dbuser     => node['zabbix']['database']['dbuser'],
-    :dbpassword => node['zabbix']['database']['dbpassword'],
-    :dbport     => node['zabbix']['database']['dbport']
+    :dbhost             => node['zabbix']['database']['dbhost'],
+    :dbname             => node['zabbix']['database']['dbname'],
+    :dbuser             => node['zabbix']['database']['dbuser'],
+    :dbpassword         => node['zabbix']['database']['dbpassword'],
+    :dbport             => node['zabbix']['database']['dbport'],
+    :java_gateway       => node['zabbix']['server']['java_gateway'],
+    :java_gateway_port  => node['zabbix']['server']['java_gateway_port'],
+    :java_pollers       => node['zabbix']['server']['java_pollers']
   })
   notifies :restart, "service[zabbix_server]", :delayed
 end

@@ -17,3 +17,7 @@ AlertScriptsPath=<%= node['zabbix']['alert_dir'] %>
 
 HousekeepingFrequency=<%= node['zabbix']['server']['housekeeping_frequency']%>
 MaxHousekeeperDelete=<%= node['zabbix']['server']['max_housekeeper_delete'] %>
+
+JavaGateway=<%= @java_gateway %>
+JavaGatewayPort=<%= @java_gateway_port %>
+StartJavaPollers=<%= @java_pollers %>

@@ -24,6 +24,16 @@ action :create_or_update do
   end 
 end
 
+def format_macros(macros)
+  macros.map do |macro, value|
+    macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
+    {
+      :macro => macro_name,
+      :value => value
+    }
+  end
+end
+
 action :create do
 
   chef_gem "zabbixapi" do
@@ -57,7 +67,7 @@ action :create do
         }
       }
     }
-    
+
     templates = connection.query(get_templates_request).map { |template| template['templateid'] }
 
     request = {
@@ -66,7 +76,8 @@ action :create do
         :host => new_resource.hostname,
         :groups => groups,
         :templates => templates,
-        :interfaces => new_resource.interfaces.map(&:to_hash)
+        :interfaces => new_resource.interfaces.map(&:to_hash),
+        :macros => format_macros(new_resource.macros)
       }
     }
     connection.query(request) 
@@ -136,7 +147,7 @@ action :update do
       :params => {
         :hostid => host["hostid"],
         :groups => desired_groups,
-        :templates => desired_templates.flatten
+        :templates => desired_templates.flatten,
       }
     }
     connection.query(host_update_request)
