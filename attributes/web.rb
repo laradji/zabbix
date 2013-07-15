@@ -15,4 +15,5 @@ default['zabbix']['web']['php']['settings']    = {
   "date.timezone"       => "'UTC'",
 }
 
-
+# only respected by apache
+default['zabbix']['web']['https_redirect'] = false
