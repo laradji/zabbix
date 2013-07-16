@@ -1,20 +1,35 @@
+<% if @params[:https_redirect] %>
 <VirtualHost *:80>
   ServerName <%= @params[:server_name] %>
-  ServerAlias <%= @params[:server_aliases].join(' ')%>
-  DocumentRoot <%= @params[:docroot] %>
-  RewriteEngine On
-  
-  <Directory <%= @params[:docroot] %>>
-    Options +FollowSymLinks
-    AllowOverride None
-    Order allow,deny
-    Allow from all
-    <% @params[:php_settings].each do |name, value| %>
-    php_admin_value <%=name%> <%=value%>
-    <%end%>
-  </Directory>
-  
-  <Directory />
+  Redirect permanent / https://<%=@params[:server_name]%>/
+</VirtualHost>
+
+<VirtualHost _default_:443>
+  <% else %>
+  <VirtualHost *:80>
+    <% end %>
+    ServerName <%= @params[:server_name] %>
+    ServerAlias <%= @params[:server_aliases].join(' ')%>
+    DocumentRoot <%= @params[:docroot] %>
+    RewriteEngine On
+
+    <% if @params[:https_redirect] %>
+    SSLEngine On
+    SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+    SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+    <% end %>
+
+    <Directory <%= @params[:docroot] %>>
+      Options +FollowSymLinks
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+      <% @params[:php_settings].each do |name, value| %>
+      php_admin_value <%=name%> <%=value%>
+      <%end%>
+    </Directory>
+
+    <Directory />
     Options FollowSymLinks
     AllowOverride None
   </Directory>

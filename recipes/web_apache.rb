@@ -81,6 +81,12 @@ template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['versio
   })
 end
 
+if node['zabbix']['web']['https_redirect']
+  file ::File.join(node['apache']['dir'], "conf.d", "ssl.conf") do
+    action :delete
+  end
+end
+
 # install vhost for zabbix frontend
 web_app node['zabbix']['web']['fqdn'] do
   server_name node['zabbix']['web']['fqdn']
