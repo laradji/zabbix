@@ -27,8 +27,8 @@ DESC="Zabbix agent daemon"
 DIR=<%= node.zabbix.run_dir %>
 PID=<%= node['zabbix']['agent']['pid_file'] %>
 LOCK=<%= node.zabbix.lock_dir %>/$NAME
-$USER=<%= node['zabbix']['agent']['user'] %>
-$GROUP=<%= node['zabbix']['agent']['group'] %>
+USER=<%= node['zabbix']['agent']['user'] %>
+GROUP=<%= node['zabbix']['agent']['group'] %>
 
 # Exit if the package is not installed
 if [ ! -x "$DAEMON" ]; then
