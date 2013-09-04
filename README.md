@@ -53,8 +53,13 @@ Include "recipe[yum::epel]" in your runlist or satisfy these requirements some o
 
 Don't forget to set :
 
-    node.set['zabbix']['agent']['servers'] = ["Your_zabbix_server.com","secondaryserver.com"]
+    node.set['zabbix']['agent']['servers'] = ["Your_zabbix_server.com","secondaryserver.com"]    
     node.set['zabbix']['web']['fqdn'] or you will not have the zabbix web interface
+    
+Searching zabbix nodes:
+	
+	node.set['zabbix']['agent']['servers_search_query'] = "your_search_query_to_determinate_zabbix_servers"
+	node.set['zabbix']['server']['agents_search_query'] = "your_search_query_to_determinate_zabbix_agents"  
 
 Note :
 

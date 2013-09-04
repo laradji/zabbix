@@ -20,7 +20,7 @@ if node['zabbix']['server']['install'] == true
   if Chef::Config[:solo]
     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
   else
-    zabbix_clients = search(:node ,'recipes:zabbix')
+    zabbix_clients = search(:node, node['zabbix']['server']['agents_search_query'])
 
      zabbix_clients.each do |client|
 
@@ -46,7 +46,7 @@ end
 if Chef::Config[:solo]
   Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
 else
-  zabbix_servers = search(:node ,'recipes:zabbix\:\:server')
+  zabbix_servers = search(:node, node['zabbix']['agent']['servers_search_query'])
     zabbix_servers.each do |server|
 
       # Accept connection from zabbix_agent on server

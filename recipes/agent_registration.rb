@@ -6,7 +6,7 @@
 #
 
 unless Chef::Config[:solo]
-  zabbix_server = search(:node, "recipes:zabbix\\:\\:server").first
+  zabbix_server = search(:node, node['zabbix']['agent']['servers_search_query']).first
 else 
   if node['zabbix']['web']['fqdn']
     zabbix_server = node

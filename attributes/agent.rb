@@ -37,3 +37,6 @@ default['zabbix']['agent']['log_file']           = nil # default (Syslog / windo
 #default['zabbix']['agent']['log_file']           = ::File.join(node['zabbix']['log_dir'], "zabbix_agentd.log"
 default['zabbix']['agent']['start_agents']       = nil # default (3)
 default['zabbix']['agent']['debug_level']        = nil # default (3)
+
+# Search query for finding zabbix servers:
+default['zabbix']['agent']['servers_search_query'] = "recipes:zabbix\\:\\:server AND chef_environment:#{node.chef_environment}" 
