@@ -18,7 +18,7 @@ when "windows"
   root_dirs.each do |dir|
     directory dir do
       owner "Administrator"
-      rights :read, "Everyone", option  => :applies_to_children
+      rights :read, "Everyone", :applies_to_children => true
       recursive true
     end
   end
