@@ -79,6 +79,10 @@ example :
 	  node.set['zabbix']['agent']['source_url'] = nil
 	  node.set['zabbix']['agent']['install_method'] = "prebuild"
 
+Additionally, you can set the listener port explicitly with the following (it otherwise will set to the zabbix default value):
+
+	node.set['zabbix']['agent']['listener_port'] = "11011"
+
 ## Database
 
     node.set['zabbix']['database']['install_method'] = 'mysql'
