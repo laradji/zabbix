@@ -22,3 +22,6 @@ ServerActive=<%= node.zabbix.agent.servers_active.join(',') %>
 <% if node['zabbix']['agent']['start_agents'] -%>
 StartAgents=<%= node['zabbix']['agent']['start_agents'] %>
 <% end -%>
+<% if node['zabbix']['agent']['listen_port'] -%>
+ListenPort=<%=node['zabbix']['agent']['listen_port'] -%>
+<% end -%>
