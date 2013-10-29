@@ -22,3 +22,5 @@ attribute :inventory, :kind_of => Hash, :default => Hash.new
 attribute :interfaces, :kind_of => Array, :default => Array.new
 
 attribute :server_connection, :kind_of => Hash, :default => Hash.new
+attribute :create_missing_groups, :kind_of => [ TrueClass, FalseClass ], :default => false
+attribute :parameters, :kind_of => Hash, :default => Hash.new
