@@ -28,6 +28,7 @@ action :create do
     converge_by("Creating Host Group '#{new_resource.group}'") do
       create_group(new_resource.group)
     end
+    new_resource.updated_by_last_action(true)
   end
 end
 

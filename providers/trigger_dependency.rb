@@ -53,6 +53,7 @@ action :create do
           }
         }
         connection.query(add_dependency_request)
+        new_resource.updated_by_last_action(true)
       else
         Chef::Log.info "Trigger '#{new_resource.trigger_name}' already depends on a trigger named '#{new_resource.dependency_name}'"
       end
