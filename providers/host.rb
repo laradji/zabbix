@@ -1,7 +1,7 @@
 action :create_or_update do
   chef_gem "zabbixapi" do
     action :install
-    version "~> 0.5.9"
+    version "~> 0.6.3"
   end
   require 'zabbixapi'
 
@@ -39,7 +39,7 @@ action :create do
 
   chef_gem "zabbixapi" do
     action :install
-    version "~> 0.5.9"
+    version "~> 0.6.3"
   end
   require 'zabbixapi'
 
@@ -130,7 +130,7 @@ end
 action :update do
   chef_gem "zabbixapi" do
     action :install
-    version "~> 0.5.9"
+    version "~> 0.6.3"
   end
 
   require 'zabbixapi'
