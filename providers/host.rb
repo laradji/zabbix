@@ -17,6 +17,7 @@ action :create_or_update do
     hosts = connection.query(get_host_request)
 
     if hosts.size == 0
+      Chef::Log.info "Proceeding to register this node to the Zabbix server"
       run_action :create
     else
       Chef::Log.debug "Going to update this host"
@@ -58,7 +59,7 @@ action :create do
 
     groups = []
     params_incoming[:groupNames].each do |current_group|
-        Chef::Log.debug "Checking for existence of group #{current_group}"
+        Chef::Log.info "Checking for existence of group #{current_group}"
         get_groups_request = {
           :method => "hostgroup.get",
           :params => {
@@ -77,6 +78,9 @@ action :create do
                 }
             }
             result = connection.query(make_groups_request)
+            # And now fetch the newly made group to be sure it worked
+            # and for later use
+            groups = connection.query(get_groups_request)
             if result == nil
                 Chef::Application.fatal! "Error creating groups, see Chef errors"
             end
@@ -123,6 +127,7 @@ action :create do
         :macros => format_macros(new_resource.macros)
       }
     }
+    Chef::Log.info "Creating new Zabbix entry for this host"
     connection.query(request) 
   end
 end
