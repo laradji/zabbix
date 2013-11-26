@@ -132,7 +132,7 @@ def create_new_database
     password new_resource.password
     database_name new_resource.dbname
     host new_resource.allowed_user_hosts
-    privileges [:select,:update,:insert,:create,:drop,:delete]
+    privileges [:select,:update,:insert,:create,:drop,:delete,:alter,:index]
     action :nothing
   end
 
