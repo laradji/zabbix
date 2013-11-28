@@ -1,6 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# This Vagrantfile needs the vagrant-omnbius plugin installed
+# To install this, run "vagrant plugin install vagrant-omnibus"
+
 Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |vbox|
     vbox.customize ['modifyvm', :id,
