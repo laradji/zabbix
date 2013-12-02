@@ -20,3 +20,5 @@ default['zabbix']['server']['java_gateway_port'] = 10052
 default['zabbix']['server']['java_pollers'] = 0
 
 default['zabbix']['server']['externalscriptspath'] = "/usr/local/scripts/zabbix/externalscripts/"
+
+default['zabbix']['server']['timeout'] = "3"
