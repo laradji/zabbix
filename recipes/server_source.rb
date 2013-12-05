@@ -22,6 +22,8 @@ when "ubuntu","debian"
   end
   init_template = 'zabbix_server.init.erb'
 when "redhat","centos","scientific","amazon","oracle"
+  include_recipe "yum::epel"
+  
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
   packages = %w{ fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }
