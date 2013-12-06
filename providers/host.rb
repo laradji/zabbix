@@ -1,10 +1,4 @@
 action :create_or_update do
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.6.3"
-  end
-  require 'zabbixapi'
-
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     get_host_request = {
       :method => "host.get",
@@ -26,24 +20,7 @@ action :create_or_update do
   end 
 end
 
-def format_macros(macros)
-  macros.map do |macro, value|
-    macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
-    {
-      :macro => macro_name,
-      :value => value
-    }
-  end
-end
-
 action :create do
-
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.6.3"
-  end
-  require 'zabbixapi'
-
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     all_are_host_interfaces = new_resource.interfaces.all? { |interface| interface.kind_of?(Chef::Zabbix::API::HostInterface) }
@@ -54,68 +31,68 @@ action :create do
     params_incoming = new_resource.parameters
 
     if params_incoming[:groupNames].length == 0
-        Chef::Application.fatal! "Please supply a group for this host!"
+      Chef::Application.fatal! "Please supply a group for this host!"
     end
 
     groups = []
     params_incoming[:groupNames].each do |current_group|
-        Chef::Log.info "Checking for existence of group #{current_group}"
-        get_groups_request = {
-          :method => "hostgroup.get",
-          :params => {
-            :filter => {
-              :name => current_group
-            }
+      Chef::Log.info "Checking for existence of group #{current_group}"
+      get_groups_request = {
+        :method => "hostgroup.get",
+        :params => {
+          :filter => {
+            :name => current_group
           }
         }
+      }
+      groups = connection.query(get_groups_request)
+      if groups.length == 0 and new_resource.create_missing_groups
+        Chef::Log.info "Creating group #{current_group}"
+        make_groups_request = {
+          :method => "hostgroup.create",
+          :params => {
+            :name => current_group
+          }
+        }
+        result = connection.query(make_groups_request)
+        # And now fetch the newly made group to be sure it worked
+        # and for later use
         groups = connection.query(get_groups_request)
-        if groups.length == 0 and new_resource.create_missing_groups
-            Chef::Log.info "Creating group #{current_group}"
-            make_groups_request = {
-                :method => "hostgroup.create",
-                :params => {
-                    :name => current_group
-                }
-            }
-            result = connection.query(make_groups_request)
-            # And now fetch the newly made group to be sure it worked
-            # and for later use
-            groups = connection.query(get_groups_request)
-            if result == nil
-                Chef::Application.fatal! "Error creating groups, see Chef errors"
-            end
-        elsif groups.length == 1
-            Chef::Log.info "Group #{current_group} already exists"
-        else
-            Chef::Application.fatal! "Could not find group, #{current_group}, for this host and \"create_missing_groups\" is False (or unset)"
+        if result == nil
+          Chef::Application.fatal! "Error creating groups, see Chef errors"
         end
+      elsif groups.length == 1
+        Chef::Log.info "Group #{current_group} already exists"
+      else
+        Chef::Application.fatal! "Could not find group, #{current_group}, for this host and \"create_missing_groups\" is False (or unset)"
+      end
     end
 
 
     if params_incoming[:templates].length == 0
-        Chef::Log.warn "Empty Zabbix template list for this host - not searching to see if templates exist"
-        templates = []
+      Chef::Log.warn "Empty Zabbix template list for this host - not searching to see if templates exist"
+      templates = {}
     else
-        get_templates_request = {
-          :method => "template.get",
-          :params => {
-            :output => "extend",
-            :filter => {
-              :name => params_incoming[:templates]
-            }
+      get_templates_request = {
+        :method => "template.get",
+        :params => {
+          :output => "extend",
+          :filter => {
+            :name => params_incoming[:templates]
           }
         }
+      }
 
-        templates = Hash[connection.query(get_templates_request).map { |template| [ template['templateid'], template['name'] ] }]
-        if templates.length != params_incoming[:templates].length
-            missing_elements = params_incoming[:templates] - templates.values
-            Chef::Application.fatal! "Cannot find all templates associated with host, missing : #{missing_elements}"
-        end
+      templates = Hash[connection.query(get_templates_request).map { |template| [ template['templateid'], template['name'] ] }]
+      if templates.length != params_incoming[:templates].length
+        missing_elements = params_incoming[:templates] - templates.values
+        Chef::Application.fatal! "Cannot find all templates associated with host, missing : #{missing_elements}"
+      end
     end
 
     templates_to_send = []
     templates.keys.each do |key|
-        templates_to_send.concat([ {"templateid" => key } ])
+      templates_to_send.concat([ {"templateid" => key } ])
     end
     request = {
       :method => "host.create",
@@ -133,13 +110,6 @@ action :create do
 end
 
 action :update do
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.6.3"
-  end
-
-  require 'zabbixapi'
-
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     get_host_request = {
@@ -217,6 +187,11 @@ action :update do
   new_resource.updated_by_last_action(true)
 end
 
+def load_current_resource
+  run_context.include_recipe "zabbix::_providers_common"
+  require 'zabbixapi'
+end
+
 def determine_new_host_interfaces(existing_interfaces, desired_interfaces)
   desired_interfaces.reject do |desired_interface|
     existing_interfaces.any? do |existing_interface|
@@ -226,3 +201,12 @@ def determine_new_host_interfaces(existing_interfaces, desired_interfaces)
   end
 end
 
+def format_macros(macros)
+  macros.map do |macro, value|
+    macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
+    {
+      :macro => macro_name,
+      :value => value
+    }
+  end
+end
