@@ -70,11 +70,10 @@ zabbix_host node['zabbix']['agent']['hostname'] do
     :templates => node['zabbix']['agent']['templates'],
     :interfaces => interface_data
   })
-  action :create_or_update
+  action :nothing
 end
 
-#ruby_block "shim" do
-#  block do
-#  end
-#  notifies :create_or_update, "zabbix_host[#{node['zabbix']['agent']['hostname']}]", :delayed
-#end
+log "Delay agent registration to wait for server to be started" do
+  level :debug
+  notifies :create_or_update, "zabbix_host[#{node['zabbix']['agent']['hostname']}]", :delayed
+end
