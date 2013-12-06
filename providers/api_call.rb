@@ -1,22 +1,18 @@
-def validate_parameters(parameters)
-  raise InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
+action :call do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    connection.query(
+      :method => new_resource.method, 
+      :params => new_resource.parameters
+    )
+  end
+  new_resource.updated_by_last_action(true)
 end
 
-action :call do
-
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.5.9"
-  end
-
+def load_current_resource
+  run_context.include_recipe "zabbix::_providers_common"
   require 'zabbixapi'
+end
 
-  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-
-    connection.query( :method => new_resource.method, 
-                      :params => new_resource.parameters
-                    )
-  end
-
-  new_resource.updated_by_last_action(true)
+def validate_parameters(parameters)
+  raise InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
 end

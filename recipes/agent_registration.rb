@@ -6,7 +6,7 @@
 #
 
 unless Chef::Config[:solo]
-  zabbix_server = search(:node, "recipes:zabbix\\:\\:server").first
+  zabbix_server = search(:node, "recipe:zabbix\\:\\:server").first
 else 
   if node['zabbix']['web']['fqdn']
     zabbix_server = node
@@ -23,34 +23,57 @@ connection_info = {
   :password => zabbix_server['zabbix']['web']['password']
 }
 
+interface_definitions = {
+  :zabbix_agent => {
+     :type => 1,
+     :main => 1,
+     :useip => 1,
+     :ip => node['ipaddress'],
+     :dns => node['fqdn'],
+     :port => "10050"
+  },
+  :jmx => {
+     :type => 4,
+     :main => 1,
+     :useip => 1,
+     :ip => node['ipaddress'],
+     :dns => node['fqdn'],
+     :port => "10052"
+  },
+  :snmp => {
+     :type => 2,
+     :main => 1,
+     :useip => 1,
+     :ip => node['ipaddress'],
+     :dns => node['fqdn'],
+     :port => "161"
+  }
+}
+
+interface_list = node['zabbix']['agent']['interfaces']
+
+interface_data = []
+interface_list.each do |interface|
+  if interface_definitions.has_key?(interface.to_sym)
+    interface_data.push(interface_definitions[interface.to_sym])
+  else
+    Chef::Log.warn "WARNING: Interface #{interface} is not defined in agent_registration.rb"
+  end
+end
+
 zabbix_host node['zabbix']['agent']['hostname'] do
   create_missing_groups true
-  server_connection     connection_info
-  parameters            ({
-                        :host => node['hostname'],
-                        :groupNames => node['zabbix']['agent']['groups'],
-                        :interfaces => [{
-                                       :type => 1,
-                                       :main => 1,
-                                       :useip => 1,
-                                       :ip => node['ipaddress'],
-                                       :dns => node['fqdn'],
-                                       :port => "10050"
-                                       },
-                                       {
-                                       :type => 2,
-                                       :main => 1,
-                                       :useip => 1,
-                                       :ip => node['ipaddress'],
-                                       :dns => node['fqdn'],
-                                       :port => "161"
-                                       }]
-                        })
+  server_connection connection_info
+  parameters ({
+    :host => node['hostname'],
+    :groupNames => node['zabbix']['agent']['groups'],
+    :templates => node['zabbix']['agent']['templates'],
+    :interfaces => interface_data
+  })
   action :nothing
 end
 
-ruby_block "shim" do
-  block do
-  end
+log "Delay agent registration to wait for server to be started" do
+  level :debug
   notifies :create_or_update, "zabbix_host[#{node['zabbix']['agent']['hostname']}]", :delayed
 end

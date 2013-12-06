@@ -2,11 +2,19 @@ def whyrun_supported?
   true
 end
 
-def load_current_resource
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.5.8"
+action :create do
+  if @current_resource.exists
+    Chef::Log.info("Create: Host Group '#{new_resource.group}' already exists")
+  else
+    converge_by("Creating Host Group '#{new_resource.group}'") do
+      create_group(new_resource.group)
+    end
+    new_resource.updated_by_last_action(true)
   end
+end
+
+def load_current_resource
+  run_context.include_recipe "zabbix::_providers_common"
   require 'zabbixapi'
 
   @current_resource = Chef::Resource::ZabbixHostGroup.new(@new_resource.group)
@@ -19,16 +27,6 @@ def group_exists?(group)
     connection.hostgroups.get_id(:name => group)
   end
   !(id.nil?)
-end
-
-action :create do
-  if @current_resource.exists
-    Chef::Log.info("Create: Host Group '#{new_resource.group}' already exists")
-  else
-    converge_by("Creating Host Group '#{new_resource.group}'") do
-      create_group(new_resource.group)
-    end
-  end
 end
 
 def create_group(group)

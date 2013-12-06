@@ -1,12 +1,4 @@
 action :create do
-
-  chef_gem "zabbixapi" do
-    action :install
-    version "~> 0.5.9"
-  end
-
-  require 'zabbixapi'
-
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     new_resource.graph_items.each do |graph_item|
@@ -68,4 +60,9 @@ action :create do
     })
   end
   new_resource.updated_by_last_action(true)
+end
+
+def load_current_resource
+  run_context.include_recipe "zabbix::_providers_common"
+  require 'zabbixapi'
 end

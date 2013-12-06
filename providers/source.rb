@@ -1,15 +1,3 @@
-def zabbix_source_identifier(branch, version)
-  "#{branch.gsub("%20", "-")}-#{version}"
-end
-
-def zabbix_tar_path(code_dir, branch, version)
-  ::File.join(code_dir, "zabbix-#{zabbix_source_identifier(branch, version)}.tar.gz")
-end
-
-def extract_dir(code_dir, target_dir)
-  ::File.join(code_dir, target_dir)
-end
-
 action :extract_only do
   tar_path = zabbix_tar_path(new_resource.code_dir, new_resource.branch, new_resource.version)
 
@@ -80,4 +68,21 @@ action :install_agent do
     end
     new_resource.updated_by_last_action(true)
   end
+end
+
+def load_current_resource
+  run_context.include_recipe "zabbix::_providers_common"
+  require 'zabbixapi'
+end
+
+def zabbix_source_identifier(branch, version)
+  "#{branch.gsub("%20", "-")}-#{version}"
+end
+
+def zabbix_tar_path(code_dir, branch, version)
+  ::File.join(code_dir, "zabbix-#{zabbix_source_identifier(branch, version)}.tar.gz")
+end
+
+def extract_dir(code_dir, target_dir)
+  ::File.join(code_dir, target_dir)
 end
