@@ -35,6 +35,7 @@ case "$1" in
         ;;
   status)
         status_of_proc $DAEMON "Zabbix server"
+        exit $?
         ;;
   *)
         N=/etc/init.d/$NAME
