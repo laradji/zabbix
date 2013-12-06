@@ -17,7 +17,8 @@ action :create_or_update do
       Chef::Log.debug "Going to update this host"
       run_action :update
     end
-  end 
+  end
+  new_resource.updated_by_last_action(true)
 end
 
 action :create do
@@ -107,6 +108,7 @@ action :create do
     Chef::Log.info "Creating new Zabbix entry for this host"
     connection.query(request) 
   end
+  new_resource.updated_by_last_action(true)
 end
 
 action :update do
