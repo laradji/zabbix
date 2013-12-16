@@ -2,8 +2,7 @@ include_recipe "zabbix::common"
 
 # Install nginx and disable default site
 node.override['nginx']['default_site_enabled'] = false
-node.override['php-fpm']['pool']['www']['listen'] = node['zabbix']['web']['php']['fastcgi_listen']
-include_recipe "php-fpm"
+#node.override['php-fpm']['pool']['www']['listen'] = node['zabbix']['web']['php']['fastcgi_listen']
 include_recipe "nginx"
 
 # Install php-fpm to execute PHP code from nginx
@@ -87,6 +86,10 @@ template "/etc/nginx/sites-available/zabbix" do
     :fastcgi_listen => node['zabbix']['web']['php']['fastcgi_listen']
   })
   notifies :reload, "service[nginx]"
+end
+
+php_fpm_pool "zabbix" do
+  listen node['zabbix']['web']['php']['fastcgi_listen']
 end
 
 nginx_site "zabbix"

@@ -1,15 +1,4 @@
 action :create do
-
-  begin
-    require 'zabbixapi'
-  rescue LoadError
-    chef_gem "zabbixapi" do
-      action :install
-      version "~> 0.5.9"
-    end
-    require 'zabbixapi'
-  end
-
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
     if template_ids.empty?
@@ -52,4 +41,9 @@ action :create do
                      :params => params)
   end
   new_resource.updated_by_last_action(true)
+end
+
+def load_current_resource
+  run_context.include_recipe "zabbix::_providers_common"
+  require 'zabbixapi'
 end
