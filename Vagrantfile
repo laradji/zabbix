@@ -10,8 +10,8 @@ Vagrant.configure("2") do |config|
                     '--memory', 1024]
   end
 
-#  config.vm.box = "Berkshelf-CentOS-6.3-x86_64-minimal"
-#  config.vm.box_url = "https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box"
+  config.vm.box = "Berkshelf-CentOS-6.3-x86_64-minimal"
+  config.vm.box_url = "https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box"
 
   config.vm.hostname = "zabbix-berkshelf"
   server_ip = "192.168.50.10"
