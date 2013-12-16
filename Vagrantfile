@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
           'servers_active' => [server_ip]
         },
         'web' => {
-          'install_method' => 'nginx',
+          'install_method' => 'apache',
           'fqdn' => server_ip
         },
         'server' => {
