@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
   server_ip = "192.168.50.10"
   config.vm.network :private_network, ip: server_ip
 
-  config.omnibus.chef_version = :latest
+  config.omnibus.chef_version = "11.6.2"
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       :mysql => {
