@@ -6,7 +6,8 @@
 
 BASE_IP = "192.168.50"
 server_ip = "#{BASE_IP}.10"
-client_ip = "#{BASE_IP}.11"
+agent_ip = "#{BASE_IP}.11"
+src_agent_ip = "#{BASE_IP}.12"
 
 Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |vbox|
@@ -65,16 +66,38 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "zabbix::agent_registration"
     end
   end
-  config.vm.define "zabbix-agent", :primary => true do |machine|
-    
+  config.vm.define "zabbix-agent" do |machine|
+   
     machine.vm.hostname = "zabbix-agent"
-    machine.vm.network :private_network, ip: client_ip
+    machine.vm.network :private_network, ip: agent_ip
     
     machine.vm.provision :chef_solo do |chef|
       chef.json = {
         'zabbix' => {
           'agent' => {
             'install_method' => 'package',
+            'servers' => [server_ip],
+            'servers_active' => [server_ip]
+          },
+          'web' => {
+            'fqdn' => server_ip
+          }
+        }
+      }
+      
+      chef.add_recipe "zabbix"
+      chef.add_recipe "zabbix::agent_registration"
+    end
+  end
+  config.vm.define "zabbix-src-agent" do |machine|
+    
+    machine.vm.hostname = "zabbix-src-agent"
+    machine.vm.network :private_network, ip: src_agent_ip
+    
+    machine.vm.provision :chef_solo do |chef|
+      chef.json = {
+        'zabbix' => {
+          'agent' => {
             'servers' => [server_ip],
             'servers_active' => [server_ip]
           },
