@@ -29,4 +29,4 @@ default['zabbix']['gid']    = nil
 default['zabbix']['home']   = '/opt/zabbix'
 default['zabbix']['shell']  = "/bin/bash"
 
-default['zabbix']['major_version'] = '2.0'
+default['zabbix']['major_version'] = '2.2'
