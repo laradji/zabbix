@@ -64,17 +64,19 @@ def create_new_database
     :password => new_resource.root_password
   }
 
-  zabbix_source "extract_zabbix_database" do
-    branch              new_resource.branch
-    version             new_resource.branch
-    source_url          new_resource.source_url
-    code_dir            new_resource.source_dir
-    target_dir          "zabbix-#{new_resource.server_version}"  
-    install_dir         new_resource.install_dir
-    branch              new_resource.branch
-    version             new_resource.version
+  unless new_resource.package_install
+    zabbix_source "extract_zabbix_database" do
+      branch              new_resource.branch
+      version             new_resource.branch
+      source_url          new_resource.source_url
+      code_dir            new_resource.source_dir
+      target_dir          "zabbix-#{new_resource.server_version}"  
+      install_dir         new_resource.install_dir
+      branch              new_resource.branch
+      version             new_resource.version
 
-    action :extract_only
+      action :extract_only
+    end
   end
 
   ruby_block "set_updated" do
@@ -113,22 +115,30 @@ def create_new_database
   dbname = new_resource.dbname
   sql_command = "#{executable} #{username} #{host} #{dbname}"
 
-  zabbix_path = ::File.join(new_resource.source_dir, "zabbix-#{new_resource.server_version}")
-  sql_scripts = if new_resource.server_version.to_f < 2.0
-                  Chef::Log.info "Version 1.x branch of zabbix in use"
-                  [
-                    ["zabbix_populate_schema", ::File.join(zabbix_path, "create", "schema", "postgresql.sql")],
-                    ["zabbix_populate_data", ::File.join(zabbix_path, "create", "data", "data.sql")],
-                    ["zabbix_populate_image", ::File.join(zabbix_path, "create", "data", "images_pgsql.sql")],
-                  ]
-                else
+  if new_resource.package_install
+    sql_scripts =  [
+                    ["zabbix_populate_schema", ::File.join(new_resource.sql_path, "create", "schema.sql")],
+                    ["zabbix_populate_data",   ::File.join(new_resource.sql_path, "create", "data.sql")],
+                    ["zabbix_populate_image",  ::File.join(new_resource.sql_path, "create", "images.sql")],
+                   ]
+  else
+    zabbix_path = ::File.join(new_resource.source_dir, "zabbix-#{new_resource.server_version}")
+    sql_scripts = if new_resource.server_version.to_f < 2.0
+                    Chef::Log.info "Version 1.x branch of zabbix in use"
+                    [
+                     ["zabbix_populate_schema", ::File.join(zabbix_path, "create", "schema", "postgresql.sql")],
+                     ["zabbix_populate_data", ::File.join(zabbix_path, "create", "data", "data.sql")],
+                     ["zabbix_populate_image", ::File.join(zabbix_path, "create", "data", "images_pgsql.sql")],
+                    ]
+                  else
                   Chef::Log.info "Version 2.x branch of zabbix in use"
-                  [
-                    ["zabbix_populate_schema", ::File.join(zabbix_path, "database", "postgresql", "schema.sql")],
-                    ["zabbix_populate_data", ::File.join(zabbix_path, "database", "postgresql", "data.sql")],
-                    ["zabbix_populate_image", ::File.join(zabbix_path, "database", "postgresql", "images.sql")],
-                  ]
-                end
+                    [
+                     ["zabbix_populate_schema", ::File.join(zabbix_path, "database", "postgresql", "schema.sql")],
+                     ["zabbix_populate_data", ::File.join(zabbix_path, "database", "postgresql", "data.sql")],
+                     ["zabbix_populate_image", ::File.join(zabbix_path, "database", "postgresql", "images.sql")],
+                    ]
+                  end
+  end
 
   sql_scripts.each do |script_spec|
     script_name = script_spec.first
