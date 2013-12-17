@@ -74,6 +74,7 @@ Vagrant.configure("2") do |config|
       chef.json = {
         'zabbix' => {
           'agent' => {
+            'install_method' => 'package',
             'servers' => [server_ip],
             'servers_active' => [server_ip]
           },

@@ -11,7 +11,6 @@ default['zabbix']['agent']['servers']           = []
 default['zabbix']['agent']['servers_active']    = []
 default['zabbix']['agent']['hostname']          = node['fqdn']
 default['zabbix']['agent']['configure_options'] = [ "--with-libcurl" ]
-default['zabbix']['agent']['include_dir']       = ::File.join( node['zabbix']['etc_dir'] , "agent_include")
 default['zabbix']['agent']['enable_remote_commands'] = true
 default['zabbix']['agent']['listen_port']       = "10050"
 
@@ -40,3 +39,10 @@ default['zabbix']['agent']['start_agents']       = nil # default (3)
 default['zabbix']['agent']['debug_level']        = nil # default (3)
 default['zabbix']['agent']['templates']          = []
 default['zabbix']['agent']['interfaces']         = [ "zabbix_agent" ]
+
+case node['zabbix']['agent']['install_method']
+when "package"
+  default['zabbix']['agent']['include_dir']       = "/etc/zabbix/zabbix_agentd.d"
+else
+  default['zabbix']['agent']['include_dir']       = ::File.join( node['zabbix']['etc_dir'] , "agent_include")
+end
