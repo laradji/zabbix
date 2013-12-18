@@ -39,7 +39,8 @@ Vagrant.configure("2") do |config|
         'zabbix' => {
           'agent' => {
             'servers' => [server_ip],
-            'servers_active' => [server_ip]
+            'servers_active' => [server_ip],
+            'install_method' => 'package'
           },
           'web' => {
             'install_method' => 'apache',
@@ -47,23 +48,23 @@ Vagrant.configure("2") do |config|
           },
           'server' => {
             'install' => true,
-            'ipaddress' => server_ip
+            'ipaddress' => server_ip,
+            'install_method' => 'package',
+            'version' => '2.2.1'
           },
           'database' => {
-            #'dbport' => '5432',
-            #'install_method' => 'postgres',
+            'dbport' => '5432',
+            'install_method' => 'postgres',
             'dbpassword' => 'password123'
           }
         }
       }
       
-      chef.add_recipe "database::mysql"
-      chef.add_recipe "mysql::server"
-      chef.add_recipe "zabbix"
       chef.add_recipe "zabbix::database"
+      chef.add_recipe "zabbix"
       chef.add_recipe "zabbix::server"
-      chef.add_recipe "zabbix::web"
-      chef.add_recipe "zabbix::agent_registration"
+#      chef.add_recipe "zabbix::web"
+#      chef.add_recipe "zabbix::agent_registration"
     end
   end
   config.vm.define "zabbix-agent" do |machine|
