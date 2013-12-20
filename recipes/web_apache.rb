@@ -9,9 +9,6 @@
 
 include_recipe "zabbix::common"
 
-directory node['zabbix']['install_dir'] do
-  mode "0755"
-end
 
 node.normal['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
 unless node['zabbix']['web']['user']
@@ -20,57 +17,98 @@ end
 
 user node['zabbix']['web']['user']
 
-case node['platform_family']
-when "debian"
-  %w{ php5-mysql php5-gd }.each do |pck|
-    package pck do
+if node['zabbix']['web']['install_package']
+  include_recipe "zabbix::_repository"
+  case node['platform_family']
+  when "debian"
+    package "zabbix-frontend-php" do
       action :install
-      notifies :restart, "service[apache2]"
+    end
+    case node['zabbix']['database']['install_method']
+    when "mysql"
+      package "php5-mysql" do
+        action :install
+      end
+    when "postgres"
+      package "php5-pgsql" do
+        action :install
+      end
+    end
+  when "rhel"
+    
+    engine = case node['zabbix']['database']['install_method']
+             when "mysql"
+               "-mysql"
+             when "postgres"
+               "-pgsql"
+             else
+               ""
+             end
+
+    package "zabbix-web#{engine}" do
+      action :install
     end
   end
-when "rhel"
-  if node['platform_version'].to_f < 6.0
-    %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
+  conf_dir = "/etc/zabbix/web"
+  
+else
+
+  directory node['zabbix']['install_dir'] do
+    mode "0755"
+  end
+  case node['platform_family']
+  when "debian"
+    %w{ php5-mysql php5-gd }.each do |pck|
       package pck do
         action :install
         notifies :restart, "service[apache2]"
       end
     end
-  else
-    %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
-      package pck do
-        action :install
-        notifies :restart, "service[apache2]"
+  when "rhel"
+    if node['platform_version'].to_f < 6.0
+      %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
+        package pck do
+          action :install
+          notifies :restart, "service[apache2]"
+        end
+      end
+    else
+      %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
+        package pck do
+          action :install
+          notifies :restart, "service[apache2]"
+        end
       end
     end
   end
-end
 
-zabbix_source "extract_zabbix_web" do
-  branch              node['zabbix']['server']['branch']
-  version             node['zabbix']['server']['version']
-  source_url          node['zabbix']['server']['source_url']
-  code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
-  install_dir         node['zabbix']['install_dir']
+  zabbix_source "extract_zabbix_web" do
+    branch              node['zabbix']['server']['branch']
+    version             node['zabbix']['server']['version']
+    source_url          node['zabbix']['server']['source_url']
+    code_dir            node['zabbix']['src_dir']
+    target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
+    install_dir         node['zabbix']['install_dir']
+    
+    action :extract_only
 
-  action :extract_only
-
-end
-
-link node['zabbix']['web_dir'] do
-  to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
-end
-
-directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf" do
-  owner node['apache']['user']
-  group node['apache']['group']
-  mode "0755"
-  action :create
+  end
+  
+  conf_dir = "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
+  link node['zabbix']['web_dir'] do
+    to conf_dir 
+  end
+  
+  directory conf_dir do
+    owner node['apache']['user']
+    group node['apache']['group']
+    mode "0755"
+    action :create
+  end
 end
 
 # install zabbix PHP config file
-template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf/zabbix.conf.php" do
+template "#{conf_dir}/zabbix.conf.php" do
   source "zabbix_web.conf.php.erb"
   owner "root"
   group "root"
