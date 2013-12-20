@@ -43,8 +43,10 @@ Vagrant.configure("2") do |config|
             'install_method' => 'package'
           },
           'web' => {
-            'install_method' => 'apache',
-            'fqdn' => server_ip
+            'install_method' => 'nginx',
+	    'install_package' => true,
+            'fqdn' => server_ip,
+	    'login' => 'Admin'
           },
           'server' => {
             'install' => true,
@@ -59,12 +61,12 @@ Vagrant.configure("2") do |config|
           }
         }
       }
-      
+
       chef.add_recipe "zabbix::database"
       chef.add_recipe "zabbix"
       chef.add_recipe "zabbix::server"
-#      chef.add_recipe "zabbix::web"
-#      chef.add_recipe "zabbix::agent_registration"
+      chef.add_recipe "zabbix::web"
+      chef.add_recipe "zabbix::agent_registration"
     end
   end
   config.vm.define "zabbix-agent" do |machine|
@@ -81,7 +83,8 @@ Vagrant.configure("2") do |config|
             'servers_active' => [server_ip]
           },
           'web' => {
-            'fqdn' => server_ip
+            'fqdn' => server_ip,
+	    'login' => 'Admin'
           }
         }
       }
@@ -103,7 +106,8 @@ Vagrant.configure("2") do |config|
             'servers_active' => [server_ip]
           },
           'web' => {
-            'fqdn' => server_ip
+            'fqdn' => server_ip,
+            'login' => 'Admin'
           }
         }
       }
