@@ -18,9 +18,11 @@ attribute :root_password, :kind_of => String, :required => true
 attribute :allowed_user_hosts, :kind_of => String, :default => ''
 
 attribute :server_version, :kind_of => String, :required => true
-attribute :source_url, :kind_of => String, :required => true
-attribute :source_dir, :kind_of => String, :required => true
-attribute :install_dir, :kind_of => String, :required => true
+attribute :source_url, :kind_of => String, :required => false
+attribute :source_dir, :kind_of => String, :required => false
+attribute :install_dir, :kind_of => String, :required => false
 attribute :branch, :kind_of => String, :required => false
 attribute :version, :kind_of => String, :required => false
 
+attribute :package_install, :kind_of => [TrueClass, FalseClass], :required => false, :default => false
+attribute :sql_path, :kind_of => String, :required => false

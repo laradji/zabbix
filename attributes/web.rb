@@ -15,4 +15,9 @@ default['zabbix']['web']['php']['settings']    = {
   "date.timezone"       => "'UTC'",
 }
 
-
+default['zabbix']['web']['install_package'] = false
+if node['zabbix']['web']['install_package']
+  default['zabbix']['web_dir']      = "/usr/share/zabbix"
+else
+  default['zabbix']['web_dir']      = "/opt/zabbix/web"
+end

@@ -84,7 +84,7 @@ template "/etc/init.d/zabbix_server" do
   owner "root"
   group "root"
   mode "755"
-  notifies :restart, "service[zabbix_server]", :delayed
+  notifies :restart, "service[zabbix-server]", :delayed
 end
 
 # install zabbix server conf
@@ -103,11 +103,12 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
     :java_gateway_port  => node['zabbix']['server']['java_gateway_port'],
     :java_pollers       => node['zabbix']['server']['java_pollers']
   })
-  notifies :restart, "service[zabbix_server]", :delayed
+  notifies :restart, "service[zabbix-server]", :delayed
 end
 
 # Define zabbix_agentd service
-service "zabbix_server" do
+service "zabbix-server" do
+  service_name "zabbix_server"
   supports :status => true, :start => true, :stop => true, :restart => true
   action [ :start, :enable ]
 end
