@@ -94,9 +94,10 @@ else
 
   end
   
-  conf_dir = "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
+  php_dir = "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
+  conf_dir = "#{php_dir}/conf"
   link node['zabbix']['web_dir'] do
-    to conf_dir 
+    to php_dir
   end
   
   directory conf_dir do
