@@ -10,14 +10,14 @@ Vagrant.configure("2") do |config|
                     '--memory', 1024]
   end
 
-#  config.vm.box = "Berkshelf-CentOS-6.3-x86_64-minimal"
-#  config.vm.box_url = "https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box"
+  config.vm.box = "Berkshelf-CentOS-6.3-x86_64-minimal"
+  config.vm.box_url = "https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box"
 
   config.vm.hostname = "zabbix-berkshelf"
   server_ip = "192.168.50.10"
   config.vm.network :private_network, ip: server_ip
 
-  config.omnibus.chef_version = :latest
+  config.omnibus.chef_version = "11.6.2"
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       :mysql => {
@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
           'servers_active' => [server_ip]
         },
         'web' => {
-          'install_method' => 'nginx',
+          'install_method' => 'apache',
           'fqdn' => server_ip
         },
         'server' => {
@@ -51,8 +51,12 @@ Vagrant.configure("2") do |config|
       }
     }
 
-    chef.add_recipe "zabbix::server"
+    chef.add_recipe "database::mysql"
+    chef.add_recipe "mysql::server"
     chef.add_recipe "zabbix"
+    chef.add_recipe "zabbix::database"
+    chef.add_recipe "zabbix::server"
+    chef.add_recipe "zabbix::web"
     chef.add_recipe "zabbix::agent_registration"
 
     #chef.log_level = :debug
