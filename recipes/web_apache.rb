@@ -22,7 +22,7 @@ user node['zabbix']['web']['user']
 
 case node['platform_family']
 when "debian"
-  %w{ php5-mysql php5-gd }.each do |pck|
+  %w{ php5-mysql php5-gd libapache2-mod-php5 }.each do |pck|
     package pck do
       action :install
       notifies :restart, "service[apache2]"
