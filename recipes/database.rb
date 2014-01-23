@@ -37,6 +37,17 @@ when 'postgres'
   root_username       = "postgres"
   root_password       = node['postgresql']['password']['postgres'] 
   provider = Chef::Provider::ZabbixDatabasePostgres
+when 'oracle'
+  # No oracle database installation or configuration currently done
+  # This recipe expects a fully configured Oracle DB with a Zabbix
+  # user + schema. The instant client is just for compiling php-oci8 
+  # and Zabbix itself
+  include_recipe "oracle-instantclient"
+  include_recipe "oracle-instantclient::sdk"
+  # Not used yet but needs to be set
+  root_username       = "sysdba"
+  root_password       = "not_applicable"
+  provider = Chef::Provider::ZabbixDatabaseOracle
 end
 
 zabbix_database node['zabbix']['database']['dbname'] do

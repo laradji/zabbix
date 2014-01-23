@@ -13,12 +13,16 @@ include_recipe "zabbix::server_common"
 packages = Array.new
 case node['platform']
 when "ubuntu","debian"
-  packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp}
+  packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear libcurl-dev }
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
     packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd' )
   when 'postgres'
     packages.push('libssh2-1-dev')
+  # Oracle oci8 PECL package installed below
+  when 'oracle'
+    php_packages = %w{ php-pear php-dev }
+    packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init.erb'
 when "redhat","centos","scientific","amazon","oracle"
@@ -26,7 +30,7 @@ when "redhat","centos","scientific","amazon","oracle"
   
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
-  packages = %w{ fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }
+  packages = %w{ fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear }
   packages.push(curldev)
 
   case node['zabbix']['database']['install_method']
@@ -40,6 +44,10 @@ when "redhat","centos","scientific","amazon","oracle"
       %w{ php5-pgsql php5-gd php5-xml } :
       %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml } 
     packages.push(*php_packages)
+  # Oracle oci8 PECL package installed below
+  when 'oracle'
+    php_packages = %w{ php-pear php-devel }
+    packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init-rh.erb'
 end
@@ -48,6 +56,14 @@ packages.each do |pck|
   package pck do
     action :install
   end
+end
+
+# Install the oci8 pecl - common to both Debian and RHEL families
+if node['zabbix']['database']['install_method'] == 'oracle'
+    php_pear "oci8" do
+      preferred_state "stable"
+      action :install
+    end
 end
 
 configure_options = node['zabbix']['server']['configure_options'].dup
@@ -61,6 +77,15 @@ when 'mysql', 'rds_mysql'
 when 'postgres'
   with_postgresql = "--with-postgresql"
   configure_options << with_postgresql unless configure_options.include?(with_postgresql)
+when 'oracle'
+  client_arch = node['kernel']['machine'] == 'x86_64' ? 'client64' : 'client'
+  oracle_lib_path = "/usr/lib/oracle/#{node['oracle-instantclient']['version']}/#{client_arch}/lib"
+  oracle_include_path = "/usr/include/oracle/#{node['oracle-instantclient']['version']}/#{client_arch}"
+  with_oracle_lib = "--with-oracle-lib=#{oracle_lib_path}"
+  with_oracle_include = "--with-oracle-include=#{oracle_include_path}"
+  configure_options << "--with-oracle" unless configure_options.include?("--with-oracle")
+  configure_options << with_oracle_lib unless configure_options.include?(with_oracle_lib)
+  configure_options << with_oracle_include unless configure_options.include?(with_oracle_include)
 end
 
 if node['zabbix']['server']['java_gateway_enable'] == true
