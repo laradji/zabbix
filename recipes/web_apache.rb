@@ -20,29 +20,22 @@ end
 
 user node['zabbix']['web']['user']
 
-case node['platform_family']
-when "debian"
-  %w{ php5-mysql php5-gd }.each do |pck|
-    package pck do
-      action :install
-      notifies :restart, "service[apache2]"
+node['zabbix']['web']['packages'] =
+  case node['platform_family']
+  when "debian"
+    %w{ php5-mysql php5-gd libapache2-mod-php5 }
+  when "rhel"
+    if node['platform_version'].to_f < 6.0
+      %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }
+    else
+      %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }
     end
   end
-when "rhel"
-  if node['platform_version'].to_f < 6.0
-    %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
-      package pck do
-        action :install
-        notifies :restart, "service[apache2]"
-      end
-    end
-  else
-    %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |pck|
-      package pck do
-        action :install
-        notifies :restart, "service[apache2]"
-      end
-    end
+
+node['zabbix']['web']['packages'].each do |pkg|
+  package pkg do
+    action :install
+    notifies :restart, "service[apache2]"
   end
 end
 
@@ -51,11 +44,9 @@ zabbix_source "extract_zabbix_web" do
   version             node['zabbix']['server']['version']
   source_url          node['zabbix']['server']['source_url']
   code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
+  target_dir          "zabbix-#{node['zabbix']['server']['version']}"
   install_dir         node['zabbix']['install_dir']
-
   action :extract_only
-
 end
 
 link node['zabbix']['web_dir'] do
@@ -89,7 +80,7 @@ web_app node['zabbix']['web']['fqdn'] do
   only_if { node['zabbix']['web']['fqdn'] != nil }
   php_settings node['zabbix']['web']['php']['settings']
   notifies :restart, "service[apache2]", :immediately 
-end  
+end
 
 apache_site "000-default" do
   enable false

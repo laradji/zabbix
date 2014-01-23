@@ -4,3 +4,4 @@
 bin
 Gemfile.lock
 Berksfile.lock
+vendor
