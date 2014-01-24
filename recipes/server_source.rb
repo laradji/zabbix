@@ -13,7 +13,7 @@ include_recipe "zabbix::server_common"
 packages = Array.new
 case node['platform']
 when "ubuntu","debian"
-  packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear libcurl-dev }
+  packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear }
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
     packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd' )
