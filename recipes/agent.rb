@@ -13,6 +13,21 @@ template "zabbix_agentd.conf" do
   notifies :restart, "service[zabbix_agentd]"
 end
 
+# Install optional additional agent config file containing UserParameter(s)
+if node['zabbix']['agent']['user_parameter'].length > 0
+    template "user_params.conf" do
+        path node['zabbix']['agent']['userparams_config_file']
+        source "user_params.conf.erb"
+        unless node['platform_family'] == "windows"
+            owner "root"
+            group "root"
+            mode "644"
+        end
+        notifies :restart, "service[zabbix_agentd]"
+    end
+end
+
+
 ruby_block "start service" do
   block do
     true
