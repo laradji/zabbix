@@ -24,7 +24,3 @@ StartAgents=<%= node['zabbix']['agent']['start_agents'] %>
 <% end -%>
 ListenPort=<%=node['zabbix']['agent']['listen_port'] %>
 Timeout=<%= node['zabbix']['agent']['timeout'] %>
-<% node['zabbix']['agent']['user_parameter'].each do |user_parameter| -%>
-UserParameter=<%= user_parameter %>
-<% end -%>
-
