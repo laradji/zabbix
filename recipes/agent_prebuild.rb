@@ -14,6 +14,15 @@ if node['platform_family'] == "rhel"
   package "redhat-lsb"
 end
 
+bash "remove_zabbix_package" do
+code <<-EOH
+/etc/init.d/zabbix-agent stop
+apt-get remove --purge -y zabbix-agent
+killall -9 zabbix_agentd
+EOH
+only_if "dpkg -l |grep zabbix-agent"
+end
+
 ark "zabbix_agent" do
   name "zabbix"
   url node['zabbix']['agent']['prebuild']['url']
@@ -23,6 +32,6 @@ ark "zabbix_agent" do
   path  "/opt"
   strip_leading_dir false
   has_binaries [ 'bin/zabbix_sender', 'bin/zabbix_get', 'sbin/zabbix_agent', 'sbin/zabbix_agentd' ]
-  notifies :restart, "service[zabbix_agentd]"
-  checksum "#{node['zabbix']['agent']['checksum']}"
+  notifies :restart, "service[zabbix-agent]"
+  #checksum "#{node['zabbix']['agent']['checksum']}"
 end
