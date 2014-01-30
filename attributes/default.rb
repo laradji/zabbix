@@ -24,7 +24,12 @@ default['zabbix']['run_dir']      = "/var/run/zabbix"
 
 default['zabbix']['login']  = "zabbix"
 default['zabbix']['group']  = "zabbix"
-default['zabbix']['uid']    = nil
-default['zabbix']['gid']    = nil
+default['zabbix']['uid']    = 999
+default['zabbix']['gid']    = 999
 default['zabbix']['home']   = '/opt/zabbix'
 default['zabbix']['shell']  = "/bin/bash"
+
+default['monitoring']['zabbix']['template'] = {}
+default['monitoring']['zabbix']['template']['base'] = []
+default['monitoring']['zabbix']['groupid'] = ["6"] #Group local
+default['monitoring']['zabbix']["macros"] = {}
