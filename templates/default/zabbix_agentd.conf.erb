@@ -1,26 +1,208 @@
 # Do not edit
 # Created by chef
-Hostname=<%= node['zabbix']['agent']['hostname'] %>
+Hostname=<%= (node['zabbix']['agent']['hostname']) ? node['zabbix']['agent']['hostname'] : node["hostname"]%>
 Include=<%= node['zabbix']['agent']['include_dir'] %>
+
 Server=<%= node.zabbix.agent.servers.join(',') %>
+#Server=<%= node['zabbix']['agent']['servers'].first %>
+
+#ServerActive=<%= node['zabbix']['agent']['servers'].first %>
+<% if node.zabbix.agent.servers_active.first -%>
+ServerActive=<%= node.zabbix.agent.servers_active.join(',') %>
+<% end -%>
+
 <% if node['zabbix']['agent']['log_file'] -%>
 LogFile=<%= node['zabbix']['agent']['log_file'] %>
 <% end -%>
+
 <% if node['zabbix']['agent']['debug_level'] -%>
 DebugLevel=<%= node['zabbix']['agent']['debug_level'] %>
 <% end -%>
+
 <% if node['zabbix']['agent']['enable_remote_commands'] -%>
 EnableRemoteCommands=1
 LogRemoteCommands=1
 <% end -%>
+
 <% if node['zabbix']['agent']['pid_file'] -%>
 PidFile=<%= node['zabbix']['agent']['pid_file'] %>
 <% end -%>
-<% if node.zabbix.agent.servers_active.first -%>
-ServerActive=<%= node.zabbix.agent.servers_active.join(',') %>
-<% end -%>
+
 <% if node['zabbix']['agent']['start_agents'] -%>
 StartAgents=<%= node['zabbix']['agent']['start_agents'] %>
 <% end -%>
+
+ListenIP=<%= (node["cloud"]) ? node["cloud"]["local_ipv4"] : node["ipaddress"] %>
+
 ListenPort=<%=node['zabbix']['agent']['listen_port'] %>
-Timeout=<%= node['zabbix']['agent']['timeout'] %>
+
+Timeout=<%= node['zabbix']['agent']['timeout'] -%>
+
+#Add user check here
+
+#Top process running
+UserParameter=system.topcpu[*],/etc/zabbix/scripts_agentd/topcpu.sh $1
+########################################################################################
+
+#Soa of dns
+UserParameter=dns.soa[*],/etc/zabbix/scripts_agentd/soa.sh $1 $2
+########################################################################################
+
+#Folder size
+UserParameter=vfs.dir.size[*],du -s $1|awk {'print $$1'}
+
+### Mysql
+### Set of parameters for monitoring MySQL server (v3.23.42 and later)
+### Change -u and add -p if required
+UserParameter=mysql.status[*],echo "show global status where Variable_name='$1';" | HOME=/srv/sa-backup mysql -N -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> | awk '{print $$2}'
+UserParameter=mysql.ping, mysqladmin -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> ping|grep alive|wc -l
+UserParameter=mysql.uptime,mysqladmin -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> status|cut -f2 -d":"|cut -f2 -d" "
+UserParameter=mysql.threads,mysqladmin -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> status|cut -f3 -d":"|cut -f2 -d" "
+UserParameter=mysql.questions,mysqladmin -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> status|cut -f4 -d":"|cut -f2 -d" "
+UserParameter=mysql.slowqueries,mysqladmin -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> status|cut -f5 -d":"|cut -f2 -d" "
+UserParameter=mysql.qps,mysqladmin -udbbackup -p<%=node["mysql"]["server_dbbackup_password"]%> status|cut -f9 -d":"|cut -f2 -d" "
+UserParameter=mysql.version,mysql -V
+
+### For percona
+UserParameter=mysql.percona.processlist,/usr/lib64/nagios/plugins/pmp-check-mysql-processlist -l dbbackup -p <%=node["mysql"]["server_dbbackup_password"]%>
+UserParameter=mysql.percona.innodb,/usr/lib64/nagios/plugins/pmp-check-mysql-innodb -l dbbackup -p <%=node["mysql"]["server_dbbackup_password"]%>
+UserParameter=mysql.percona.table-checksum,/usr/bin/pt-table-checksum u=root,h=<%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : node['ipaddress']%>,p=<%=node["mysql"]["server_root_password"]%>,P=<%=node["mysql"]["port"]%> --recursion-method=dsn=h=<%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : node['ipaddress']%>,P=<%=node["mysql"]["port"]%>,D=percona,t=dsns --chunk-time=4; a="$?"; if [ $a -ne "0" ]; then echo "Return code : $a - KO"; echo "Launching replicate comparison"; /usr/bin/pt-table-checksum --replicate-check-only u=root,h=<%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : node['ipaddress']%>,p=<%=node["mysql"]["server_root_password"]%>,P=<%=node["mysql"]["port"]%> --recursion-method=dsn=h=<%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : node['ipaddress']%>,P=<%=node["mysql"]["port"]%>,D=percona,t=dsns --chunk-time=4;  else echo "OK"; fi
+########################################################################################
+
+
+######## Folder size ###################################################################
+
+
+######## Riak from https://github.com/aggress/riak-zabbix/blob/master/riak.conf ########
+
+### Riak segment number - discovery rule
+UserParameter=riak_discover_part,perl /etc/zabbix/scripts_agentd/riak_part.pl
+UserParameter=riak_segment_part[*],ls /srv/sa_riak/shared/data/merge_index/$1/* | grep segment | wc -l
+
+
+###
+### riak-admin status
+###
+
+# Get times
+UserParameter=riak_admin_node_get_fsm_time_mean,grep node_get_fsm_time_mean /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_time_median,grep node_get_fsm_time_median /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_time_95,grep node_get_fsm_time_95 /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_time_99,grep node_get_fsm_time_99 /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_time_100,grep node_get_fsm_time_100 /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Put times
+UserParameter=riak_admin_node_put_fsm_time_mean,grep node_put_fsm_time_mean /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_put_fsm_time_median,grep node_put_fsm_time_mean /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_put_fsm_time_95,grep node_put_fsm_time_95 /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_put_fsm_time_99,grep node_put_fsm_time_99 /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_put_fsm_time_100,grep node_put_fsm_time_100 /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Get Size
+UserParameter=riak_admin_node_get_fsm_objsize_mean,grep node_get_fsm_objsize_mean /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_objsize_median,grep node_get_fsm_objsize_median /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_objsize_95,grep node_get_fsm_objsize_95 /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_objsize_99,grep node_get_fsm_objsize_99 /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_node_get_fsm_objsize_100,grep node_get_fsm_objsize_100 /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Get active
+UserParameter=riak_admin_index_fsm_active,grep index_fsm_active /tmp/riak_admin_status.tmp | awk {'print $3'}
+
+# Vnode gets/puts
+UserParameter=riak_admin_vnode_gets,grep vnode_gets /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_vnode_gets_total,grep vnode_gets_total /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_vnode_puts,grep vnode_puts /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_vnode_puts_total,grep vnode_puts_total /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_vnode_index_reads,grep "vnode_index_reads " /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_vnode_index_writes,grep "vnode_index_writes " /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_vnode_index_deletes,grep "vnode_index_deletes " /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Node gets/puts
+UserParameter=riak_admin_node_gets,grep node_gets /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_node_gets_total,grep node_gets_total /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_node_puts,grep node_puts /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_node_puts_total,grep node_puts_total /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+# Protocol Buffers
+UserParameter=riak_admin_pbc_active,grep pbc_active /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_pbc_connects,grep pbc_connects /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_pbc_connects_total,grep pbc_connects_total /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Read Repairs
+UserParameter=riak_admin_read_repairs,grep read_repairs /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_total,grep read_repairs_total /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_primary_outofdate_one,grep read_repairs_primary_outofdate_one /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_primary_outofdate_count,grep read_repairs_primary_outofdate_count /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_primary_notfound_one,grep read_repairs_primary_notfound_one /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_primary_notfound_count,grep read_repairs_primary_notfound_count /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_fallback_outofdate_one,grep read_repairs_fallback_outofdate_one /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_fallback_outofdate_count,grep read_repairs_fallback_outofdate_count /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_fallback_notfound_one,grep read_repairs_fallback_notfound_one /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_read_repairs_fallback_notfound_count,grep read_repairs_fallback_notfound_count /tmp/riak_admin_status.tmp | awk {'print $3'}
+
+# Coord Redirs
+UserParameter=riak_admin_coord_redirs_total,grep coord_redirs_total /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Commit Hooks
+UserParameter=riak_admin_precommit_fail,grep precommit_fail /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_postcommit_fail,grep postcommit_fail /tmp/riak_admin_status.tmp | awk {'print $3'}
+# Memory
+UserParameter=riak_admin_memory_atom,grep memory_atom /tmp/riak_admin_status.tmp | head -1 | awk {'print $3'}
+UserParameter=riak_admin_memory_binary,grep memory_binary /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_memory_code,grep memory_code /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_memory_ets,grep memory_ets /tmp/riak_admin_status.tmp | awk {'print $3'}
+#Executing / Precommit
+UserParameter=riak_admin_executing_mappers,grep executing_mappers /tmp/riak_admin_status.tmp | awk {'print $3'}
+
+#system
+UserParameter=riak_admin_sys_process_count,grep sys_process_count /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_sys_smp_support,grep sys_smp_support /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_sys_system_version,grep sys_system_version /tmp/riak_admin_status.tmp | awk -F"\"" {'print $2'}
+UserParameter=riak_admin_sys_system_architecture,grep sys_system_architecture /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_sys_threads_enabled,grep sys_threads_enabled /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_riak_api_version,grep riak_api_version /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_riak_core_version,grep riak_core_version /tmp/riak_admin_status.tmp | awk {'print $3'}
+
+#Shopping adventure
+UserParameter=riak_admin_sa_stemmer_version,grep sa_stemmer_version /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_sa_indexer_version,grep sa_indexer_version /tmp/riak_admin_status.tmp | awk {'print $3'}
+UserParameter=riak_admin_sa_riak_version,grep sa_riak_version /tmp/riak_admin_status.tmp | awk {'print $3'}
+
+
+## General
+
+UserParameter=riak_process_beam.smp,ps aux | grep beam.smp | grep -v grep | wc -l
+UserParameter=riak_process_epmd,ps aux | grep epmd | grep -v grep | wc -l
+
+##################################################################################################
+
+###### DNSSEC #######################################################
+UserParameter=dns.dnssec.expire[*],/etc/zabbix/scripts_agentd/check_zone_rrsig_expiration -Z $1 -W $2 -C $3
+
+###### POSTFIX #######################################################
+UserParameter=postfix.mailq,mailq | grep -v "Mail queue is empty" | grep -c '^[0-9A-Z]'
+
+###### APACHE #######################################################
+UserParameter=apache_stats[*],bash /etc/zabbix/scripts_agentd/zapache.sh \$1
+
+###### HAPROXY #######################################################
+UserParameter=haproxy.stats[*], curl  "http://<%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : '0.0.0.0'%>:22002/stats;csv" 2>/dev/null | grep "^$1,$2" | cut -d, -f $3
+
+###### VARNISH, cron needed #######################################################
+UserParameter=varnish.stat[*],cat /tmp/varnishstat | grep "$1 " | awk '{print $$2}'
+
+
+###### WEB #######################################################
+#Wget response header
+UserParameter=web.page.code[*],curl -D $3 -o /dev/null http://$1/$2 && cat $3 | grep "$4" 
+
+#Sitemap pubwebsite take long time to be executed, set a long timeout !
+UserParameter=web.page.sitemap[*],/usr/bin/wget --timeout $4 -q -O - 1 $1:$2/$3
+
+##### Disk performance from https://github.com/grundic/zabbix-disk-performance
+
+UserParameter=custom.vfs.discover_disks,python /etc/zabbix/scripts_agentd/lld-disks.py
+
+UserParameter=custom.vfs.dev.read.ops[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$4}'
+UserParameter=custom.vfs.dev.read.merged[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$5}'
+UserParameter=custom.vfs.dev.read.sectors[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$6}'
+UserParameter=custom.vfs.dev.read.ms[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$7}'
+UserParameter=custom.vfs.dev.write.ops[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$8}'
+UserParameter=custom.vfs.dev.write.merged[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$9}'
+UserParameter=custom.vfs.dev.write.sectors[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$10}'
+UserParameter=custom.vfs.dev.write.ms[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$11}'
+UserParameter=custom.vfs.dev.io.active[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$12}'
+UserParameter=custom.vfs.dev.io.ms[*],cat /proc/diskstats | grep $1 | head -1 | awk '{print $$13}'
