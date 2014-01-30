@@ -25,4 +25,11 @@ JavaGatewayPort=<%= @java_gateway_port %>
 StartJavaPollers=<%= @java_pollers %>
 
 ExternalScripts=<%= node['zabbix']['server']['externalscriptspath'] %>
+ListenIP=127.0.0.1,<%= node['zabbix']['web']['ip'] %>
+
+FpingLocation=/usr/bin/fping
+Fping6Location=/usr/bin/fping6
+
+StartPingers=<%= node['zabbix']['server']['startpinger'] %>
+
 Timeout=<%= node['zabbix']['server']['timeout']%>
