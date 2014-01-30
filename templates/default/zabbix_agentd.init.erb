@@ -13,6 +13,10 @@
 # Written by Alexei Vladishev <alexei.vladishev@zabbix.com>.
 # Add status support by Ovea Inc.
 
+################################################################
+## Drop by Chef, recipe zabbix, template zabbix_agentd.init.erb
+################################################################
+
 NAME=zabbix_agentd
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node['zabbix']['install_dir'] %>/sbin:<%= node['zabbix']['install_dir'] %>/bin
 DAEMON=<%= node['zabbix']['install_dir'] %>/sbin/${NAME}
