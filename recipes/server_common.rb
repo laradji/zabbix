@@ -43,3 +43,16 @@ root_dirs.each do |dir|
     recursive true
   end
 end
+
+node.normal['zabbix']['web']['ip'] = (node["cloud"]) ? node["cloud"]["local_ipv4"] : node["ipaddress"]
+
+# Create api scripts folder and files
+remote_directory "/etc/zabbix/scripts/api" do
+       source "scripts_api"
+       files_owner "root"
+       files_group "root"
+       files_mode 00600
+       owner "root"
+       group "root"
+       action :create
+end
