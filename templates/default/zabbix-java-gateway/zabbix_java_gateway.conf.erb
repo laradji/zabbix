@@ -1,0 +1,7 @@
+#
+# Main Zabbix Java Gateway configuration file managed by Chef
+#
+LISTEN_IP="<%= @java_gateway_listen_ip %>"
+LISTEN_PORT="<%= @java_gateway_listen_port %>"
+PID_FILE="/var/run/zabbix/zabbix_java_gateway.pid"
+START_POLLERS=<%= @java_gateway_pollers %>

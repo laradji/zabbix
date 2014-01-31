@@ -18,6 +18,10 @@ default['zabbix']['server']['name'] = nil
 default['zabbix']['server']['java_gateway'] = '127.0.0.1'
 default['zabbix']['server']['java_gateway_port'] = 10052
 default['zabbix']['server']['java_pollers'] = 0
+default['zabbix']['server']['java_gateway_enable'] = false
+default['zabbix']['server']['java_gateway_pollers'] = 5
+default['zabbix']['server']['java_gateway_listen_ip'] = '0.0.0.0'
+default['zabbix']['server']['java_gateway_listen_port'] = 10052
 
 default['zabbix']['server']['externalscriptspath'] = "/usr/local/scripts/zabbix/externalscripts/"
 

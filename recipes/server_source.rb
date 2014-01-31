@@ -22,7 +22,7 @@ when "ubuntu","debian"
   end
   init_template = 'zabbix_server.init.erb'
 when "redhat","centos","scientific","amazon","oracle"
-  include_recipe "yum::epel"
+  include_recipe "yum-epel"
   
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
@@ -62,6 +62,11 @@ when 'postgres'
   with_postgresql = "--with-postgresql"
   configure_options << with_postgresql unless configure_options.include?(with_postgresql)
 end
+
+if node['zabbix']['server']['java_gateway_enable'] == true
+  configure_options << "--enable-java"
+end
+
 node.normal['zabbix']['server']['configure_options'] = configure_options
 
 zabbix_source "install_zabbix_server" do
@@ -110,4 +115,9 @@ end
 service "zabbix_server" do
   supports :status => true, :start => true, :stop => true, :restart => true
   action [ :start, :enable ]
+end
+
+# Configure the Java Gateway
+if node['zabbix']['server']['java_gateway_enable'] == true
+  include_recipe "zabbix::java_gateway"
 end
