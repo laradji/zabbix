@@ -7,8 +7,8 @@
 # Apache 2.0
 #
 
-include_recipe "zabbix::common"
 include_recipe "zabbix::server_common"
+include_recipe "zabbix::common"
 
 packages = Array.new
 case node['platform']
