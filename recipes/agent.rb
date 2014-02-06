@@ -1,38 +1,51 @@
-include_recipe "zabbix::agent_#{node['zabbix']['agent']['install_method']}"
-include_recipe "zabbix::agent_common"
+#include_recipe "zabbix::agent_#{node['zabbix']['agent']['install_method']}"
+#include_recipe "zabbix::agent_common"
 
-# Install configuration
-template "zabbix_agentd.conf" do
-  path node['zabbix']['agent']['config_file']
-  source "zabbix_agentd.conf.erb"
-  unless node['platform_family'] == "windows"
-    owner "root"
-    group "root"
-    mode "644"
-  end
-  notifies :restart, "service[zabbix_agentd]"
-end
+zabbix_server =search(:node,"role:zabbix-server AND chef_environment:#{node.chef_environment}").first
 
-# Install optional additional agent config file containing UserParameter(s)
-if node['zabbix']['agent']['user_parameter'].length > 0
-    template "user_params.conf" do
-        path node['zabbix']['agent']['userparams_config_file']
-        source "user_params.conf.erb"
-        unless node['platform_family'] == "windows"
-            owner "root"
-            group "root"
-            mode "644"
-        end
-        notifies :restart, "service[zabbix_agentd]"
-    end
-end
+#unless zabbix_server.length.nil?
+	if zabbix_server
+	include_recipe "zabbix::agent_#{node['zabbix']['agent']['install_method']}"
+	include_recipe "zabbix::agent_common"
 
+	zabbix_server =search(:node,"role:zabbix-server AND chef_environment:#{node.chef_environment}").first
 
-ruby_block "start service" do
-  block do
-    true
-  end
-  Array(node['zabbix']['agent']['service_state']).each do |action|
-    notifies action, "service[zabbix_agentd]"
-  end
+	node.default["monitoring"]["zabbix"]["template"]["base"]= ['Template OS Linux Base']
+
+	# Install configuration
+	template "zabbix_agentd.conf" do
+		path node['zabbix']['agent']['config_file']
+		source "zabbix_agentd.conf.erb"
+		unless node['platform_family'] == "windows"
+			owner "root"
+			group "root"
+			mode "644"
+		end
+		notifies :restart, "service[zabbix-agent]"
+		variables({
+			:zabbix_server => zabbix_server
+		})
+	end
+
+	ruby_block "start service" do
+		block do
+			true
+		end
+		Array(node['zabbix']['agent']['service_state']).each do |action|
+			notifies action, "service[zabbix-agent]"
+		end
+	end
+
+	res=search(:virtual_machines,"id:#{node['hostname']}").first
+	if res then
+		hyp=res["host"]
+		#Setup hyp trigger dependencies here
+		node.default['monitoring']['zabbix']['triggerdeps']["{HOST.NAME} : Ping ICMP"]= "#{hyp}: {HOST.NAME} : Ping ICMP"
+		node.default['monitoring']['zabbix']['triggerdeps']["Lack of available memory on server {HOST.NAME}"]= "#{hyp}: Lack of available memory on server {HOST.NAME}"
+	else
+		Chef::Log.warn("Zabbix_LOG : #{node['hostname']} as not hypervisor defined in it's databags")
+	end
+
+	package "libnet-dns-perl"
+
 end

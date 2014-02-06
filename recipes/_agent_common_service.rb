@@ -1,15 +1,15 @@
 # Manage Agent service
 case node['zabbix']['agent']['init_style']
 when "sysvinit"
-  template "/etc/init.d/zabbix_agentd" do
+  template "/etc/init.d/zabbix-agent" do
     source value_for_platform_family([ "rhel" ] => "zabbix_agentd.init-rh.erb", "default" => "zabbix_agentd.init.erb")
     owner "root"
     group "root"
     mode "754"
   end
-
-  # Define zabbix_agentd service
-  service "zabbix_agentd" do
+when 'package'
+  # Define zabbix-agentd service
+  service "zabbix-agent" do
     supports :status => true, :start => true, :stop => true, :restart => true
     action :nothing
   end

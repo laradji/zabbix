@@ -1,6 +1,7 @@
-<VirtualHost *:80>
-  ServerName <%= @params[:server_name] %>
-  ServerAlias <%= @params[:server_aliases].join(' ')%>
+Listen <%=@params[:bindip]%>:<%= @params[:bindport] %>
+<VirtualHost <%=@params[:bindip]%>:<%= @params[:bindport] %> >
+#  ServerName <%= @params[:server_name] %>
+#  ServerAlias <%= @params[:server_aliases].join(' ')%>
   DocumentRoot <%= @params[:docroot] %>
   RewriteEngine On
   
@@ -36,9 +37,9 @@
   RewriteLogLevel 0
 
   # Canonical host, <%= @params['server_name'] %>
-  RewriteCond %{HTTP_HOST}   !^<%= @params['server_name'] %> [NC]
-  RewriteCond %{HTTP_HOST}   !^$
-  RewriteRule ^/(.*)$        http://<%= @params['server_name'] %>/$1 [L,R=301]
+  #RewriteCond %{HTTP_HOST}   !^<%= @params['server_name'] %> [NC]
+  #RewriteCond %{HTTP_HOST}   !^$
+  #RewriteRule ^/(.*)$        http://<%= @params['server_name'] %>/$1 [L,R=301]
 
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteCond %{SCRIPT_FILENAME} !maintenance.html

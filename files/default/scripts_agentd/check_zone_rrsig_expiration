@@ -1,0 +1,296 @@
+#!/usr/bin/perl
+
+# $Id: check_zone_rrsig_expiration,v 1.10 2011/01/04 22:27:26 wessels Exp $
+#
+# check_zone_rrsig_expiration
+#
+# nagios plugin to check expiration times of RRSIG records.  Reminds
+# you if its time to re-sign your zone.
+
+# Copyright (c) 2008, The Measurement Factory, Inc. All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 
+# Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+# Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# Neither the name of The Measurement Factory nor the names of its
+# contributors may be used to endorse or promote products derived
+# from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+# usage
+#
+# define command {
+#   command_name    check-zone-rrsig
+#   command_line    /usr/local/libexec/nagios-local/check_zone_rrsig -Z $HOSTADDRESS$
+# }
+# 
+# define service {
+#   name		dns-rrsig-service
+#   check_command	check-zone-rrsig
+#   ...
+# }
+# 
+# define host {
+#   use dns-zone
+#   host_name zone.example.com
+#   alias ZONE example.com
+# }
+# 
+# define service {
+#   use dns-rrsig-service
+#   host_name zone.example.com
+# }
+
+use warnings;
+use strict;
+
+use Getopt::Std;
+use Net::DNS::Resolver;
+use Time::HiRes qw ( gettimeofday tv_interval);
+use Time::Local;
+use List::Util qw ( shuffle );
+
+# options
+#  -Z zone        Zone to test
+#  -t seconds     DNS query timeout
+#  -d             debug
+#  -C days        Critical if expiring in this many days
+#  -W days        Warning if expiring in this many days
+my %opts = (t=>30, C=>2, W=>3);
+getopts('Z:dt:W:C:', \%opts);
+usage() unless $opts{Z};
+usage() if $opts{h};
+my $zone = $opts{Z};
+$zone =~ s/^zone\.//;
+
+my $data;
+my $start;
+my $stop;
+
+my @refs = qw (
+a.root-servers.net
+b.root-servers.net
+c.root-servers.net
+d.root-servers.net
+e.root-servers.net
+f.root-servers.net
+g.root-servers.net
+h.root-servers.net
+i.root-servers.net
+j.root-servers.net
+k.root-servers.net
+l.root-servers.net
+m.root-servers.net
+);
+
+$start = [gettimeofday()];
+do_recursion();
+do_queries();
+$stop = [gettimeofday()];
+do_analyze();
+
+sub do_recursion {
+	my $done = 0;
+	my $res = Net::DNS::Resolver->new;
+	do {
+		print STDERR "\nRECURSE\n" if $opts{d};
+		my $pkt;
+		foreach my $ns (shuffle @refs) {
+			print STDERR "sending query for $zone RRSIG to $ns\n" if $opts{d};
+			$res->nameserver($ns);
+			$res->udp_timeout($opts{t});
+			$res->udppacketsize(4096);
+			$pkt = $res->send($zone, 'RRSIG');
+			last if $pkt;
+		}
+		critical("No response to seed query") unless $pkt;
+		critical($pkt->header->rcode . " from " . $pkt->answerfrom)
+			unless ($pkt->header->rcode eq 'NOERROR');
+		@refs = ();
+		foreach my $rr ($pkt->authority) {
+			print STDERR $rr->string, "\n" if $opts{d};
+			push (@refs, $rr->nsdname);
+			next unless names_equal($rr->name, $zone);
+			add_nslist_to_data($pkt);
+			$done = 1;
+		}
+	} while (! $done);
+}
+
+
+sub do_queries {
+	my $n;
+	do {
+		$n = 0;
+		foreach my $ns (keys %$data) {
+			next if $data->{$ns}->{done};
+			print STDERR "\nQUERY $ns\n" if $opts{d};
+
+			my $pkt = send_query($zone, 'RRSIG', $ns);
+			add_nslist_to_data($pkt);
+			$data->{$ns}->{queries}->{RRSIG} = $pkt;
+
+			print STDERR "done with $ns\n" if $opts{d};
+			$data->{$ns}->{done} = 1;
+			$n++;
+		}
+	} while ($n);
+}
+
+sub do_analyze {
+	my $nscount = 0;
+	my $NOW = time;
+	my %MAX_EXP_BY_TYPE;
+	foreach my $ns (keys %$data) {
+		print STDERR "\nANALYZE $ns\n" if $opts{d};
+		my $pkt = $data->{$ns}->{queries}->{RRSIG};
+		critical("No response from $ns") unless $pkt;
+		print STDERR $pkt->string if $opts{d};
+		critical($pkt->header->rcode . " from $ns")
+			unless ($pkt->header->rcode eq 'NOERROR');
+		critical("$ns is lame") unless $pkt->header->ancount;
+		foreach my $rr ($pkt->answer) {
+			next unless $rr->type eq 'RRSIG';
+			my $exp = sigrr_exp_epoch($rr);
+			my $T = $rr->typecovered;
+			if (!defined($MAX_EXP_BY_TYPE{$T}->{exp}) || $exp > $MAX_EXP_BY_TYPE{$T}->{exp}) {
+				$MAX_EXP_BY_TYPE{$T}->{exp} = $exp;
+				$MAX_EXP_BY_TYPE{$T}->{ns} = $ns;
+			}
+		}
+		$nscount++;
+	}
+	warning("No nameservers found.  Is '$zone' a zone?") if ($nscount < 1);
+	warning("No RRSIGs found") unless %MAX_EXP_BY_TYPE;
+	my $min_exp = undef;
+	my $min_ns = undef;
+	my $min_type = undef;
+	foreach my $T (keys %MAX_EXP_BY_TYPE) {
+		#printf STDERR ("%s RRSIG expires in %.1f days\n", $T, ($MAX_EXP_BY_TYPE{$T}->{exp}-$NOW)/86400) if $opts{d};
+		printf ("%s RRSIG expires in %.1f days\n", $T, ($MAX_EXP_BY_TYPE{$T}->{exp}-$NOW)/86400) ;
+		if (!defined($min_exp) || $MAX_EXP_BY_TYPE{$T}->{exp} < $min_exp) {
+			$min_exp = $MAX_EXP_BY_TYPE{$T}->{exp};
+			$min_ns = $MAX_EXP_BY_TYPE{$T}->{ns};
+			$min_type = $T;
+		}
+	}
+	critical("$min_ns has expired RRSIGs") if ($min_exp < $NOW);
+	if ($min_exp - $NOW < ($opts{C}*86400)) {
+		my $ND = sprintf "%3.1f days", ($min_exp-$NOW)/86400;
+		critical("$min_type RRSIG expires in $ND at $min_ns")
+	}
+	if ($min_exp - $NOW < ($opts{W}*86400)) {
+		my $ND = sprintf "%3.1f days", ($min_exp-$NOW)/86400;
+		warning("$min_type RRSIG expires in $ND at $min_ns")
+	}
+	success("No RRSIGs expiring in the next $opts{W} days");
+}
+
+sub sigrr_exp_epoch {
+	my $rr = shift;
+	die unless $rr->type eq 'RRSIG';
+	my $exp = $rr->sigexpiration;
+	die "bad exp time '$exp'"
+		unless $exp =~ /^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/;
+	my $exp_epoch = timegm($6,$5,$4,$3,$2-1,$1);
+	return $exp_epoch;
+}
+
+sub add_nslist_to_data {
+	my $pkt = shift;
+	foreach my $ns (get_nslist($pkt)) {
+		next if defined $data->{$ns}->{done};
+		print STDERR "adding NS $ns\n" if $opts{d};
+		$data->{$ns}->{done} |= 0;
+	}
+}
+
+sub success {
+	output('OK', shift);
+	exit(0);
+}
+
+sub warning {
+	output('WARNING', shift);
+	exit(1);
+}
+
+sub critical {
+	output('CRITICAL', shift);
+	exit(2);
+}
+
+sub output {
+	my $state = shift;
+	my $msg = shift;
+	$stop = [gettimeofday()] unless $stop;
+	my $latency = tv_interval($start, $stop);
+	printf "ZONE %s: %s; (%.2fs) |time=%.6fs;;;0.000000\n",
+		$state,
+		$msg,
+		$latency,
+		$latency;
+}
+
+sub usage {
+	print STDERR "usage: $0 -Z zone\n";
+	exit 3;
+}
+
+sub send_query {
+	my $qname = shift;
+	my $qtype = shift;
+	my $server = shift;
+	my $res = Net::DNS::Resolver->new;
+	$res->nameserver($server) if $server;
+	$res->udp_timeout($opts{t});
+	$res->retry(2);
+	$res->udppacketsize(4096);
+	my $pkt = $res->send($qname, $qtype);
+	unless ($pkt) {
+		$res->usevc(1);
+		$res->tcp_timeout($opts{t});
+		$pkt = $res->send($qname, $qtype);
+	}
+	return $pkt;
+}
+
+sub get_nslist {
+	my $pkt = shift;
+	return () unless $pkt;
+	return () unless $pkt->authority;
+	my @nslist;
+	foreach my $rr ($pkt->authority) {
+		next unless ($rr->type eq 'NS');
+		next unless names_equal($rr->name, $zone);
+		push(@nslist, lc($rr->nsdname));
+	}
+	return @nslist;
+}
+
+sub names_equal {
+	my $a = shift;
+	my $b = shift;
+	$a =~ s/\.$//;
+	$b =~ s/\.$//;
+	lc($a) eq lc($b);
+}
+

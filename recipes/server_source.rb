@@ -54,6 +54,15 @@ configure_options = node['zabbix']['server']['configure_options'].dup
 configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
+
+configure_options.each do |opt|
+        case opt
+        when '--with-ssh2'
+        packages.push("libssh2-1-dev")
+        end
+end
+
+
 case node['zabbix']['database']['install_method']
 when 'mysql', 'rds_mysql'
   with_mysql = "--with-mysql"
@@ -106,7 +115,7 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   notifies :restart, "service[zabbix_server]", :delayed
 end
 
-# Define zabbix_agentd service
+# Define zabbix_server service
 service "zabbix_server" do
   supports :status => true, :start => true, :stop => true, :restart => true
   action [ :start, :enable ]

@@ -74,10 +74,10 @@ example :
 
 ## Agent
 
-	  node.set['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
-	  node.set['zabbix']['agent']['version'] = "2.0.0"
+	  node.set['zabbix']['agent']['branch'] = "ZABBIX%21Latest%21Stable"
+	  node.set['zabbix']['agent']['version'] = "2.1.1"
 	  node.set['zabbix']['agent']['source_url'] = nil
-	  node.set['zabbix']['agent']['install_method'] = "prebuild"
+	  node.set['zabbix']['agent']['install_method'] = "package"
 
 ## Database
 
@@ -108,6 +108,22 @@ You can control the agent install with the following attributes:
 
     node['zabbix']['agent']['install'] = true
     node['zabbix']['agent']['install_method'] = 'source'
+
+
+## agent
+
+Install agent only if a server is defined.  
+Set the configuration file from the template.  
+Define some mandatory attributs:
+    
+    node.default["monitoring"]["zabbix"]["template"]["base"]= ['Template OS Linux Base'] => all nodes
+    node.default['monitoring']['zabbix']['triggerdeps']["{HOST.NAME} : Ping ICMP"]= "#{hyp}: {HOST.NAME} : Ping ICMP" => vm nodes
+    node.default['monitoring']['zabbix']['triggerdeps']["Lack of available memory on server {HOST.NAME}"]= "#{hyp}: Lack of available memory on server {HOST.NAME}" => vm nodes
+
+## agent\_package
+
+Downloads and installs the Zabbix agent from a pre built .DEB package.  
+Remove any existing pre build package not grom .DEB file.
 
 ## agent\_prebuild
 
@@ -229,6 +245,17 @@ The server also needs to know about:
 
 Creates an Apache site for the Zabbix Web component
 
+## agent\_registration
+
+This recipe will add hostgroup, host and all hosts attribut like template, macros and trigger dependencies.  
+All informations are retrieved from attributs :
+    
+    node["monitoring"]["zabbix"]["macros"]["macroname"] : macro value => a macro named macroname
+    node["monitoring"]["zabbix"]["triggerdeps"]["rolename"]["triggername"] : trigger_deps => a trigger dependencies. roleanme must be defined, even if the triggerdeps is set on the node (set rolename to 'node' is a good choice)
+    node["monitoring"]["zabbix"]["template"]["rolename"] :Array of template names => templates to attache to the node. roleanme must be defined, even if the template is set on the node (set rolename to 'node' is a good choice)
+    node["monitoring"]["zabbix"]["groupid"] :  Array of id of groups (must be change to name of group soon).roleanme must be defined, even if the groupip is set on the node (set rolename to 'node' is a good choice)
+
+
 # LWRPs
 
 ## database
@@ -291,6 +318,61 @@ Make sure you set
     root_pasword  'your postgres admin password'
 
 The `allowed_user_hosts` attribute is ignored
+
+### providers/host
+
+Create, Update, Delete host from hostname. Retrieve all hosts parameters (templates,macros...).  
+Use like this :
+
+    #Retrieve node template : in attribut node["monitoring"]["zabbix"]"template"]["role_name"]
+    tmpl = []
+    (node["monitoring"]["zabbix"]["template"] or {}).each do |key,role|
+     (role or []).each do |template|
+      tmpl << template
+      end
+    end
+
+    #Retrieve node macros
+    macros=[]
+    (node["monitoring"]["zabbix"]["macros"] or {}).each do |key,role|
+     (role or []).each do |macro|
+       macros << macro
+      end
+    end
+
+    zabbix_host "#{node['hostname']}" do
+     create_missing_groups true
+     server_connection connection_info
+     parameters ({
+     :host => node['hostname'],
+     :groupNames => node['zabbix']['agent']['groups'],
+     :templates => tmpl,
+     :interfaces => interface_data,
+     :macros => macros
+     })
+     action :create_or_update
+    end
+    
+
+
+### providers/trigger\_dependency
+
+Set trigger dependency. Dependency could be on the same host or on another host.  
+Must be used this way (into a recipe) :
+    
+    #We create a triggers from attribut
+    (node["monitoring"]["zabbix"]["triggerdeps"] or {}).each do |t,v|
+      zabbix_trigger_dependency "#{t}" do
+        hostdep_name  v.to_s.split(':', 2).first
+        dependency_name  v.to_s.split(':', 2).last[1..-1]
+        server_connection connection_info
+        trigger_name t
+        action :create
+     end
+    end
+
+The attribut contains the dependency has it is into zabbix webui, so that we split the content of the attribut to retrieve (or not) some values.
+
 
 ### resources/source
 
