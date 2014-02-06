@@ -10,7 +10,7 @@ zabbix_server =search(:node,"role:zabbix-server AND chef_environment:#{node.chef
 
 	zabbix_server =search(:node,"role:zabbix-server AND chef_environment:#{node.chef_environment}").first
 
-	node.default["monitoring"]["zabbix"]["template"]["base"]= ['"Template OS Linux Base"']
+	node.default["monitoring"]["zabbix"]["template"]["base"]= ['Template OS Linux Base']
 
 	# Install configuration
 	template "zabbix_agentd.conf" do
@@ -40,8 +40,8 @@ zabbix_server =search(:node,"role:zabbix-server AND chef_environment:#{node.chef
 	if res then
 		hyp=res["host"]
 		#Setup hyp trigger dependencies here
-		node.default['monitoring']['zabbix']['triggerdeps']["{HOST.NAME} : Ping ICMP"]= ["#{hyp}: {HOST.NAME} : Ping ICMP"]
-		node.default['monitoring']['zabbix']['triggerdeps']["Lack of available memory on server {HOST.NAME}"]= ["#{hyp}: Lack of available memory on server {HOST.NAME}"]
+		node.default['monitoring']['zabbix']['triggerdeps']["{HOST.NAME} : Ping ICMP"]= "#{hyp}: {HOST.NAME} : Ping ICMP"
+		node.default['monitoring']['zabbix']['triggerdeps']["Lack of available memory on server {HOST.NAME}"]= "#{hyp}: Lack of available memory on server {HOST.NAME}"
 	else
 		Chef::Log.warn("Zabbix_LOG : #{node['hostname']} as not hypervisor defined in it's databags")
 	end
