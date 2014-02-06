@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'zabbix::web_apache' do
   context 'on Ubuntu 12.04' do
     let(:chef_run) do
-      ChefSpec::ChefRunner.new(platform: 'ubuntu', version: '12.04').
+      ChefSpec::Runner.new(platform: 'ubuntu', version: '12.04').
         converge(described_recipe)
     end
 
@@ -16,7 +16,7 @@ describe 'zabbix::web_apache' do
 
   context 'on Centos 5.9' do
     let(:chef_run) do
-      ChefSpec::ChefRunner.new(platform: 'centos', version: '5.9').
+      ChefSpec::Runner.new(platform: 'centos', version: '5.9').
         converge(described_recipe)
     end
 
@@ -29,7 +29,7 @@ describe 'zabbix::web_apache' do
 
   context 'on Centos 6.0' do
     let(:chef_run) do
-      ChefSpec::ChefRunner.new(platform: 'centos', version: '6.0').
+      ChefSpec::Runner.new(platform: 'centos', version: '6.0').
         converge(described_recipe)
     end
 
