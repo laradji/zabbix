@@ -3,13 +3,12 @@ action :create_or_update do
     get_host_request = {
       :method => "host.get",
       :params => {
-        :filter => {
-          :host => new_resource.hostname
-        }
-      }
+      :filter => {
+      :host => new_resource.hostname
+    }
+    }
     }
     hosts = connection.query(get_host_request)
-
     if hosts.size == 0
       Chef::Log.info "Proceeding to register this node to the Zabbix server"
       run_action :create
@@ -41,10 +40,10 @@ action :create do
       get_groups_request = {
         :method => "hostgroup.get",
         :params => {
-          :filter => {
-            :name => current_group
-          }
-        }
+        :filter => {
+        :name => current_group
+      }
+      }
       }
       groups = connection.query(get_groups_request)
       if groups.length == 0 and new_resource.create_missing_groups
@@ -52,8 +51,8 @@ action :create do
         make_groups_request = {
           :method => "hostgroup.create",
           :params => {
-            :name => current_group
-          }
+          :name => current_group
+        }
         }
         result = connection.query(make_groups_request)
         # And now fetch the newly made group to be sure it worked
@@ -77,11 +76,11 @@ action :create do
       get_templates_request = {
         :method => "template.get",
         :params => {
-          :output => "extend",
-          :filter => {
-            :name => params_incoming[:templates]
-          }
-        }
+        :output => "extend",
+        :filter => {
+        :name => params_incoming[:templates]
+      }
+      }
       }
 
       templates = Hash[connection.query(get_templates_request).map { |template| [ template['templateid'], template['name'] ] }]
@@ -98,12 +97,12 @@ action :create do
     request = {
       :method => "host.create",
       :params => {
-        :host => new_resource.hostname,
-        :groups => groups,
-        :templates => templates_to_send,
-        :interfaces => params_incoming[:interfaces].map(&:to_hash),
-        :macros => format_macros(new_resource.macros)
-      }
+      :host => new_resource.hostname,
+      :groups => groups,
+      :templates => templates_to_send,
+      :interfaces => params_incoming[:interfaces].map(&:to_hash),
+      :macros => format_macros(params_incoming[:macros]),
+    }
     }
     Chef::Log.info "Creating new Zabbix entry for this host"
     connection.query(request) 
@@ -117,13 +116,13 @@ action :update do
     get_host_request = {
       :method=>"host.get",
       :params=> {
-        :filter=> {
-          :host=>new_resource.hostname
-        },
-        :selectInterfaces=>"extend",
-        :selectGroups=>"extend",
-        :selectParentTemplates=>"extend"
-      }
+      :filter=> {
+      :host=>new_resource.hostname
+    },
+      :selectInterfaces=>"extend",
+      :selectGroups=>"extend",
+      :selectParentTemplates=>"extend"
+    }
     }
     host = connection.query(get_host_request).first
     if host.nil?
@@ -137,10 +136,10 @@ action :update do
       get_desired_groups_request = {
         :method => "hostgroup.get",
         :params => {
-          :filter => {
-            :name => desired_group
-          }
-        }
+        :filter => {
+        :name => desired_group
+      }
+      }
       }
       group = connection.query(get_desired_groups_request).first
       if group.nil?
@@ -151,29 +150,32 @@ action :update do
 
     templates = params_incoming[:templates]
     desired_templates = templates.inject([]) do |acc, desired_template|
-      get_desired_templates_request = {
+    get_desired_templates_request = {
         :method => "template.get",
         :params => {
-          :filter => {
-            :host => desired_template
-          }
-        }
+        :filter => {
+        :host => desired_template
+      }
+      }
       }
       template = connection.query(get_desired_templates_request)
       acc << template
     end
 
-    existing_interfaces = host["interfaces"].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+    existing_interfaces = host["interfaces"].map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
     new_host_interfaces = determine_new_host_interfaces(existing_interfaces, params_incoming[:interfaces].map(&:to_hash))
-
+    Chef::Log.info("Zabbix template total : #{desired_templates.length}")
+    Chef::Log.info("Zabbix groups total : #{desired_groups.length}")
     host_update_request = {
       :method => "host.update",
       :params => {
-        :hostid => host["hostid"],
-        :groups => desired_groups,
-        :templates => desired_templates.flatten,
-      }
+      :hostid => host["hostid"],
+      :groups => desired_groups,
+      :templates => desired_templates.flatten,
+      :macros => format_macros(params_incoming[:macros]),
     }
+    }
+    Chef::Log.info("Zabbix Macro Total : #{format_macros(params_incoming[:macros]).length}")
     connection.query(host_update_request)
 
     new_host_interfaces.each do |interface|
@@ -203,12 +205,21 @@ def determine_new_host_interfaces(existing_interfaces, desired_interfaces)
   end
 end
 
+#def format_macros(macros)
+#  macros.map do |macro, value|
+#    macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
+#    {
+#      :macro => macro_name,
+#      :value => value
+#    }
+#  end
+#end
+
 def format_macros(macros)
-  macros.map do |macro, value|
-    macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
-    {
-      :macro => macro_name,
-      :value => value
-    }
+  result=[]
+  macros.each do |macro, value|
+  macro_name = (macro[0] == '{') ? macro : "{$#{macro}}"
+  result.push({:macro => macro, :value => value})
   end
+  return result
 end
