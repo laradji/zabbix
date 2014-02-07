@@ -4,7 +4,7 @@ action :create_or_update do
       :method => "host.get",
       :params => {
       :filter => {
-      :host => new_resource.hostname
+      :host => node["cloud"]["local_hostname"]
     }
     }
     }
@@ -84,7 +84,7 @@ action :create do
       }
 
       templates = Hash[connection.query(get_templates_request).map { |template| [ template['templateid'], template['name'] ] }]
-      if templates.length != params_incoming[:templates].length
+      if templates.length != params_incoming[:templates].uniq.length
         missing_elements = params_incoming[:templates] - templates.values
         Chef::Application.fatal! "Cannot find all templates associated with host, missing : #{missing_elements}"
       end
@@ -97,9 +97,10 @@ action :create do
     request = {
       :method => "host.create",
       :params => {
-      :host => new_resource.hostname,
+      :host => params_incoming[:host],
+      :name => params_incoming[:name],
       :groups => groups,
-      :templates => templates_to_send,
+      :templates => templates_to_send.uniq,
       :interfaces => params_incoming[:interfaces].map(&:to_hash),
       :macros => format_macros(params_incoming[:macros]),
     }
@@ -112,12 +113,13 @@ end
 
 action :update do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    params_incoming = new_resource.parameters
 
     get_host_request = {
       :method=>"host.get",
       :params=> {
       :filter=> {
-      :host=>new_resource.hostname
+      :host=>params_incoming[:host]
     },
       :selectInterfaces=>"extend",
       :selectGroups=>"extend",
@@ -129,7 +131,6 @@ action :update do
       Chef::Application.fatal! "Could not find host #{new_resource.hostname}"
     end
 
-    params_incoming = new_resource.parameters
     groupNames = params_incoming[:groupNames]
 
     desired_groups = groupNames.inject([]) do |acc, desired_group|
@@ -171,9 +172,11 @@ action :update do
       :params => {
       :hostid => host["hostid"],
       :groups => desired_groups,
-      :templates => desired_templates.flatten,
+      :templates => desired_templates.uniq.flatten,
       :macros => format_macros(params_incoming[:macros]),
-    }
+      :name => params_incoming[:name],
+    
+}
     }
     Chef::Log.info("Zabbix Macro Total : #{format_macros(params_incoming[:macros]).length}")
     connection.query(host_update_request)
