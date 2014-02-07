@@ -64,6 +64,7 @@ when 'postgres'
 end
 
 if node['zabbix']['server']['java_gateway_enable'] == true
+  include_recipe "java" # install a JDK if not present
   configure_options << "--enable-java"
 end
 

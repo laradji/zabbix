@@ -31,12 +31,12 @@ EXECDIR="/opt/zabbix/sbin/zabbix_java"
 
 case "$1" in
     start)
-	CLASSPATH="$EXECDIR/lib"
-	for jar in $EXECDIR/{lib,bin}/*.jar; do
-		if [[ $jar != *junit* ]]; then
-			CLASSPATH="$CLASSPATH:$jar"
-		fi
-	done
+        CLASSPATH="$EXECDIR/lib"
+        for jar in $EXECDIR/{lib,bin}/*.jar; do
+            if [[ $jar != *junit* ]]; then
+                CLASSPATH="$CLASSPATH:$jar"
+            fi
+        done
         echo -n "Starting zabbix java gateway: "
         if [ -n "$PID_FILE" -a -e "$PID_FILE" ]; then
             echo "zabbix java gateway is already running"

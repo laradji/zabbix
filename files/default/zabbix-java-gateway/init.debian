@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          zabbix-java-gateway
 # Required-Start:    $remote_fs $network
@@ -11,12 +11,11 @@
 
 NAME=zabbix-java-gateway
 DAEMON=/usr/bin/java
-# TODO: Sub in actual version
-JAR=/opt/zabbix/sbin/zabbix_java/bin/zabbix-java-gateway-2.2.1.jar
 # Exit if executable is not installed
 [ -x $DAEMON ] || exit 0
 
-DIR=/var/run/zabbix
+DIR="/var/run/zabbix"
+EXECDIR="/opt/zabbix/sbin/zabbix_java"
 PID_FILE=$DIR/$NAME.pid
 RETRY=TERM/30/KILL/5
 
@@ -41,8 +40,15 @@ fi
 if [ -n "$START_POLLERS" ]; then
     ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.startPollers=$START_POLLERS"
 fi
-DAEMON_ARGS="${JAVA_OPTIONS} -server ${ZABBIX_OPTIONS} -Dlogback.configurationFile=/etc/zabbix/zabbix_java_gateway.logback.xml -Djava.library.path=/usr/lib/jni -jar $JAR"
-#COMMAND_LINE="${DAEMON} $DAEMON_ARGS -classpath $CLASSPATH com.zabbix.gateway.JavaGateway"
+
+CLASSPATH="$EXECDIR/lib"
+for jar in $EXECDIR/{lib,bin}/*.jar; do
+    if [[ $jar != *junit* ]]; then
+        CLASSPATH="$CLASSPATH:$jar"
+    fi
+done
+
+DAEMON_ARGS="${JAVA_OPTIONS} -server ${ZABBIX_OPTIONS} -Dlogback.configurationFile=/etc/zabbix/zabbix_java_gateway.logback.xml -Djava.library.path=/usr/lib/jni -classpath $CLASSPATH com.zabbix.gateway.JavaGateway"
 
 # Load the VERBOSE setting and other rcS variables
 [ -f /etc/default/rcS ] && . /etc/default/rcS
@@ -53,6 +59,14 @@ DAEMON_ARGS="${JAVA_OPTIONS} -server ${ZABBIX_OPTIONS} -Dlogback.configurationFi
 _ev_ () {
   [ "$VERBOSE" = "no" ] || eval $@
 }
+
+
+
+
+
+
+
+
 
 [ -d "$DIR" ] || mkdir "$DIR"
 chown -R zabbix:zabbix "$DIR"
