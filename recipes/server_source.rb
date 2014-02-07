@@ -65,7 +65,7 @@ end
 
 if node['zabbix']['server']['java_gateway_enable'] == true
   include_recipe "java" # install a JDK if not present
-  configure_options << "--enable-java"
+  configure_options << "--enable-java" unless configure_options.include?("--enable-java")
 end
 
 node.normal['zabbix']['server']['configure_options'] = configure_options
