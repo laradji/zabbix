@@ -56,7 +56,7 @@ action :create do
       :method => "host.get",
       :params => {
       :filter => {
-      :host => new_resource.node["hostname"]
+      :name => new_resource.node["hostname"]
     }
     }
     }
@@ -65,7 +65,6 @@ action :create do
       Chef::Application.fatal! "Host dependency #{my_hostid} no found"
     end
     my_hostid=my_hostid.to_s.gsub!(/\D/, "")
-
     #Retrieve the trigger id of my host
     get_trigger_request = {
       :method => "trigger.get",
