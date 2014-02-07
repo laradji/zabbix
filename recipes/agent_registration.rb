@@ -1,4 +1,5 @@
-# Author:: Kevin MAZIERE
+# Author::  Guilhem Lettron (<guilhem.lettron@youscribe.com>)
+# Contributor:: Kevin MAZIERE (<kevin@kbrwadventure.com>)
 # Cookbook Name:: zabbix
 # Recipe:: agent_registration
 #
