@@ -29,6 +29,26 @@
 RETVAL=0
 EXECDIR="/opt/zabbix/sbin/zabbix_java"
 
+is_running() {
+	if [ -n "$PID_FILE" -a -e "$PID_FILE" ]; then
+	    PID=$(cat $PID_FILE)
+	    # Fragile - convert this to systemd
+	    kill -0 $PID 2> /dev/null
+	    if (( $? == 0 )); then
+		echo "zabbix java gateway is already running"
+		return 1
+	    else
+		rm $PID_FILE
+	    fi
+	fi
+	# Now for the super fragi
+	PID=$(ps auxww | grep com.zabbix.gateway.JavaGatewa[y] | awk '{print $2}')
+	if [[ "$PID" != "" ]]; then
+		echo "Zabbix java gateway is already running (found com.zabbix.gateway.JavaGateway process)."
+		return 1
+	fi
+}
+
 case "$1" in
     start)
         CLASSPATH="$EXECDIR/lib"
@@ -37,14 +57,7 @@ case "$1" in
                 CLASSPATH="$CLASSPATH:$jar"
             fi
         done
-        echo -n "Starting zabbix java gateway: "
-        if [ -n "$PID_FILE" -a -e "$PID_FILE" ]; then
-            echo "zabbix java gateway is already running"
-            exit 1
-        fi
-
         JAVA=${JAVA:-java}
-
         JAVA_OPTIONS="-server"
 
         ZABBIX_OPTIONS=""
@@ -60,6 +73,12 @@ case "$1" in
         if [ -n "$START_POLLERS" ]; then
             ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.startPollers=$START_POLLERS"
         fi
+
+	echo -n "Starting zabbix java gateway: "
+	is_running
+	if (( $? == 1 )); then
+		exit 1
+	fi
 
         COMMAND_LINE="$JAVA $JAVA_OPTIONS -classpath $CLASSPATH $ZABBIX_OPTIONS -Dlogback.configurationFile=/etc/zabbix/zabbix_java_gateway.logback.xml com.zabbix.gateway.JavaGateway"
 
@@ -83,7 +102,7 @@ case "$1" in
                     kill `cat $PID_FILE`
 		    rm $PID_FILE
             else
-                echo "zabbix java gateway is not running"
+                echo "zabbix java gateway is not running (or could not find PID file)"
                 exit 1
             fi
         else
@@ -104,8 +123,12 @@ case "$1" in
         RETVAL=$?
         ;;
     status)
-        status -p $PID_FILE $0
-        exit 0
+        is_running
+        if (( $? == 1 )); then
+            exit 0
+        fi
+        echo "zabbix java gateway is not running"
+        exit 1
         ;;
     *)
         echo "Usage: $0 {start|stop|restart|condrestart|status}"
