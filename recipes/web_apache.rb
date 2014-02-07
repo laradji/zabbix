@@ -55,7 +55,7 @@ apps.each do |a|
     bindport =  a['bind'][node.chef_environment]['port']
   end
 end
-
+node.save
 user node['zabbix']['web']['user']
 
 case node['platform_family']
