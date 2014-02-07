@@ -41,7 +41,7 @@ is_running() {
 		rm $PID_FILE
 	    fi
 	fi
-	# Now for the super fragi
+	# Again, another reason to use systemd
 	PID=$(ps auxww | grep com.zabbix.gateway.JavaGatewa[y] | awk '{print $2}')
 	if [[ "$PID" != "" ]]; then
 		echo "Zabbix java gateway is already running (found com.zabbix.gateway.JavaGateway process)."
