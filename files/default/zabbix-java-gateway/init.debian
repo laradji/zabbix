@@ -60,14 +60,6 @@ _ev_ () {
   [ "$VERBOSE" = "no" ] || eval $@
 }
 
-
-
-
-
-
-
-
-
 [ -d "$DIR" ] || mkdir "$DIR"
 chown -R zabbix:zabbix "$DIR"
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
