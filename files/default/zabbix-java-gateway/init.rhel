@@ -1,0 +1,142 @@
+#!/bin/bash
+#
+# chkconfig: - 69 15
+# description: zabbix java gateway
+#
+
+### BEGIN INIT INFO
+# Provides: zabbix
+# Required-Start: $local_fs $network
+# Required-Stop: $local_fs $network
+# Default-Start:
+# Default-Stop: 0 1 2 3 4 5 6
+# Short-Description: start and stop zabbix java gateway
+# Description: Zabbix Java Gateway
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Source Zabbix Java Gateway configuration
+. /etc/zabbix/zabbix_java_gateway.conf
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+RETVAL=0
+EXECDIR="/opt/zabbix/sbin/zabbix_java"
+
+is_running() {
+	if [ -n "$PID_FILE" -a -e "$PID_FILE" ]; then
+	    PID=$(cat $PID_FILE)
+	    # Fragile - convert this to systemd
+	    kill -0 $PID 2> /dev/null
+	    if (( $? == 0 )); then
+		echo "zabbix java gateway is already running"
+		return 1
+	    else
+		rm $PID_FILE
+	    fi
+	fi
+	# Again, another reason to use systemd
+	PID=$(ps auxww | grep com.zabbix.gateway.JavaGatewa[y] | awk '{print $2}')
+	if [[ "$PID" != "" ]]; then
+		echo "Zabbix java gateway is already running (found com.zabbix.gateway.JavaGateway process)."
+		return 1
+	fi
+}
+
+case "$1" in
+    start)
+        CLASSPATH="$EXECDIR/lib"
+        for jar in $EXECDIR/{lib,bin}/*.jar; do
+            if [[ $jar != *junit* ]]; then
+                CLASSPATH="$CLASSPATH:$jar"
+            fi
+        done
+        JAVA=${JAVA:-java}
+        JAVA_OPTIONS="-server"
+
+        ZABBIX_OPTIONS=""
+        if [ -n "$PID_FILE" ]; then
+            ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.pidFile=$PID_FILE"
+        fi
+        if [ -n "$LISTEN_IP" ]; then
+            ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.listenIP=$LISTEN_IP"
+        fi
+        if [ -n "$LISTEN_PORT" ]; then
+            ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.listenPort=$LISTEN_PORT"
+        fi
+        if [ -n "$START_POLLERS" ]; then
+            ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.startPollers=$START_POLLERS"
+        fi
+
+	echo -n "Starting zabbix java gateway: "
+	is_running
+	if (( $? == 1 )); then
+		exit 1
+	fi
+
+        COMMAND_LINE="$JAVA $JAVA_OPTIONS -classpath $CLASSPATH $ZABBIX_OPTIONS -Dlogback.configurationFile=/etc/zabbix/zabbix_java_gateway.logback.xml com.zabbix.gateway.JavaGateway"
+
+        if [ -n "$PID_FILE" ]; then
+            PID=$(su -s /bin/bash -c "$COMMAND_LINE > /dev/null 2>&1 & echo \$!" zabbix)
+            if ps -p $PID > /dev/null 2>&1; then
+                echo $PID > $PID_FILE
+            else
+                echo "zabbix java gateway did not start"
+                exit 1
+            fi
+        else
+            exec $COMMAND_LINE
+            RETVAL=$?
+        fi
+        ;;
+    stop)
+        echo -n "Shutting down zabbix java gateway: "
+        if [ -n "$PID_FILE" ]; then
+            if [ -e "$PID_FILE" ]; then
+                    kill `cat $PID_FILE`
+		    rm $PID_FILE
+            else
+                echo "zabbix java gateway is not running (or could not find PID file)"
+                exit 1
+            fi
+        else
+            echo "zabbix java gateway is not configured as a daemon: variable \$PID_FILE is not set"
+            exit 1
+        fi
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        RETVAL=$?
+        ;;
+    condrestart)
+        if [ -n "$PID_FILE" -a -e "$PID_FILE" ]; then
+            $0 stop
+            $0 start
+        fi
+        RETVAL=$?
+        ;;
+    status)
+        is_running
+        if (( $? == 1 )); then
+            exit 0
+        fi
+        echo "zabbix java gateway is not running"
+        exit 1
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|condrestart|status}"
+        exit 1
+        ;;
+esac
+
+[ "$RETVAL" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+echo
+exit $RETVAL
+

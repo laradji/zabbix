@@ -1,0 +1,112 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          zabbix-java-gateway
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start zabbix-java-gateway daemon
+# Description: Control zabbix-java-gateway daemon
+### END INIT INFO
+
+NAME=zabbix-java-gateway
+DAEMON=/usr/bin/java
+# Exit if executable is not installed
+[ -x $DAEMON ] || exit 0
+
+DIR="/var/run/zabbix"
+EXECDIR="/opt/zabbix/sbin/zabbix_java"
+PID_FILE=$DIR/$NAME.pid
+RETRY=TERM/30/KILL/5
+
+#if [ "$(id -u)" -ne 0 ]; then
+#    echo "Error: root privileges are needed to run $0"
+#    exit 1
+#fi
+
+# Source Zabbix java gateway configuration file
+. /etc/zabbix/zabbix_java_gateway.conf
+
+ZABBIX_OPTIONS=""
+if [ -n "$PID_FILE" ]; then
+    ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.pidFile=$PID_FILE"
+fi
+if [ -n "$LISTEN_IP" ]; then
+    ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.listenIP=$LISTEN_IP"
+fi
+if [ -n "$LISTEN_PORT" ]; then
+    ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.listenPort=$LISTEN_PORT"
+fi
+if [ -n "$START_POLLERS" ]; then
+    ZABBIX_OPTIONS="$ZABBIX_OPTIONS -Dzabbix.startPollers=$START_POLLERS"
+fi
+
+CLASSPATH="$EXECDIR/lib"
+for jar in $EXECDIR/{lib,bin}/*.jar; do
+    if [[ $jar != *junit* ]]; then
+        CLASSPATH="$CLASSPATH:$jar"
+    fi
+done
+
+DAEMON_ARGS="${JAVA_OPTIONS} -server ${ZABBIX_OPTIONS} -Dlogback.configurationFile=/etc/zabbix/zabbix_java_gateway.logback.xml -Djava.library.path=/usr/lib/jni -classpath $CLASSPATH com.zabbix.gateway.JavaGateway"
+
+# Load the VERBOSE setting and other rcS variables
+[ -f /etc/default/rcS ] && . /etc/default/rcS
+
+# define LSB log_* functions.
+. /lib/lsb/init-functions
+
+_ev_ () {
+  [ "$VERBOSE" = "no" ] || eval $@
+}
+
+[ -d "$DIR" ] || mkdir "$DIR"
+chown -R zabbix:zabbix "$DIR"
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+case "$1" in
+  start)
+    start-stop-daemon --start --pidfile $PID_FILE --exec $DAEMON --test --quiet > /dev/null
+    [ $? -ne 0 ] && log_action_msg "$NAME is already running" && exit 0
+    _ev_ log_action_begin_msg \"$NAME starting\"
+    R=$(start-stop-daemon --start --background --make-pidfile --user zabbix --group zabbix --chuid zabbix --pidfile $PID_FILE --exec $DAEMON --oknodo -- ${DAEMON_ARGS} 2>&1) \
+    && _ev_ log_action_end_msg 0 \"$R\" \
+    || _ev_ log_action_end_msg 1 \"$R\"
+  ;;
+  stop)
+    _ev_ log_action_begin_msg "$NAME stopping"
+    R=$(start-stop-daemon --stop --pidfile $PID_FILE --oknodo --retry=$RETRY 2>&1)
+    if [ $? -ne 0 ]; then
+        _ev_ log_action_end_msg 1 \"$R\"
+    else
+        t=5
+        while $0 status >/dev/null; do
+            _ev_ log_action_cont_msg \"[$t]\"
+            t=$(($t-1))
+            if [ $t -ne 0 ]; then
+                sleep 1
+                continue
+            else
+                break
+            fi
+        done
+        $0 status >/dev/null \
+        && _ev_ log_action_end_msg 1 \"still running after 5 sec., unable to stop\" \
+        || _ev_ log_action_end_msg 0 \"$R\"
+    fi
+  ;;
+  status)
+    ## return status 0 if process is running.
+    status_of_proc -p $PID_FILE "$DAEMON" "$NAME"
+  ;;
+  restart|force-reload)
+    $0 stop
+    $0 status >/dev/null \
+    &&  exit 1  \
+    || $0 start
+  ;;
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload|status}" >&2
+    exit 1
+  ;;
+esac
