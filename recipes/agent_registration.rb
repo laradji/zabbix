@@ -19,7 +19,7 @@ else
 end
 
 connection_info = {
-  :url => "http://#{zabbix_server['zabbix']['web']['ip']}/api_jsonrpc.php",
+  :url => "http://#{zabbix_server['zabbix']['web']['ip']}:#{zabbix_server['zabbix']['web']['port']}/api_jsonrpc.php",
   :user => zabbix_server['zabbix']['web']['login'],
     :password => zabbix_server['zabbix']['web']['password']
 }
@@ -92,7 +92,8 @@ zabbix_host "#{node['hostname']}" do
   create_missing_groups true
   server_connection connection_info
   parameters ({
-    :host => node['hostname'],
+    :host => dnsname,
+    :name => node['hostname'],
     :groupNames => node['zabbix']['agent']['groups'],
     :templates => tmpl,
     :interfaces => interface_data,
