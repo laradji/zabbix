@@ -21,7 +21,10 @@ depends          "php-fpm"
 depends          "nginx", ">= 1.0.0"
 depends          "ark"
 depends          "chocolatey"
+<<<<<<< HEAD
 depends          "java"
+=======
+>>>>>>> f7e40212a5729f4b0a72aa53a706588c61b1c2e3
 depends          "oracle-instantclient"
 depends          "php"
 depends          "yum-epel"
