@@ -6,6 +6,7 @@ global $DB;
 <% dbtypes['mysql'] = "MYSQL" %>
 <% dbtypes['rds_mysql'] = "MYSQL" %>
 <% dbtypes['postgres'] = "POSTGRESQL" %>
+<% dbtypes['oracle'] = "ORACLE" %>
 
 $DB["TYPE"]                     = '<%= dbtypes[@database[:install_method]] %>';
 $DB["SERVER"]                   = '<%= @database[:dbhost] %>';
