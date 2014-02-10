@@ -11,7 +11,7 @@ class Chef
 
     class InvalidMySqlConnectionInfoError < ZabbixError
       def initialize(bad_connection_info)
-        @bad_connection_info = bad_connection_info 
+        @bad_connection_info = bad_connection_info
       end
 
       def to_s
@@ -24,7 +24,7 @@ class Chef
         @bad_connection_spec = bad_connection_spec
       end
 
-      def to_s 
+      def to_s
         "ZabbixApi connection info must be a Hash containing :url, :user and :password keys. Received: #{@bad_connection_spec}"
       end
     end

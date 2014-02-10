@@ -1,7 +1,7 @@
 # Author:: Friedrich Clausen (<ftclausen@gmail.com>)
 # Cookbook Name:: zabbix
 # Recipe:: java_gateway
-# 
+#
 # Apache 2.0
 #
 
@@ -9,11 +9,11 @@ include_recipe "java"
 
 template "/etc/zabbix/zabbix_java_gateway.conf" do
   source "zabbix-java-gateway/zabbix_java_gateway.conf.erb"
-  variables({
+  variables(
     :java_gateway_listen_ip => node['zabbix']['server']['java_gateway_listen_ip'],
     :java_gateway_listen_port => node['zabbix']['server']['java_gateway_listen_port'],
     :java_gateway_pollers => node['zabbix']['server']['java_gateway_pollers']
-  })
+  )
   owner "zabbix"
   group "zabbix"
   mode "0644"
@@ -51,7 +51,6 @@ service "zabbix-java-gateway" do
   action [:enable, :start]
 end
 
-
 # Dummy file saying look at /etc/zabbix/zabbix_java_gateway.conf
 cookbook_file "/opt/zabbix/sbin/zabbix_java/settings.sh" do
   source "zabbix-java-gateway/settings.sh"
@@ -59,4 +58,3 @@ cookbook_file "/opt/zabbix/sbin/zabbix_java/settings.sh" do
   group "zabbix"
   mode "0644"
 end
-

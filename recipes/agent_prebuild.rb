@@ -22,7 +22,7 @@ ark "zabbix_agent" do
   action :put
   path  "/opt"
   strip_leading_dir false
-  has_binaries [ 'bin/zabbix_sender', 'bin/zabbix_get', 'sbin/zabbix_agent', 'sbin/zabbix_agentd' ]
+  has_binaries ['bin/zabbix_sender', 'bin/zabbix_get', 'sbin/zabbix_agent', 'sbin/zabbix_agentd']
   notifies :restart, "service[zabbix_agentd]"
   checksum "#{node['zabbix']['agent']['checksum']}"
 end

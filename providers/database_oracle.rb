@@ -1,5 +1,5 @@
 # Stub Oracle provider
-def whyrun_supported? 
+def whyrun_supported?
   true
 end
 

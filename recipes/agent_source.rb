@@ -10,7 +10,7 @@
 include_recipe "zabbix::agent_common"
 
 case node['platform']
-when "ubuntu","debian"
+when "ubuntu", "debian"
   # install some dependencies
   %w{ fping libcurl3 libiksemel-dev libiksemel3 libsnmp-dev libiksemel-utils libcurl4-openssl-dev }.each do |pck|
     package pck do
@@ -18,8 +18,8 @@ when "ubuntu","debian"
     end
   end
   init_template = 'zabbix_agentd.init.erb'
-  
-when "redhat","centos","scientific","amazon"
+
+when "redhat", "centos", "scientific", "amazon"
     %w{ fping curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb }.each do |pck|
       package pck do
         action :install
@@ -40,7 +40,7 @@ zabbix_source "install_zabbix_agent" do
   version             node['zabbix']['server']['version']
   source_url          node['zabbix']['agent']['source_url']
   code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['agent']['version']}-agent"  
+  target_dir          "zabbix-#{node['zabbix']['agent']['version']}-agent"
   install_dir         node['zabbix']['install_dir']
   configure_options   configure_options.join(" ")
 

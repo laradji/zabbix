@@ -27,7 +27,6 @@ if node['zabbix']['agent']['user_parameter'].length > 0
     end
 end
 
-
 ruby_block "start service" do
   block do
     true

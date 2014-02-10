@@ -2,7 +2,7 @@ include_recipe "zabbix::common"
 
 # Install nginx and disable default site
 node.override['nginx']['default_site_enabled'] = false
-#node.override['php-fpm']['pool']['www']['listen'] = node['zabbix']['web']['php']['fastcgi_listen']
+# node.override['php-fpm']['pool']['www']['listen'] = node['zabbix']['web']['php']['fastcgi_listen']
 include_recipe "nginx"
 
 # Install php-fpm to execute PHP code from nginx
@@ -39,7 +39,7 @@ zabbix_source "extract_zabbix_web" do
   version             node['zabbix']['server']['version']
   source_url          node['zabbix']['server']['source_url']
   code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
+  target_dir          "zabbix-#{node['zabbix']['server']['version']}"
   install_dir         node['zabbix']['install_dir']
 
   action :extract_only
@@ -51,7 +51,7 @@ link node['zabbix']['web_dir'] do
   to "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php"
 end
 
-conf_dir = ::File.join(node['zabbix']['src_dir'], "zabbix-#{node['zabbix']['server']['version']}", "frontends", "php", "conf") 
+conf_dir = ::File.join(node['zabbix']['src_dir'], "zabbix-#{node['zabbix']['server']['version']}", "frontends", "php", "conf")
 directory conf_dir do
   owner node['nginx']['user']
   group node['nginx']['group']
