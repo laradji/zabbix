@@ -23,12 +23,23 @@ connection_info = {
   :password => zabbix_server['zabbix']['web']['password']
 }
 
+ip_address => node['ipaddress']
+if node['zabbix']['agent']['network_interface']
+  interface = node['zabbix']['agent']['network_interface']
+  if node['network']['interfaces'][interface]
+    ip_address = node['network']['interfaces'][interface]['addresses'].keys[1]
+    Chef::Log.debug "zabbix::agent_registration : Using ip address of #{ip_address} for host"
+  else
+    Chef::Log.warn "zabbix::agent_registration : Could not find interface address for #{interface}, falling back to default"
+  end
+end
+
 interface_definitions = {
   :zabbix_agent => {
      :type => 1,
      :main => 1,
      :useip => 1,
-     :ip => node['ipaddress'],
+     :ip => ip_address,
      :dns => node['fqdn'],
      :port => "10050"
   },
@@ -36,7 +47,7 @@ interface_definitions = {
      :type => 4,
      :main => 1,
      :useip => 1,
-     :ip => node['ipaddress'],
+     :ip => ip_address,
      :dns => node['fqdn'],
      :port => "10052"
   },
@@ -44,7 +55,7 @@ interface_definitions = {
      :type => 2,
      :main => 1,
      :useip => 1,
-     :ip => node['ipaddress'],
+     :ip => ip_address,
      :dns => node['fqdn'],
      :port => "161"
   }
