@@ -23,7 +23,7 @@ connection_info = {
   :password => zabbix_server['zabbix']['web']['password']
 }
 
-ip_address => node['ipaddress']
+ip_address = node['ipaddress']
 if node['zabbix']['agent']['network_interface']
   interface = node['zabbix']['agent']['network_interface']
   if node['network']['interfaces'][interface]
