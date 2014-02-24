@@ -76,27 +76,27 @@ class Chef
         end
 
         private 
-          def validate!(options)
-            options = symbolize(options)
-            Chef::Application.fatal!(":main must be one of [true, false]") unless [true, false].include?(options[:main])
-            Chef::Application.fatal!(":useip must be one of [true, false]") unless [true, false].include?(options[:useip])
-            if options[:useip]
-              search = :ip
-            else
-              search = :dns
-            end
-            Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") if options[search].to_s.empty?
-            Chef::Application.fatal!(":port is required") if options[:port].to_s.empty?
-            Chef::Application.fatal!(":type must be a Chef::Zabbix::API:HostInterfaceType") unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
+        def validate!(options)
+          options = symbolize(options)
+          Chef::Application.fatal!(":main must be one of [true, false]") unless [true, false].include?(options[:main])
+          Chef::Application.fatal!(":useip must be one of [true, false]") unless [true, false].include?(options[:useip])
+          if options[:useip]
+            search = :ip
+          else
+            search = :dns
           end
+          Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") if options[search].to_s.empty?
+          Chef::Application.fatal!(":port is required") if options[:port].to_s.empty?
+          Chef::Application.fatal!(":type must be a Chef::Zabbix::API:HostInterfaceType") unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
+        end
 
-          def symbolize(options)
-            symbolized = {}
-            options.each_key do |key|
-              symbolized[key.to_sym] = options[key]
-            end
-            symbolized
+        def symbolize(options)
+          symbolized = {}
+          options.each_key do |key|
+            symbolized[key.to_sym] = options[key]
           end
+          symbolized
+        end
       end
 
       class << self
@@ -113,6 +113,27 @@ class Chef
           connection.query(group_id_request)
         end
 
+        def find_host_ids(connection, host)  
+          get_host_request = {
+            :method => "host.get",
+            :params => {
+              :filter => {
+                :host => host,
+              }
+            }
+          }
+          connection.query(get_host_request) 
+        end
+
+        def find_interface_ids(connection, hostids)  
+          get_interface_request = {
+            :method => "hostinterface.get",
+            :params => {
+                :hostids => hostids,
+            }
+          }
+          connection.query(get_interface_request) 
+        end
         def find_template_ids(connection, template)
           get_template_request = {
             :method => "template.get",
