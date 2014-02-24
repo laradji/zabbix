@@ -38,9 +38,13 @@ zabbix_server =search(:node,"role:zabbix-server AND chef_environment:#{node.chef
 
 	res=search(:virtual_machines,"id:#{node['hostname']}").first
 	if res then
-		hyp=res["host"]
+		
+                hyp=res["host"]
+                # Dirty trick to set end of fqdn hypervisor same as vm
+                hyp=hyp.to_s.split('.', 2).first+"."+node["cloud"]["local_hostname"].to_s.split('.', 2).last
 		#Setup hyp trigger dependencies here
-		node.default['monitoring']['zabbix']['triggerdeps']["{HOST.NAME} : Ping ICMP"]= "#{hyp}: {HOST.NAME} : Ping ICMP"
+		node.default['virtualization']['hypervisor']="#{hyp}"
+                node.default['monitoring']['zabbix']['triggerdeps']["{HOST.NAME} : Ping ICMP"]= "#{hyp}: {HOST.NAME} : Ping ICMP"
 		node.default['monitoring']['zabbix']['triggerdeps']["Lack of available memory on server {HOST.NAME}"]= "#{hyp}: Lack of available memory on server {HOST.NAME}"
 	else
 		Chef::Log.warn("Zabbix_LOG : #{node['hostname']} as not hypervisor defined in it's databags")
