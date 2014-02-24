@@ -1,8 +1,9 @@
-actions :create
+actions :create, :delete
 default_action :create
 
 attribute :name, :kind_of => String, :name_attribute => true
-attribute :template, :kind_of => String, :required => true
+attribute :template, :kind_of => String
+attribute :hostname, :kind_of => String
 attribute :applications, :kind_of => Array, :required => true
 attribute :key, :kind_of => String, :required => true
 attribute :type, :kind_of => Chef::Zabbix::API::ItemType, :required => true
@@ -37,6 +38,7 @@ attribute :publickey, :kind_of => String
 attribute :privatekey, :kind_of => String
 attribute :inventory_link, :kind_of => Fixnum, :default => 0 #TODO: Make an enumeration for this
 attribute :valuemap, :kind_of => String
+attribute :hostid, :kind_of => String
 
 # Setting discovery_rule will cause the item to be created as a prototype
 attribute :discovery_rule_key, :kind_of => String, :default => nil
