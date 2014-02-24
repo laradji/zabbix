@@ -5,19 +5,52 @@ action :create do
     # and we just treat it as the description field the api wants
     # 
     # The description on the lwrp becomes comments in the api
+    template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)       
+    unless template_ids.empty?
+      params = {
+        # For whatever reason triggers have a description and comments
+        # instead of a name and description...
+        :description => new_resource.name,
+        :comments => new_resource.description,
+        :expression => new_resource.expression,
+        :priority => new_resource.priority.value, 
+        :status => new_resource.status.value,
+      }
 
-    params = {
-      # For whatever reason triggers have a description and comments
-      # instead of a name and description...
-      :description => new_resource.name,
-      :comments => new_resource.description,
-      :expression => new_resource.expression,
-      :priority => new_resource.priority.value, 
-      :status => new_resource.status.value,
-    }
+      noun = (new_resource.prototype) ? 'triggerprototype' : 'trigger'
+      verb = 'create'
+
+      if new_resource.prototype
+        trigger_ids = Zabbix::API.find_trigger_prototype_ids(connection, new_resource.name)
+      else
+        trigger_ids = Zabbix::API.find_trigger_ids(connection, new_resource.name)
+      end
+
+      unless trigger_ids.empty?
+        verb = 'update'
+        params[:triggerid] = trigger_ids.first['triggerid']
+      end
+
+      method = "#{noun}.#{verb}"
+      connection.query(
+        :method => method,
+        :params => params,
+        :templateid => template_ids.first['templateid']
+      )
+    end
+    new_resource.updated_by_last_action(true)
+  end
+end
+action :delete do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    # NOTE: Triggers in the zabbix api don't really have a "name"
+    # Instead we call it name so that lwrp users don't lose their minds
+    # and we just treat it as the description field the api wants
+    # 
+    # The description on the lwrp becomes comments in the api
 
     noun = (new_resource.prototype) ? 'triggerprototype' : 'trigger'
-    verb = 'create'
+    verb = 'delete'
 
     if new_resource.prototype
       trigger_ids = Zabbix::API.find_trigger_prototype_ids(connection, new_resource.name)
@@ -26,7 +59,7 @@ action :create do
     end
 
     unless trigger_ids.empty?
-      verb = 'update'
+      verb = 'delete'
       params[:triggerid] = trigger_ids.first['triggerid']
     end
 
