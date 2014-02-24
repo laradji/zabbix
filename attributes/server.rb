@@ -1,6 +1,6 @@
 include_attribute "zabbix"
 
-default['zabbix']['server']['version']                = "2.2.1"
+default['zabbix']['server']['version']                = "2.2.2"
 default['zabbix']['server']['branch']                 = "ZABBIX%20Latest%20Stable"
 default['zabbix']['server']['source_url']             = nil
 default['zabbix']['server']['install_method']         = "source"
