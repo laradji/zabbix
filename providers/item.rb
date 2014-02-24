@@ -1,11 +1,21 @@
 action :create do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-    template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
-    if template_ids.empty?
-      Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
-    end
 
-    template_id = template_ids.first['hostid']
+    template_id=""
+    if new_resource.template
+      template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
+      if template_ids.empty?
+        Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
+      end
+      template_id = template_ids.first['templateid']
+    end
+    if new_resource.hostname
+      template_ids = Zabbix::API.find_host_ids(connection, new_resource.hostname)
+      if template_ids.empty?
+        Chef::Application.fatal! "Could not find a host named #{new_resource.hostname}"
+      end
+      template_id = template_ids.first['hostid']
+    end
 
     application_ids = new_resource.applications.map do |application|
       app_ids = Zabbix::API.find_application_ids(connection, application, template_id) 
@@ -42,6 +52,19 @@ action :create do
     params[:key_] = new_resource.key
     params[:hostid] = template_id
     params[:applications] = application_ids
+    if new_resource.hostname
+      host_ids = Zabbix::API.find_host_ids(connection, new_resource.hostname)
+      if host_ids.empty?
+        Chef::Application.fatal! "Could not find a host named #{new_resource.hostname}"
+      end
+      host_id = host_ids.first['hostid']
+      interface_ids = Zabbix::API.find_interface_ids(connection, host_id)
+      if interface_ids.empty?
+        Chef::Application.fatal! "Could not find a interface for  #{new_resource.hostname}"
+      end
+      interface_id = interface_ids.first['interfaceid']
+      params[:interfaceid] = interface_id
+    end
     unless new_resource.discovery_rule_key.nil?
       discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
       params[:ruleid] = discovery_rule_id
@@ -65,6 +88,55 @@ action :create do
   end
 
   new_resource.updated_by_last_action(true)
+end
+
+
+
+action :delete do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+
+    params = {}
+    template_id=""
+    if new_resource.template
+      template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
+      if template_ids.empty?
+        Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
+      end
+      template_id = template_ids.first['templateid']
+    end
+    if new_resource.hostname
+      template_ids = Zabbix::API.find_host_ids(connection, new_resource.hostname)
+      if template_ids.empty?
+        Chef::Application.fatal! "Could not find a host named #{new_resource.hostname}"
+      end
+      template_id = template_ids.first['hostid']
+    end
+
+    unless new_resource.discovery_rule_key.nil?
+      discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+      params[:ruleid] = discovery_rule_id
+    end
+
+    if new_resource.discovery_rule_key.nil?
+      item_ids = Zabbix::API.find_item_ids(connection, template_id, new_resource.key, new_resource.name)
+    else
+      item_ids = Zabbix::API.find_item_prototype_ids(connection, template_id, new_resource.key, discovery_rule_id)
+    end
+
+    unless item_ids.empty?
+      verb = "delete"
+      params[:itemid] = item_ids.first['itemid']
+
+    noun = (new_resource.discovery_rule_key.nil?) ? "item" : "itemprototype"
+    verb = "delete"
+      connection.query(
+        :method => "#{noun}.#{verb}",
+        :params => params
+      )
+    end
+
+    new_resource.updated_by_last_action(true)
+  end
 end
 
 def load_current_resource
