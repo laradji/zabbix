@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/laradji/zabbix.png?branch=master)](https://travis-ci.org/laradji/zabbix)
+
 # DESCRIPTION
 
 This cookbook install zabbix-agent and zabbix-server.
