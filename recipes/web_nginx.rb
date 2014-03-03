@@ -8,29 +8,9 @@ include_recipe 'nginx'
 # Install php-fpm to execute PHP code from nginx
 include_recipe 'php-fpm'
 
-case node['platform_family']
-when 'debian'
-  %w{ php5-mysql php5-gd }.each do |pck|
-    package pck do
-      action :install
-      notifies :restart, 'service[nginx]'
-    end
-  end
-when 'rhel'
-  if node['platform_version'].to_f < 6.0
-    %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |pck|
-      package pck do
-        action :install
-        notifies :restart, 'service[nginx]'
-      end
-    end
-  else
-    %w{ php-mysql php-gd php-bcmath php-mbstring }.each do |pck|
-      package pck do
-        action :install
-        notifies :restart, 'service[nginx]'
-      end
-    end
+node['zabbix']['web']['packages'].each do |pck|
+  package pck do
+    notifies :restart, 'service[nginx]'
   end
 end
 
@@ -43,7 +23,6 @@ zabbix_source 'extract_zabbix_web' do
   install_dir         node['zabbix']['install_dir']
 
   action :extract_only
-
 end
 
 # Link to the web interface version

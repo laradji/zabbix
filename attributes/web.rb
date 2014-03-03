@@ -14,3 +14,13 @@ default['zabbix']['web']['php']['settings']    = {
   'max_input_time'      => '600',
   'date.timezone'       => "'UTC'",
 }
+
+default['zabbix']['web']['packages'] = value_for_platform_family(
+  'debian' => %w{ php5-mysql php5-gd libapache2-mod-php5 },
+  'rhel' =>
+    if node['platform_version'].to_f < 6.0
+      %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }
+    else
+      %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }
+    end
+  )

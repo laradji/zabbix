@@ -20,24 +20,14 @@ end
 
 user node['zabbix']['web']['user']
 
-node['zabbix']['web']['packages'] =
-  case node['platform_family']
-  when 'debian'
-    %w{ php5-mysql php5-gd libapache2-mod-php5 }
-  when 'rhel'
-    if node['platform_version'].to_f < 6.0
-      %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }
-    else
-      %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }
-    end
-  end
-
 node['zabbix']['web']['packages'].each do |pkg|
   package pkg do
     action :install
     notifies :restart, 'service[apache2]'
   end
 end
+
+package 'libapache2-mod-php5' if platform_family?('debian')
 
 zabbix_source 'extract_zabbix_web' do
   branch              node['zabbix']['server']['branch']
