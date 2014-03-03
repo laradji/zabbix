@@ -8,7 +8,7 @@ root_dirs.each do |dir|
     unless node['platform'] == "windows"
       owner "root"
       group "root"
-      mode "755" 
+      mode "755"
     end
     recursive true
     notifies :restart, "service[zabbix_agentd]"

@@ -6,7 +6,7 @@ attribute :template, :kind_of => String, :required => true
 attribute :applications, :kind_of => Array, :required => true
 attribute :key, :kind_of => String, :required => true
 attribute :type, :kind_of => Chef::Zabbix::API::ItemType, :required => true
-attribute :value_type, :kind_of => Chef::Zabbix::API::ItemValueType, :required => true 
+attribute :value_type, :kind_of => Chef::Zabbix::API::ItemValueType, :required => true
 attribute :server_connection, :kind_of => Hash, :required => true
 
 attribute :delay, :kind_of => Fixnum, :default => 60
@@ -35,7 +35,7 @@ attribute :username, :kind_of => String
 attribute :password, :kind_of => String
 attribute :publickey, :kind_of => String
 attribute :privatekey, :kind_of => String
-attribute :inventory_link, :kind_of => Fixnum, :default => 0 #TODO: Make an enumeration for this
+attribute :inventory_link, :kind_of => Fixnum, :default => 0 # TODO: Make an enumeration for this
 attribute :valuemap, :kind_of => String
 
 # Setting discovery_rule will cause the item to be created as a prototype

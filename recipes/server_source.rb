@@ -10,13 +10,13 @@
 include_recipe "zabbix::common"
 include_recipe "zabbix::server_common"
 
-packages = Array.new
+packages = []
 case node['platform']
-when "ubuntu","debian"
+when "ubuntu", "debian"
   packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear }
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
-    packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd' )
+    packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd')
   when 'postgres'
     packages.push('libssh2-1-dev')
   # Oracle oci8 PECL package installed below
@@ -25,9 +25,9 @@ when "ubuntu","debian"
     packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init.erb'
-when "redhat","centos","scientific","amazon","oracle"
+when "redhat", "centos", "scientific", "amazon", "oracle"
   include_recipe "yum-epel"
-  
+
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
   packages = %w{ fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear }
@@ -35,14 +35,14 @@ when "redhat","centos","scientific","amazon","oracle"
 
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
-    php_packages = (node['platform_version'].to_i < 6)?
+    php_packages = (node['platform_version'].to_i < 6) ?
       %w{ php53-mysql php53-gd php53-bcmath php53-mbstring php53-xml } :
       %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }
     packages.push(*php_packages)
   when 'postgres'
-    php_packages = (node['platform_version'].to_i < 6)?
+    php_packages = (node['platform_version'].to_i < 6) ?
       %w{ php5-pgsql php5-gd php5-xml } :
-      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml } 
+      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml }
     packages.push(*php_packages)
   # Oracle oci8 PECL package installed below
   when 'oracle'
@@ -102,7 +102,7 @@ zabbix_source "install_zabbix_server" do
   branch              node['zabbix']['server']['branch']
   version             node['zabbix']['server']['version']
   code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['server']['version']}"  
+  target_dir          "zabbix-#{node['zabbix']['server']['version']}"
   install_dir         node['zabbix']['install_dir']
   configure_options   configure_options.join(" ")
 
@@ -140,7 +140,7 @@ end
 # Define zabbix_agentd service
 service "zabbix_server" do
   supports :status => true, :start => true, :stop => true, :restart => true
-  action [ :start, :enable ]
+  action [:start, :enable]
 end
 
 # Configure the Java Gateway

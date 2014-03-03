@@ -7,7 +7,7 @@
 
 unless Chef::Config[:solo]
   zabbix_server = search(:node, "recipe:zabbix\\:\\:server").first
-else 
+else
   if node['zabbix']['web']['fqdn']
     zabbix_server = node
   else
@@ -54,7 +54,7 @@ interface_list = node['zabbix']['agent']['interfaces']
 
 interface_data = []
 interface_list.each do |interface|
-  if interface_definitions.has_key?(interface.to_sym)
+  if interface_definitions.key?(interface.to_sym)
     interface_data.push(interface_definitions[interface.to_sym])
   else
     Chef::Log.warn "WARNING: Interface #{interface} is not defined in agent_registration.rb"

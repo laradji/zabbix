@@ -54,10 +54,10 @@ action :create do
     end
 
     method = "#{noun}.#{verb}"
-    connection.query({
+    connection.query(
       :method => method,
       :params => params
-    })
+    )
   end
   new_resource.updated_by_last_action(true)
 end

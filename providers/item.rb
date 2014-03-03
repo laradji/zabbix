@@ -8,7 +8,7 @@ action :create do
     template_id = template_ids.first['hostid']
 
     application_ids = new_resource.applications.map do |application|
-      app_ids = Zabbix::API.find_application_ids(connection, application, template_id) 
+      app_ids = Zabbix::API.find_application_ids(connection, application, template_id)
       if app_ids.empty?
         Chef::Application.fatal! "Could not find an application named #{application}"
       end
@@ -20,7 +20,7 @@ action :create do
 
     params = {}
     simple_value_keys = [
-      :name, :delay, :description, :snmp_community, :snmp_oid, 
+      :name, :delay, :description, :snmp_community, :snmp_oid,
       :port, :params, :multiplier, :history, :trends, :allowed_hosts,
       :units, :snmpv3_securityname, :snmpv3_authpassphrase, :snmpv3_privpassphrase,
       :formula, :delay_flex, :ipmi_sensor, :username, :password,

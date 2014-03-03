@@ -25,7 +25,7 @@ action :create do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     all_are_host_interfaces = new_resource.interfaces.all? { |interface| interface.kind_of?(Chef::Zabbix::API::HostInterface) }
-    unless all_are_host_interfaces 
+    unless all_are_host_interfaces
       Chef::Application.fatal!(":interfaces must only contain Chef::Zabbix::API::HostInterface")
     end
 
@@ -69,7 +69,6 @@ action :create do
       end
     end
 
-
     if params_incoming[:templates].length == 0
       Chef::Log.warn "Empty Zabbix template list for this host - not searching to see if templates exist"
       templates = {}
@@ -84,7 +83,7 @@ action :create do
         }
       }
 
-      templates = Hash[connection.query(get_templates_request).map { |template| [ template['templateid'], template['name'] ] }]
+      templates = Hash[connection.query(get_templates_request).map { |template| [template['templateid'], template['name']] }]
       if templates.length != params_incoming[:templates].length
         missing_elements = params_incoming[:templates] - templates.values
         Chef::Application.fatal! "Cannot find all templates associated with host, missing : #{missing_elements}"
@@ -93,7 +92,7 @@ action :create do
 
     templates_to_send = []
     templates.keys.each do |key|
-      templates_to_send.concat([ {"templateid" => key } ])
+      templates_to_send.concat([{ "templateid" => key }])
     end
     request = {
       :method => "host.create",
@@ -106,7 +105,7 @@ action :create do
       }
     }
     Chef::Log.info "Creating new Zabbix entry for this host"
-    connection.query(request) 
+    connection.query(request)
   end
   new_resource.updated_by_last_action(true)
 end
@@ -115,14 +114,14 @@ action :update do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
     get_host_request = {
-      :method=>"host.get",
-      :params=> {
-        :filter=> {
-          :host=>new_resource.hostname
+      :method => "host.get",
+      :params => {
+        :filter => {
+          :host => new_resource.hostname
         },
-        :selectInterfaces=>"extend",
-        :selectGroups=>"extend",
-        :selectParentTemplates=>"extend"
+        :selectInterfaces => "extend",
+        :selectGroups => "extend",
+        :selectParentTemplates => "extend"
       }
     }
     host = connection.query(get_host_request).first
@@ -133,7 +132,7 @@ action :update do
     params_incoming = new_resource.parameters
     groupNames = params_incoming[:groupNames]
 
-    desired_groups = groupNames.inject([]) do |acc, desired_group|
+    desired_groups = groupNames.reduce([]) do |acc, desired_group|
       get_desired_groups_request = {
         :method => "hostgroup.get",
         :params => {
@@ -150,7 +149,7 @@ action :update do
     end
 
     templates = params_incoming[:templates]
-    desired_templates = templates.inject([]) do |acc, desired_template|
+    desired_templates = templates.reduce([]) do |acc, desired_template|
       get_desired_templates_request = {
         :method => "template.get",
         :params => {

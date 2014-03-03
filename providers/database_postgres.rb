@@ -1,4 +1,4 @@
-def whyrun_supported? 
+def whyrun_supported?
   true
 end
 
@@ -12,10 +12,10 @@ def load_current_resource
   @current_resource.root_username(@new_resource.root_username)
   @current_resource.root_password(@new_resource.root_password)
 
-  if database_exists?(@current_resource.dbname, 
-                      @current_resource.host, 
+  if database_exists?(@current_resource.dbname,
+                      @current_resource.host,
                       @current_resource.port,
-                      @current_resource.root_username, 
+                      @current_resource.root_username,
                       @current_resource.root_password)
     @current_resource.exists = true
   end
@@ -25,7 +25,7 @@ def database_exists?(dbname, host, port, root_username, root_password)
   exists = false
   db = nil
   begin
-    db = ::PG.connect(:host => host, 
+    db = ::PG.connect(:host => host,
                       :port => port,
                       :dbname => dbname,
                       :user => root_username,
@@ -69,7 +69,7 @@ def create_new_database
     version             new_resource.branch
     source_url          new_resource.source_url
     code_dir            new_resource.source_dir
-    target_dir          "zabbix-#{new_resource.server_version}"  
+    target_dir          "zabbix-#{new_resource.server_version}"
     install_dir         new_resource.install_dir
     branch              new_resource.branch
     version             new_resource.version
@@ -139,6 +139,4 @@ def create_new_database
       action :nothing
     end
   end
-
-
 end

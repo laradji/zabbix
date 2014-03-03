@@ -66,10 +66,10 @@ template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['versio
   owner "root"
   group "root"
   mode "754"
-  variables({
+  variables(
     :database => node['zabbix']['database'],
     :server => node['zabbix']['server']
-  })
+  )
 end
 
 # install vhost for zabbix frontend
@@ -79,7 +79,7 @@ web_app node['zabbix']['web']['fqdn'] do
   docroot node['zabbix']['web_dir']
   only_if { node['zabbix']['web']['fqdn'] != nil }
   php_settings node['zabbix']['web']['php']['settings']
-  notifies :restart, "service[apache2]", :immediately 
+  notifies :restart, "service[apache2]", :immediately
 end
 
 apache_site "000-default" do

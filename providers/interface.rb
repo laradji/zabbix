@@ -40,7 +40,7 @@ action :create do
     else
       # Update the interface for this host
       new_resource.parameters[:interfaceid] = interfaceId[0]['interfaceid']
-      new_resource.parameters.delete( 'hostName' )
+      new_resource.parameters.delete('hostName')
       connection.query(
         :method => "hostinterface.update",
         :params => new_resource.parameters

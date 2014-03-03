@@ -3,7 +3,6 @@ require 'forwardable'
 class Chef
   module Zabbix
     module API
-
       class GraphItem
         extend Forwardable
         def_delegators :@options, :[], :[]=, :delete
@@ -32,10 +31,9 @@ class Chef
       end
 
       class HostInterface
-
         class << self
           def from_api_response(options)
-            options["type"] = Zabbix::API::HostInterfaceType.enumeration_values.detect { |value| value[1].value == options["type"].to_i }[1]
+            options["type"] = Zabbix::API::HostInterfaceType.enumeration_values.find { |value| value[1].value == options["type"].to_i }[1]
             options["main"] = (options["main"].to_i == 1)
             options["useip"] = (options["useip"].to_i == 1)
             new(options)
@@ -66,7 +64,7 @@ class Chef
         end
 
         def ==(other)
-          this = self.to_hash
+          this = to_hash
           this[:main]    == other[:main].to_i &&
             this[:useip] == other[:useip].to_i &&
             this[:ip]    == other[:ip].to_s &&
@@ -75,7 +73,7 @@ class Chef
             this[:type]  == other[:type].to_i
         end
 
-        private 
+        private
           def validate!(options)
             options = symbolize(options)
             Chef::Application.fatal!(":main must be one of [true, false]") unless [true, false].include?(options[:main])
@@ -100,11 +98,10 @@ class Chef
       end
 
       class << self
-
         def find_hostgroup_ids(connection, hostgroup)
           group_id_request = {
             :method => "hostgroup.get",
-            :params => { 
+            :params => {
               :filter => {
                 :name => hostgroup
               }
@@ -122,7 +119,7 @@ class Chef
               }
             }
           }
-          connection.query(get_template_request) 
+          connection.query(get_template_request)
         end
 
         def find_application_ids(connection, application, template_id)
@@ -130,7 +127,7 @@ class Chef
             :method => "application.get",
             :params => {
               :hostids => template_id,
-              :filter => { 
+              :filter => {
                 :name => application
               }
             }
@@ -176,7 +173,7 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_ids(connection, template_id, key, name=nil)
+        def find_item_ids(connection, template_id, key, name = nil)
           request = {
             :method => "item.get",
             :params => {
@@ -195,7 +192,7 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_prototype_ids(connection, template_id, key, discovery_rule_id=nil)
+        def find_item_prototype_ids(connection, template_id, key, discovery_rule_id = nil)
           request = {
             :method => "itemprototype.get",
             :params => {
@@ -211,7 +208,7 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_ids_on_host(connection, host, key) 
+        def find_item_ids_on_host(connection, host, key)
           request = {
             :method => "item.get",
             :params => {

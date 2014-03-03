@@ -1,7 +1,7 @@
 action :call do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     connection.query(
-      :method => new_resource.method, 
+      :method => new_resource.method,
       :params => new_resource.parameters
     )
   end
@@ -14,5 +14,5 @@ def load_current_resource
 end
 
 def validate_parameters(parameters)
-  raise InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
+  fail InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
 end

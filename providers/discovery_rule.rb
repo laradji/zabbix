@@ -27,7 +27,7 @@ action :create do
     end
 
     params[:hostid] = template_id
-    params[:key_] = new_resource.key 
+    params[:key_] = new_resource.key
     params[:params] = new_resource.discovery_rule_params
     params[:trapper_hosts] = new_resource.allowed_hosts
 

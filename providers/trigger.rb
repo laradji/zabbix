@@ -3,7 +3,7 @@ action :create do
     # NOTE: Triggers in the zabbix api don't really have a "name"
     # Instead we call it name so that lwrp users don't lose their minds
     # and we just treat it as the description field the api wants
-    # 
+    #
     # The description on the lwrp becomes comments in the api
 
     params = {
@@ -12,7 +12,7 @@ action :create do
       :description => new_resource.name,
       :comments => new_resource.description,
       :expression => new_resource.expression,
-      :priority => new_resource.priority.value, 
+      :priority => new_resource.priority.value,
       :status => new_resource.status.value,
     }
 
