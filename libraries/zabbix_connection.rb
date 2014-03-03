@@ -20,7 +20,7 @@ class Chef
 
       def validate_connection(connection_spec)
         if [:url, :user, :password].any? { |key| connection_spec[key].to_s.empty? }
-          fail InvalidZabbixServerSpecificationError.new(connection_spec)
+          Chef::Log.error('invalid connection')
         end
       end
     end

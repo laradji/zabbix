@@ -7,12 +7,12 @@ action :create do
     # The description on the lwrp becomes comments in the api
 
     get_trigger_request = {
-      :method => "trigger.get",
+      :method => 'trigger.get',
       :params => {
         :filter => {
           :description => new_resource.trigger_name
         },
-        :selectDependencies => "refer"
+        :selectDependencies => 'refer'
       }
     }
     triggers = connection.query(get_trigger_request)
@@ -22,7 +22,7 @@ action :create do
     trigger = triggers.first
 
     get_dependency_request = {
-      :method => "trigger.get",
+      :method => 'trigger.get',
       :params => {
         :filter => {
           :description => new_resource.dependency_name
@@ -35,9 +35,9 @@ action :create do
     end
     dependency_id = dependency_ids.first['triggerid']
 
-    unless trigger['dependencies'].map { |dep| dep['triggerid'] }.include?(dependency_id)
+    if !trigger['dependencies'].map { |dep| dep['triggerid'] }.include?(dependency_id)
       add_dependency_request = {
-        :method => "trigger.adddependencies",
+        :method => 'trigger.adddependencies',
         :params => {
           :triggerid => trigger['triggerid'],
           :dependsOnTriggerid => dependency_id,
@@ -53,6 +53,6 @@ action :create do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end

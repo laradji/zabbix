@@ -7,24 +7,24 @@
 # Apache 2.0
 #
 
-include_recipe "zabbix::common"
+include_recipe 'zabbix::common'
 
 directory node['zabbix']['install_dir'] do
-  mode "0755"
+  mode '0755'
 end
 
 node.normal['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
 unless node['zabbix']['web']['user']
-  node.normal['zabbix']['web']['user'] = "apache"
+  node.normal['zabbix']['web']['user'] = 'apache'
 end
 
 user node['zabbix']['web']['user']
 
 node['zabbix']['web']['packages'] =
   case node['platform_family']
-  when "debian"
+  when 'debian'
     %w{ php5-mysql php5-gd libapache2-mod-php5 }
-  when "rhel"
+  when 'rhel'
     if node['platform_version'].to_f < 6.0
       %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }
     else
@@ -35,11 +35,11 @@ node['zabbix']['web']['packages'] =
 node['zabbix']['web']['packages'].each do |pkg|
   package pkg do
     action :install
-    notifies :restart, "service[apache2]"
+    notifies :restart, 'service[apache2]'
   end
 end
 
-zabbix_source "extract_zabbix_web" do
+zabbix_source 'extract_zabbix_web' do
   branch              node['zabbix']['server']['branch']
   version             node['zabbix']['server']['version']
   source_url          node['zabbix']['server']['source_url']
@@ -56,16 +56,16 @@ end
 directory "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf" do
   owner node['apache']['user']
   group node['apache']['group']
-  mode "0755"
+  mode '0755'
   action :create
 end
 
 # install zabbix PHP config file
 template "#{node['zabbix']['src_dir']}/zabbix-#{node['zabbix']['server']['version']}/frontends/php/conf/zabbix.conf.php" do
-  source "zabbix_web.conf.php.erb"
-  owner "root"
-  group "root"
-  mode "754"
+  source 'zabbix_web.conf.php.erb'
+  owner 'root'
+  group 'root'
+  mode '754'
   variables(
     :database => node['zabbix']['database'],
     :server => node['zabbix']['server']
@@ -77,11 +77,11 @@ web_app node['zabbix']['web']['fqdn'] do
   server_name node['zabbix']['web']['fqdn']
   server_aliases node['zabbix']['web']['aliases']
   docroot node['zabbix']['web_dir']
-  only_if { node['zabbix']['web']['fqdn'] != nil }
+  not_if { node['zabbix']['web']['fqdn'].nil? }
   php_settings node['zabbix']['web']['php']['settings']
-  notifies :restart, "service[apache2]", :immediately
+  notifies :restart, 'service[apache2]', :immediately
 end
 
-apache_site "000-default" do
+apache_site '000-default' do
   enable false
 end

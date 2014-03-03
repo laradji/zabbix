@@ -9,10 +9,10 @@ action :call do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end
 
 def validate_parameters(parameters)
-  fail InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
+  Chef::Log.error("#{parameter} isn't an Hash") unless parameters.is_a?(Hash)
 end

@@ -10,7 +10,7 @@ action :create do
       end
 
       create_template_request = {
-        :method => "template.create",
+        :method => 'template.create',
         :params => {
           :host => new_resource.name,
           :groups => group_ids.first
@@ -23,27 +23,6 @@ action :create do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end
-
-=begin
-  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-    # Check to see if the Template exists
-    templateId = connection.query( :method => "template.get",
-                                  :params => {
-      :filter => {
-        :host => new_resource.parameters[:host]}
-    })
-    if templateId.size > 0
-      puts templateId[0]['templateid']
-      params = [ templateId[0]['templateid'] ]
-      puts params
-      connection.query( :method => "template.delete",
-                       :params => params
-                      )
-    end
-  end
-  new_resource.updated_by_last_action(true)
-end
-=end

@@ -23,7 +23,7 @@ attribute :allowed_hosts, :kind_of => String
 attribute :units, :kind_of => String
 attribute :delta, :kind_of => Chef::Zabbix::API::Delta, :default => Chef::Zabbix::API::Delta.as_is
 attribute :snmpv3_securityname, :kind_of => String
-attribute :snmpv3_securitylevel, :kind_of => Chef::Zabbix::API::SNMPV3_SecurityLevel, :default => Chef::Zabbix::API::SNMPV3_SecurityLevel.no_auth_no_priv
+attribute :snmpv3_securitylevel, :kind_of => Chef::Zabbix::API::SNMPV3SecurityLevel, :default => Chef::Zabbix::API::SNMPV3SecurityLevel.no_auth_no_priv
 attribute :snmpv3_authpassphrase, :kind_of => String
 attribute :snmpv3_privpassphrase, :kind_of => String
 attribute :formula, :kind_of => Fixnum, :default => 1

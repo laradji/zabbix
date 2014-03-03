@@ -15,8 +15,8 @@ action :create do
       app_ids.map { |app_id| app_id['applicationid'] }
     end.flatten
 
-    noun = (new_resource.discovery_rule_key.nil?) ? "item" : "itemprototype"
-    verb = "create"
+    noun = (new_resource.discovery_rule_key.nil?) ? 'item' : 'itemprototype'
+    verb = 'create'
 
     params = {}
     simple_value_keys = [
@@ -43,7 +43,7 @@ action :create do
     params[:hostid] = template_id
     params[:applications] = application_ids
     unless new_resource.discovery_rule_key.nil?
-      discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+      discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first['itemid']
       params[:ruleid] = discovery_rule_id
     end
 
@@ -54,7 +54,7 @@ action :create do
     end
 
     unless item_ids.empty?
-      verb = "update"
+      verb = 'update'
       params[:itemid] = item_ids.first['itemid']
     end
 
@@ -68,6 +68,6 @@ action :create do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end
