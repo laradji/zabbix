@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-include_recipe "chocolatey"
+include_recipe 'chocolatey'
 
-chocolatey "zabbix-agent"
+chocolatey 'zabbix-agent'
 
-include_recipe "zabbix::agent_common"
+include_recipe 'zabbix::agent_common'

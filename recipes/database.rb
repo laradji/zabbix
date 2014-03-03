@@ -1,9 +1,9 @@
-include_recipe "zabbix::common"
+include_recipe 'zabbix::common'
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe "database::mysql"
-include_recipe "mysql::client"
+include_recipe 'database::mysql'
+include_recipe 'mysql::client'
 
 # Generates passwords if they aren't already set
 # This is INSECURE because node.normal persists the passwords to the chef
@@ -20,13 +20,13 @@ case node['zabbix']['database']['install_method']
 when 'rds_mysql'
   root_username       = node['zabbix']['database']['rds_master_username']
   root_password       = node['zabbix']['database']['rds_master_password']
-  allowed_user_hosts  = "%"
+  allowed_user_hosts  = '%'
   provider = Chef::Provider::ZabbixDatabaseMySql
 when 'mysql'
   unless node['mysql']['server_root_password']
     node.normal['mysql']['server_root_password'] = secure_password
   end
-  root_username       = "root"
+  root_username       = 'root'
   root_password       = node['mysql']['server_root_password']
   allowed_user_hosts  = node['zabbix']['database']['allowed_user_hosts']
   provider = Chef::Provider::ZabbixDatabaseMySql
@@ -34,7 +34,7 @@ when 'postgres'
   unless node['postgresql']['password']['postgres']
     node.normal['postgresql']['password']['postgres'] = secure_password
   end
-  root_username       = "postgres"
+  root_username       = 'postgres'
   root_password       = node['postgresql']['password']['postgres']
   provider = Chef::Provider::ZabbixDatabasePostgres
 when 'oracle'
@@ -42,11 +42,11 @@ when 'oracle'
   # This recipe expects a fully configured Oracle DB with a Zabbix
   # user + schema. The instant client is just for compiling php-oci8
   # and Zabbix itself
-  include_recipe "oracle-instantclient"
-  include_recipe "oracle-instantclient::sdk"
+  include_recipe 'oracle-instantclient'
+  include_recipe 'oracle-instantclient::sdk'
   # Not used yet but needs to be set
-  root_username       = "sysdba"
-  root_password       = "not_applicable"
+  root_username       = 'sysdba'
+  root_password       = 'not_applicable'
   provider = Chef::Provider::ZabbixDatabaseOracle
 end
 

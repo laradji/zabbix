@@ -7,4 +7,4 @@
 # Apache 2.0
 
 node.normal['zabbix']['server']['install'] = true
-include_recipe "zabbix::server_source"
+include_recipe 'zabbix::server_source'

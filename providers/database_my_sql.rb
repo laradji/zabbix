@@ -46,12 +46,12 @@ action :create do
 end
 
 def create_new_database
-  user_connection = {
-    :host => new_resource.host,
-    :port => new_resource.port,
-    :username => new_resource.username,
-    :password => new_resource.password
-  }
+#   user_connection = {
+#     :host => new_resource.host,
+#     :port => new_resource.port,
+#     :username => new_resource.username,
+#     :password => new_resource.password
+#   }
   root_connection = {
     :host => new_resource.host,
     :port => new_resource.port,
@@ -59,7 +59,7 @@ def create_new_database
     :password => new_resource.root_password
   }
 
-  zabbix_source "extract_zabbix_database" do
+  zabbix_source 'extract_zabbix_database' do
     branch              new_resource.branch
     version             new_resource.branch
     source_url          new_resource.source_url
@@ -72,7 +72,7 @@ def create_new_database
     action :extract_only
   end
 
-  ruby_block "set_updated" do
+  ruby_block 'set_updated' do
     action :nothing
     block do
       new_resource.updated_by_last_action(true)
@@ -82,16 +82,16 @@ def create_new_database
   # create zabbix database
   mysql_database new_resource.dbname do
     connection root_connection
-    notifies :run, "execute[zabbix_populate_schema]", :immediately
-    notifies :run, "execute[zabbix_populate_image]", :immediately
-    notifies :run, "execute[zabbix_populate_data]", :immediately
+    notifies :run, 'execute[zabbix_populate_schema]', :immediately
+    notifies :run, 'execute[zabbix_populate_image]', :immediately
+    notifies :run, 'execute[zabbix_populate_data]', :immediately
     notifies :create, "mysql_database_user[#{new_resource.username}]", :immediately
     notifies :grant, "mysql_database_user[#{new_resource.username}]", :immediately
-    notifies :create, "ruby_block[set_updated]", :immediately
+    notifies :create, 'ruby_block[set_updated]', :immediately
   end
 
   # populate database
-  executable = "/usr/bin/mysql"
+  executable = '/usr/bin/mysql'
   root_username = "-u #{new_resource.root_username}"
   root_password = "-p#{new_resource.root_password}"
   host = "-h #{new_resource.host}"
@@ -101,18 +101,18 @@ def create_new_database
 
   zabbix_path = ::File.join(new_resource.source_dir, "zabbix-#{new_resource.server_version}")
   sql_scripts = if new_resource.server_version.to_f < 2.0
-                  Chef::Log.info "Version 1.x branch of zabbix in use"
+                  Chef::Log.info 'Version 1.x branch of zabbix in use'
                   [
-                    ["zabbix_populate_schema", ::File.join(zabbix_path, "create", "schema", "mysql.sql")],
-                    ["zabbix_populate_data", ::File.join(zabbix_path, "create", "data", "data.sql")],
-                    ["zabbix_populate_image", ::File.join(zabbix_path, "create", "data", "images_mysql.sql")],
+                    ['zabbix_populate_schema', ::File.join(zabbix_path, 'create', 'schema', 'mysql.sql')],
+                    ['zabbix_populate_data', ::File.join(zabbix_path, 'create', 'data', 'data.sql')],
+                    ['zabbix_populate_image', ::File.join(zabbix_path, 'create', 'data', 'images_mysql.sql')],
                   ]
                 else
-                  Chef::Log.info "Version 2.x branch of zabbix in use"
+                  Chef::Log.info 'Version 2.x branch of zabbix in use'
                   [
-                    ["zabbix_populate_schema", ::File.join(zabbix_path, "database", "mysql", "schema.sql")],
-                    ["zabbix_populate_data", ::File.join(zabbix_path, "database", "mysql", "data.sql")],
-                    ["zabbix_populate_image", ::File.join(zabbix_path, "database", "mysql", "images.sql")],
+                    ['zabbix_populate_schema', ::File.join(zabbix_path, 'database', 'mysql', 'schema.sql')],
+                    ['zabbix_populate_data', ::File.join(zabbix_path, 'database', 'mysql', 'data.sql')],
+                    ['zabbix_populate_image', ::File.join(zabbix_path, 'database', 'mysql', 'images.sql')],
                   ]
                 end
 

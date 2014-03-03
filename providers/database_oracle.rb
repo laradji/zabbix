@@ -1,4 +1,7 @@
 # Stub Oracle provider
+
+use_inline_resources
+
 def whyrun_supported?
   true
 end
@@ -12,7 +15,7 @@ def database_exists?(dbname, host, port, root_username, root_password)
 end
 
 action :create do
-  Chef::Log.info "Oracle provider is a stub - does not do anything yet!"
+  Chef::Log.info 'Oracle provider is a stub - does not do anything yet!'
 end
 
 def create_new_database

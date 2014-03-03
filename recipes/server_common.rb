@@ -20,7 +20,7 @@ if node['zabbix']['login']
 
   # Create zabbix User
   user node['zabbix']['login'] do
-    comment "zabbix User"
+    comment 'zabbix User'
     home node['zabbix']['install_dir']
     shell node['zabbix']['shell']
     uid node['zabbix']['uid']
@@ -37,9 +37,9 @@ root_dirs = [
 # Create root folders
 root_dirs.each do |dir|
   directory dir do
-    owner "root"
-    group "root"
-    mode "755"
+    owner 'root'
+    group 'root'
+    mode '755'
     recursive true
   end
 end

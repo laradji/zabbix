@@ -54,7 +54,7 @@ class Chef
         enum :simple_change,    2
       end
 
-      class SNMPV3_SecurityLevel
+      class SNMPV3SecurityLevel
         include Enumeration
         enum :no_auth_no_priv,  0
         enum :auth_no_priv,     1
