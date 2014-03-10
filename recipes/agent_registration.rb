@@ -25,12 +25,12 @@ connection_info = {
 
 ip_address = node['ipaddress']
 if node['zabbix']['agent']['network_interface']
-  interface = node['zabbix']['agent']['network_interface']
-  if node['network']['interfaces'][interface]
-    ip_address = node['network']['interfaces'][interface]['addresses'].keys[1]
+  target_interface = node['zabbix']['agent']['network_interface']
+  if node['network']['interfaces'][target_interface]
+    ip_address = node['network']['interfaces'][target_interface]['addresses'].keys[1]
     Chef::Log.debug "zabbix::agent_registration : Using ip address of #{ip_address} for host"
   else
-    Chef::Log.warn "zabbix::agent_registration : Could not find interface address for #{interface}, falling back to default"
+    Chef::Log.warn "zabbix::agent_registration : Could not find interface address for #{target_interface}, falling back to default"
   end
 end
 
