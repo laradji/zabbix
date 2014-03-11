@@ -6,12 +6,12 @@ class Chef
           def included(base)
             base.extend(ClassMethods)
             base.send(:include, ClassMethods)
-          end 
+          end
 
           def extended(base)
             base.send(:include, ClassMethods)
-          end 
-        end 
+          end
+        end
 
         module ClassMethods
           attr_reader :enumeration_values
@@ -30,8 +30,8 @@ class Chef
         attr_reader :value
         def initialize(value)
           @value = value
-        end 
-      end 
+        end
+      end
 
       class AuthType
         include Enumeration
@@ -54,7 +54,7 @@ class Chef
         enum :simple_change,    2
       end
 
-      class SNMPV3_SecurityLevel
+      class SNMPV3SecurityLevel
         include Enumeration
         enum :no_auth_no_priv,  0
         enum :auth_no_priv,     1
@@ -95,7 +95,7 @@ class Chef
       class TriggerPriority
         include Enumeration
 
-        enum :not_classified, 0 
+        enum :not_classified, 0
         enum :information, 1
         enum :warning, 2
         enum :average, 3
@@ -151,7 +151,7 @@ class Chef
         enum :fixed, 1
         # TODO: Update the graph provider to do an update after it has created
         # all of its item so that you can map an item id and support this value
-        #enum :item, 2
+        # enum :item, 2
       end
 
       class IPMIAuthType
@@ -181,7 +181,6 @@ class Chef
         enum :ipmi,   3
         enum :jmx,    4
       end
-
     end
   end
 end

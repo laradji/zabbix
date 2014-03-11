@@ -5,12 +5,12 @@ root_dirs = [
 # Create root folders
 root_dirs.each do |dir|
   directory dir do
-    unless node['platform'] == "windows"
-      owner "root"
-      group "root"
-      mode "755" 
+    unless node['platform'] == 'windows'
+      owner 'root'
+      group 'root'
+      mode '755'
     end
     recursive true
-    notifies :restart, "service[zabbix_agentd]"
+    notifies :restart, 'service[zabbix_agentd]'
   end
 end

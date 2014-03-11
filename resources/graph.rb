@@ -18,7 +18,7 @@ attribute :show_3d, :kind_of => [TrueClass, FalseClass], :default => false
 attribute :type, :kind_of => Zabbix::API::GraphType, :default => Zabbix::API::GraphType.normal
 attribute :ymin_type, :kind_of => Zabbix::API::GraphAxisType, :default => Zabbix::API::GraphAxisType.calculated
 attribute :ymax_type, :kind_of => Zabbix::API::GraphAxisType, :default => Zabbix::API::GraphAxisType.calculated
-# TODO: eventually these will be strings that could be floats for GraphAxisType.fixed 
+# TODO: eventually these will be strings that could be floats for GraphAxisType.fixed
 # or could reference an item_id for GraphAxisType.item
 attribute :ymin_item, :kind_of => Float, :default => 0.000
 attribute :ymax_item, :kind_of => Float, :default => 0.000

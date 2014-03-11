@@ -7,7 +7,7 @@ action :create do
 
     template_id = template_ids.first['hostid']
 
-    method = "discoveryrule.create"
+    method = 'discoveryrule.create'
     params = {}
     simple_value_keys = [
       :name, :delay, :lifetime, :delay_flex, :description,
@@ -27,13 +27,13 @@ action :create do
     end
 
     params[:hostid] = template_id
-    params[:key_] = new_resource.key 
+    params[:key_] = new_resource.key
     params[:params] = new_resource.discovery_rule_params
     params[:trapper_hosts] = new_resource.allowed_hosts
 
     rule_ids = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.key)
     unless rule_ids.empty?
-      method = "discoveryrule.update"
+      method = 'discoveryrule.update'
       params[:itemid] = rule_ids.first['itemid']
     end
 
@@ -44,6 +44,6 @@ action :create do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end

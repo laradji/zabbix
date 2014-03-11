@@ -11,7 +11,7 @@ action :create do
 
     if application_ids.empty?
       request = {
-        :method => "application.create",
+        :method => 'application.create',
         :params => {
           :name => new_resource.name,
           :hostid => template_ids.first['hostid']
@@ -24,6 +24,6 @@ action :create do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end
