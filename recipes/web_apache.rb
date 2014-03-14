@@ -13,7 +13,6 @@ directory node['zabbix']['install_dir'] do
   mode '0755'
 end
 
-node.normal['zabbix']['web']['fqdn'] = node['fqdn'] if node['zabbix']['web']['fqdn'].nil?
 unless node['zabbix']['web']['user']
   node.normal['zabbix']['web']['user'] = 'apache'
 end
