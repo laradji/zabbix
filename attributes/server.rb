@@ -22,4 +22,4 @@ default['zabbix']['server']['java_pollers'] = 0
 default['zabbix']['server']['externalscriptspath'] = "/usr/local/scripts/zabbix/externalscripts/"
 
 default['zabbix']['server']['timeout'] = "3"
-default['zabbix']['server']['value_cache_size'] = "8MB" # default 8MB
+default['zabbix']['server']['value_cache_size'] = "8M" # default 8MB
