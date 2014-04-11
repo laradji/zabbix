@@ -27,6 +27,16 @@ end
 desc 'Run all style checks'
 task style: ['style:chef', 'style:ruby']
 
+namespace :unit do
+  begin
+    require 'rspec/core/rake_task'
+    desc 'Runs specs with chefspec.'
+    RSpec::Core::RakeTask.new(:chefspec)
+  rescue LoadError
+    puts '>>>>> chefspec gem not loaded, omitting tasks' unless ENV['CI']
+  end
+end
+
 # Integration tests. Kitchen.ci
 namespace :integration do
   begin
