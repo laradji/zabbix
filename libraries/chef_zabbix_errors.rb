@@ -92,7 +92,7 @@ class Chef
       end
 
       def message
-        "Expected parameters to be a Hash but got '#{@bad_params.class}': #{@bad_params.to_s}"
+        "Expected parameters to be a Hash but got '#{@bad_params.class}': #{@bad_params}"
       end
     end
   end

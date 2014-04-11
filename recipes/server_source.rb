@@ -13,7 +13,7 @@ include_recipe 'zabbix::server_common'
 packages = []
 case node['platform']
 when 'ubuntu', 'debian'
-  packages = %w{ fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear }
+  packages = %w(fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear)
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
     packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd')
@@ -21,7 +21,7 @@ when 'ubuntu', 'debian'
     packages.push('libssh2-1-dev')
   # Oracle oci8 PECL package installed below
   when 'oracle'
-    php_packages = %w{ php-pear php-dev }
+    php_packages = %w(php-pear php-dev)
     packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init.erb'
@@ -30,29 +30,29 @@ when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
 
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
-  packages = %w{ fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear }
+  packages = %w(fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear)
   packages.push(curldev)
 
   case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
     php_packages =
     if node['platform_version'].to_i < 6
-      %w{ php53-mysql php53-gd php53-bcmath php53-mbstring php53-xml }
+      %w(php53-mysql php53-gd php53-bcmath php53-mbstring php53-xml)
     else
-      %w{ php-mysql php-gd php-bcmath php-mbstring php-xml }
+      %w(php-mysql php-gd php-bcmath php-mbstring php-xml)
     end
     packages.push(*php_packages)
   when 'postgres'
     php_packages =
     if node['platform_version'].to_i < 6
-      %w{ php5-pgsql php5-gd php5-xml }
+      %w(php5-pgsql php5-gd php5-xml)
     else
-      %w{ php-pgsql php-gd php-bcmath php-mbstring php-xml }
+      %w(php-pgsql php-gd php-bcmath php-mbstring php-xml)
     end
     packages.push(*php_packages)
   # Oracle oci8 PECL package installed below
   when 'oracle'
-    php_packages = %w{ php-pear php-devel }
+    php_packages = %w(php-pear php-devel)
     packages.push(*php_packages)
   end
   init_template = 'zabbix_server.init-rh.erb'
@@ -101,15 +101,15 @@ end
 node.normal['zabbix']['server']['configure_options'] = configure_options
 
 zabbix_source 'install_zabbix_server' do
-  branch              node['zabbix']['server']['branch']
-  version             node['zabbix']['server']['version']
-  source_url          node['zabbix']['server']['source_url']
-  branch              node['zabbix']['server']['branch']
-  version             node['zabbix']['server']['version']
-  code_dir            node['zabbix']['src_dir']
-  target_dir          "zabbix-#{node['zabbix']['server']['version']}"
-  install_dir         node['zabbix']['install_dir']
-  configure_options   configure_options.join(' ')
+  branch node['zabbix']['server']['branch']
+  version node['zabbix']['server']['version']
+  source_url node['zabbix']['server']['source_url']
+  branch node['zabbix']['server']['branch']
+  version node['zabbix']['server']['version']
+  code_dir node['zabbix']['src_dir']
+  target_dir "zabbix-#{node['zabbix']['server']['version']}"
+  install_dir node['zabbix']['install_dir']
+  configure_options configure_options.join(' ')
 
   action :install_server
 end

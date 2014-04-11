@@ -25,28 +25,28 @@ connection_info = {
 
 interface_definitions = {
   :zabbix_agent => {
-     :type => 1,
-     :main => 1,
-     :useip => 1,
-     :ip => node['ipaddress'],
-     :dns => node['fqdn'],
-     :port => '10050'
+    :type => 1,
+    :main => 1,
+    :useip => 1,
+    :ip => node['ipaddress'],
+    :dns => node['fqdn'],
+    :port => '10050'
   },
   :jmx => {
-     :type => 4,
-     :main => 1,
-     :useip => 1,
-     :ip => node['ipaddress'],
-     :dns => node['fqdn'],
-     :port => '10052'
+    :type => 4,
+    :main => 1,
+    :useip => 1,
+    :ip => node['ipaddress'],
+    :dns => node['fqdn'],
+    :port => '10052'
   },
   :snmp => {
-     :type => 2,
-     :main => 1,
-     :useip => 1,
-     :ip => node['ipaddress'],
-     :dns => node['fqdn'],
-     :port => '161'
+    :type => 2,
+    :main => 1,
+    :useip => 1,
+    :ip => node['ipaddress'],
+    :dns => node['fqdn'],
+    :port => '161'
   }
 }
 
