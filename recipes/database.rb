@@ -2,8 +2,15 @@ include_recipe 'zabbix::common'
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe 'database::mysql'
-include_recipe 'mysql::client'
+case node['zabbix']['database']['install_method']
+when 'mysql' || 'rds_mysql'
+  include_recipe 'database::mysql'
+  include_recipe 'mysql::client'
+when 'postgres'
+  include_recipe 'database::postgresql'
+  include_recipe 'postgresql::client'
+# when 'oracle' see below
+end
 
 # Generates passwords if they aren't already set
 # This is INSECURE because node.normal persists the passwords to the chef
