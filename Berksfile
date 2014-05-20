@@ -1,4 +1,3 @@
-site :opscode
-# source "http://api.berkshelf.com"
+source "http://api.berkshelf.com"
 
 metadata
