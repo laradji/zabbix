@@ -8,7 +8,7 @@ describe 'zabbix::web_apache' do
     end
 
     it 'installs required packages' do
-      %w{ php5-mysql php5-gd libapache2-mod-php5 }.each do |package|
+      %w(php5-mysql php5-gd libapache2-mod-php5).each do |package|
         expect(chef_run).to install_package(package)
       end
     end
@@ -21,7 +21,7 @@ describe 'zabbix::web_apache' do
     end
 
     it 'installs required packages' do
-      %w{ php53-mysql php53-gd php53-bcmath php53-mbstring }.each do |package|
+      %w(php53-mysql php53-gd php53-bcmath php53-mbstring).each do |package|
         expect(chef_run).to install_package(package)
       end
     end
@@ -34,7 +34,7 @@ describe 'zabbix::web_apache' do
     end
 
     it 'installs required packages' do
-      %w{ php php-mysql php-gd php-bcmath php-mbstring php-xml }.each do |package|
+      %w(php php-mysql php-gd php-bcmath php-mbstring php-xml).each do |package|
         expect(chef_run).to install_package(package)
       end
     end

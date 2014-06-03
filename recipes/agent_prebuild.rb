@@ -18,7 +18,7 @@ ark 'zabbix_agent' do
   owner node['zabbix']['agent']['user']
   group node['zabbix']['agent']['group']
   action :put
-  path  '/opt'
+  path '/opt'
   strip_leading_dir false
   has_binaries ['bin/zabbix_sender', 'bin/zabbix_get', 'sbin/zabbix_agent', 'sbin/zabbix_agentd']
   notifies :restart, 'service[zabbix_agentd]'

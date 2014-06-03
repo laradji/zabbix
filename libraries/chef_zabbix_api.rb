@@ -77,12 +77,9 @@ class Chef
 
         def validate!(options)
           options = symbolize(options)
-          [:main, :useip].each do |opt|
-            Chef::Application.fatal!("#{opt} must be a boolean") unless !!options[opt] == options[opt]
-          end
           search = options[:useip] ? :ip : :dns
-          Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") if options[search].to_s.empty?
-          Chef::Application.fatal!(':port is required') if options[:port].to_s.empty?
+          Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") unless options[search]
+          Chef::Application.fatal!(':port is required') unless options[:port]
           Chef::Application.fatal!(':type must be a Chef::Zabbix::API:HostInterfaceType') unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
         end
 
