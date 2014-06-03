@@ -19,9 +19,8 @@ class Chef
       end
 
       def validate_connection(connection_spec)
-        if [:url, :user, :password].any? { |key| connection_spec[key].to_s.empty? }
-          Chef::Log.error('invalid connection')
-        end
+        return if [:url, :user, :password].all? { |key| !connection_spec[key].to_s.empty? }
+        Chef::Log.error('invalid connection')
       end
     end
   end
