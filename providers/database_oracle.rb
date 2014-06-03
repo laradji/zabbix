@@ -10,7 +10,7 @@ def load_current_resource
   true
 end
 
-def database_exists?(dbname, host, port, root_username, root_password)
+def database_exists?(_dbname, _host, _port, _root_username, _root_password)
   true
 end
 

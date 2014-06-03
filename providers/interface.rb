@@ -6,7 +6,7 @@ action :create do
   types['SNMP'] = 2
   types['IPMI'] = 3
   types['JMX'] = 4
-#   type = types[new_resource.name]
+  #   type = types[new_resource.name]
 
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     # Convert the "hostname" (a template name) into a hostid
@@ -19,15 +19,15 @@ action :create do
       }
     )
 
-#     interface_id = connection.query(
-#       :method => 'hostinterface.get',
-#       :params => {
-#         :hostids => hostId[0]['hostid'],
-#         :filter => {
-#           :type => type,
-#         }
-#       }
-#     )
+    #     interface_id = connection.query(
+    #       :method => 'hostinterface.get',
+    #       :params => {
+    #         :hostids => hostId[0]['hostid'],
+    #         :filter => {
+    #           :type => type,
+    #         }
+    #       }
+    #     )
 
     if interfaceId.size == 0
       # Make a new params with the correct parameters

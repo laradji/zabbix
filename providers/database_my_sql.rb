@@ -11,13 +11,12 @@ def load_current_resource
   @current_resource.root_username(@new_resource.root_username)
   @current_resource.root_password(@new_resource.root_password)
 
-  if database_exists?(@current_resource.dbname,
-                      @current_resource.host,
-                      @current_resource.port,
-                      @current_resource.root_username,
-                      @current_resource.root_password)
-    @current_resource.exists = true
-  end
+  @current_resource.exists = true if database_exists?(
+    @current_resource.dbname,
+    @current_resource.host,
+    @current_resource.port,
+    @current_resource.root_username,
+    @current_resource.root_password)
 end
 
 def database_exists?(dbname, host, port, root_username, root_password)
@@ -46,12 +45,12 @@ action :create do
 end
 
 def create_new_database
-#   user_connection = {
-#     :host => new_resource.host,
-#     :port => new_resource.port,
-#     :username => new_resource.username,
-#     :password => new_resource.password
-#   }
+  #   user_connection = {
+  #     :host => new_resource.host,
+  #     :port => new_resource.port,
+  #     :username => new_resource.username,
+  #     :password => new_resource.password
+  #   }
   root_connection = {
     :host => new_resource.host,
     :port => new_resource.port,

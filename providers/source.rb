@@ -76,7 +76,7 @@ def load_current_resource
 end
 
 def zabbix_source_identifier(branch, version)
-  "#{branch.gsub("%20", "-")}-#{version}"
+  "#{branch.gsub('%20', '-')}-#{version}"
 end
 
 def zabbix_tar_path(code_dir, branch, version)
