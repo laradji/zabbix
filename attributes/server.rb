@@ -24,3 +24,4 @@ default['zabbix']['server']['externalscriptspath'] = '/usr/local/scripts/zabbix/
 
 default['zabbix']['server']['timeout'] = '3'
 default['zabbix']['server']['value_cache_size'] = '8M' # default 8MB
+default['zabbix']['server']['cache_size'] = '8M' # default 8MB
