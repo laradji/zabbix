@@ -15,6 +15,7 @@ default['zabbix']['agent']['include_dir']       = ::File.join(node['zabbix']['et
 default['zabbix']['agent']['enable_remote_commands'] = true
 default['zabbix']['agent']['listen_port']       = '10050'
 default['zabbix']['agent']['timeout']       	= '3'
+default['zabbix']['agent']['ipaddress']         = node['ipaddress']
 
 default['zabbix']['agent']['config_file']               = ::File.join(node['zabbix']['etc_dir'], 'zabbix_agentd.conf')
 default['zabbix']['agent']['userparams_config_file']    = ::File.join(node['zabbix']['agent']['include_dir'], 'user_params.conf')
