@@ -28,7 +28,7 @@ interface_definitions = {
     :type => 1,
     :main => 1,
     :useip => 1,
-    :ip => node['ipaddress'],
+    :ip => node['zabbix']['agent']['ipaddress'] ,
     :dns => node['fqdn'],
     :port => '10050'
   },
@@ -36,7 +36,7 @@ interface_definitions = {
     :type => 4,
     :main => 1,
     :useip => 1,
-    :ip => node['ipaddress'],
+    :ip => node['zabbix']['agent']['ipaddress'] ,
     :dns => node['fqdn'],
     :port => '10052'
   },
@@ -44,7 +44,7 @@ interface_definitions = {
     :type => 2,
     :main => 1,
     :useip => 1,
-    :ip => node['ipaddress'],
+    :ip => node['zabbix']['agent']['ipaddress'] ,
     :dns => node['fqdn'],
     :port => '161'
   }
