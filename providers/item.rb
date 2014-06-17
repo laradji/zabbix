@@ -8,19 +8,19 @@ action :create do
     template_id = template_ids.first['hostid']
 
     application_ids = new_resource.applications.map do |application|
-      app_ids = Zabbix::API.find_application_ids(connection, application, template_id) 
+      app_ids = Zabbix::API.find_application_ids(connection, application, template_id)
       if app_ids.empty?
         Chef::Application.fatal! "Could not find an application named #{application}"
       end
       app_ids.map { |app_id| app_id['applicationid'] }
     end.flatten
 
-    noun = (new_resource.discovery_rule_key.nil?) ? "item" : "itemprototype"
-    verb = "create"
+    noun = (new_resource.discovery_rule_key.nil?) ? 'item' : 'itemprototype'
+    verb = 'create'
 
     params = {}
     simple_value_keys = [
-      :name, :delay, :description, :snmp_community, :snmp_oid, 
+      :name, :delay, :description, :snmp_community, :snmp_oid,
       :port, :params, :multiplier, :history, :trends, :allowed_hosts,
       :units, :snmpv3_securityname, :snmpv3_authpassphrase, :snmpv3_privpassphrase,
       :formula, :delay_flex, :ipmi_sensor, :username, :password,
@@ -43,7 +43,7 @@ action :create do
     params[:hostid] = template_id
     params[:applications] = application_ids
     unless new_resource.discovery_rule_key.nil?
-      discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first["itemid"]
+      discovery_rule_id = Zabbix::API.find_lld_rule_ids(connection, template_id, new_resource.discovery_rule_key).first['itemid']
       params[:ruleid] = discovery_rule_id
     end
 
@@ -54,7 +54,7 @@ action :create do
     end
 
     unless item_ids.empty?
-      verb = "update"
+      verb = 'update'
       params[:itemid] = item_ids.first['itemid']
     end
 
@@ -68,6 +68,6 @@ action :create do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end

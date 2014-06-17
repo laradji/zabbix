@@ -4,7 +4,6 @@ require 'timeout'
 class Chef
   module Zabbix
     class << self
-
       # Creates a Zabbix connection and passes it to the block provided
       #
       # @param [Hash] connection_spec The specification for your Zabbix connection
@@ -20,11 +19,9 @@ class Chef
       end
 
       def validate_connection(connection_spec)
-        if [:url, :user, :password].any? { |key| connection_spec[key].to_s.empty? }
-          raise InvalidZabbixServerSpecificationError.new(connection_spec)
-        end
+        return if [:url, :user, :password].all? { |key| !connection_spec[key].to_s.empty? }
+        Chef::Log.error('invalid connection')
       end
     end
-
   end
 end

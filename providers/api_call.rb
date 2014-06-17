@@ -1,7 +1,7 @@
 action :call do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     connection.query(
-      :method => new_resource.method, 
+      :method => new_resource.method,
       :params => new_resource.parameters
     )
   end
@@ -9,10 +9,10 @@ action :call do
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end
 
 def validate_parameters(parameters)
-  raise InvalidParametersHashError.new(parameters) unless parameters.is_a?(Hash)
+  Chef::Log.error("#{parameter} isn't an Hash") unless parameters.is_a?(Hash)
 end

@@ -3,17 +3,16 @@ require 'forwardable'
 class Chef
   module Zabbix
     module API
-
       class GraphItem
         extend Forwardable
         def_delegators :@options, :[], :[]=, :delete
         def initialize(options)
           if options[:item_template].to_s.empty? && options[:host].to_s.empty?
-            Chef::Application.fatal! ":item_template or :host is required"
+            Chef::Application.fatal! ':item_template or :host is required'
           end
-          Chef::Application.fatal! ":item_key is required" if options[:item_key].to_s.empty?
-          Chef::Application.fatal! ":calc_function must be a Zabbix::API::GraphItemCalcFunction" unless options[:calc_function].kind_of?(GraphItemCalcFunction)
-          Chef::Application.fatal! ":type must be a Zabbix::API::GraphItemType" unless options[:type].kind_of?(GraphItemType)
+          Chef::Application.fatal! ':item_key is required' if options[:item_key].to_s.empty?
+          Chef::Application.fatal! ':calc_function must be a Zabbix::API::GraphItemCalcFunction' unless options[:calc_function].kind_of?(GraphItemCalcFunction)
+          Chef::Application.fatal! ':type must be a Zabbix::API::GraphItemType' unless options[:type].kind_of?(GraphItemType)
           @options = options
         end
 
@@ -32,12 +31,11 @@ class Chef
       end
 
       class HostInterface
-
         class << self
           def from_api_response(options)
-            options["type"] = Zabbix::API::HostInterfaceType.enumeration_values.detect { |value| value[1].value == options["type"].to_i }[1]
-            options["main"] = (options["main"].to_i == 1)
-            options["useip"] = (options["useip"].to_i == 1)
+            options['type'] = Zabbix::API::HostInterfaceType.enumeration_values.find { |value| value[1].value == options['type'].to_i }[1]
+            options['main'] = (options['main'].to_i == 1)
+            options['useip'] = (options['useip'].to_i == 1)
             new(options)
           end
         end
@@ -66,7 +64,7 @@ class Chef
         end
 
         def ==(other)
-          this = self.to_hash
+          this = to_hash
           this[:main]    == other[:main].to_i &&
             this[:useip] == other[:useip].to_i &&
             this[:ip]    == other[:ip].to_s &&
@@ -75,36 +73,30 @@ class Chef
             this[:type]  == other[:type].to_i
         end
 
-        private 
-          def validate!(options)
-            options = symbolize(options)
-            Chef::Application.fatal!(":main must be one of [true, false]") unless [true, false].include?(options[:main])
-            Chef::Application.fatal!(":useip must be one of [true, false]") unless [true, false].include?(options[:useip])
-            if options[:useip]
-              search = :ip
-            else
-              search = :dns
-            end
-            Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") if options[search].to_s.empty?
-            Chef::Application.fatal!(":port is required") if options[:port].to_s.empty?
-            Chef::Application.fatal!(":type must be a Chef::Zabbix::API:HostInterfaceType") unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
-          end
+        private
 
-          def symbolize(options)
-            symbolized = {}
-            options.each_key do |key|
-              symbolized[key.to_sym] = options[key]
-            end
-            symbolized
+        def validate!(options)
+          options = symbolize(options)
+          search = options[:useip] ? :ip : :dns
+          Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") unless options[search]
+          Chef::Application.fatal!(':port is required') unless options[:port]
+          Chef::Application.fatal!(':type must be a Chef::Zabbix::API:HostInterfaceType') unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
+        end
+
+        def symbolize(options)
+          symbolized = {}
+          options.each_key do |key|
+            symbolized[key.to_sym] = options[key]
           end
+          symbolized
+        end
       end
 
       class << self
-
         def find_hostgroup_ids(connection, hostgroup)
           group_id_request = {
-            :method => "hostgroup.get",
-            :params => { 
+            :method => 'hostgroup.get',
+            :params => {
               :filter => {
                 :name => hostgroup
               }
@@ -115,22 +107,22 @@ class Chef
 
         def find_template_ids(connection, template)
           get_template_request = {
-            :method => "template.get",
+            :method => 'template.get',
             :params => {
               :filter => {
                 :host => template,
               }
             }
           }
-          connection.query(get_template_request) 
+          connection.query(get_template_request)
         end
 
         def find_application_ids(connection, application, template_id)
           request = {
-            :method => "application.get",
+            :method => 'application.get',
             :params => {
               :hostids => template_id,
-              :filter => { 
+              :filter => {
                 :name => application
               }
             }
@@ -140,7 +132,7 @@ class Chef
 
         def find_lld_rule_ids(connection, template_id, key)
           request = {
-            :method => "discoveryrule.get",
+            :method => 'discoveryrule.get',
             :params => {
               :templated => true,
               :templateids => template_id,
@@ -154,7 +146,7 @@ class Chef
 
         def find_trigger_ids(connection, description)
           request = {
-            :method => "trigger.get",
+            :method => 'trigger.get',
             :params => {
               :search => {
                 :description => description
@@ -166,7 +158,7 @@ class Chef
 
         def find_trigger_prototype_ids(connection, description)
           request = {
-            :method => "triggerprototype.get",
+            :method => 'triggerprototype.get',
             :params => {
               :search => {
                 :description => description
@@ -176,9 +168,9 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_ids(connection, template_id, key, name=nil)
+        def find_item_ids(connection, template_id, key, name = nil)
           request = {
-            :method => "item.get",
+            :method => 'item.get',
             :params => {
               :hostids => template_id,
               :search => {
@@ -195,9 +187,9 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_prototype_ids(connection, template_id, key, discovery_rule_id=nil)
+        def find_item_prototype_ids(connection, template_id, key, discovery_rule_id = nil)
           request = {
-            :method => "itemprototype.get",
+            :method => 'itemprototype.get',
             :params => {
               :templateids => template_id,
               :search => {
@@ -211,9 +203,9 @@ class Chef
           connection.query(request)
         end
 
-        def find_item_ids_on_host(connection, host, key) 
+        def find_item_ids_on_host(connection, host, key)
           request = {
-            :method => "item.get",
+            :method => 'item.get',
             :params => {
               :host => host,
               :search => {
@@ -226,7 +218,7 @@ class Chef
 
         def find_graph_ids(connection, name)
           request = {
-            :method => "graph.get",
+            :method => 'graph.get',
             :params => {
               :filter => {
                 :name => name
@@ -238,7 +230,7 @@ class Chef
 
         def find_graph_prototype_ids(connection, name)
           request = {
-            :method => "graphprototype.get",
+            :method => 'graphprototype.get',
             :params => {
               :filter => {
                 :name => name

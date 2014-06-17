@@ -54,15 +54,15 @@ action :create do
     end
 
     method = "#{noun}.#{verb}"
-    connection.query({
+    connection.query(
       :method => method,
       :params => params
-    })
+    )
   end
   new_resource.updated_by_last_action(true)
 end
 
 def load_current_resource
-  run_context.include_recipe "zabbix::_providers_common"
+  run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
 end

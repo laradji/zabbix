@@ -6,7 +6,7 @@ attribute :template, :kind_of => String, :required => true
 attribute :applications, :kind_of => Array, :required => true
 attribute :key, :kind_of => String, :required => true
 attribute :type, :kind_of => Chef::Zabbix::API::ItemType, :required => true
-attribute :value_type, :kind_of => Chef::Zabbix::API::ItemValueType, :required => true 
+attribute :value_type, :kind_of => Chef::Zabbix::API::ItemValueType, :required => true
 attribute :server_connection, :kind_of => Hash, :required => true
 
 attribute :delay, :kind_of => Fixnum, :default => 60
@@ -23,7 +23,7 @@ attribute :allowed_hosts, :kind_of => String
 attribute :units, :kind_of => String
 attribute :delta, :kind_of => Chef::Zabbix::API::Delta, :default => Chef::Zabbix::API::Delta.as_is
 attribute :snmpv3_securityname, :kind_of => String
-attribute :snmpv3_securitylevel, :kind_of => Chef::Zabbix::API::SNMPV3_SecurityLevel, :default => Chef::Zabbix::API::SNMPV3_SecurityLevel.no_auth_no_priv
+attribute :snmpv3_securitylevel, :kind_of => Chef::Zabbix::API::SNMPV3SecurityLevel, :default => Chef::Zabbix::API::SNMPV3SecurityLevel.no_auth_no_priv
 attribute :snmpv3_authpassphrase, :kind_of => String
 attribute :snmpv3_privpassphrase, :kind_of => String
 attribute :formula, :kind_of => Fixnum, :default => 1
@@ -35,7 +35,7 @@ attribute :username, :kind_of => String
 attribute :password, :kind_of => String
 attribute :publickey, :kind_of => String
 attribute :privatekey, :kind_of => String
-attribute :inventory_link, :kind_of => Fixnum, :default => 0 #TODO: Make an enumeration for this
+attribute :inventory_link, :kind_of => Fixnum, :default => 0 # TODO: Make an enumeration for this
 attribute :valuemap, :kind_of => String
 
 # Setting discovery_rule will cause the item to be created as a prototype
