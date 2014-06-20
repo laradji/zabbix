@@ -42,5 +42,5 @@ default['zabbix']['agent']['start_agents']       = nil # default (3)
 default['zabbix']['agent']['debug_level']        = nil # default (3)
 default['zabbix']['agent']['templates']          = []
 default['zabbix']['agent']['interfaces']         = ['zabbix_agent']
-
 default['zabbix']['agent']['user_parameter'] = []
+default['zabbix']['agent']['my_proxy'] = nil # If using a proxy then override this in your wrapper cookbook

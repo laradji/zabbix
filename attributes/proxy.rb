@@ -1,0 +1,11 @@
+default["zabbix"]["proxy"]["enabled"]                    = false 
+default["zabbix"]["proxy"]["master"]                     = nil
+default["zabbix"]["proxy"]["install_method"]             = "source"
+default["zabbix"]["proxy"]["database"]["install_method"] = 'sqlite' # or mysql or postgres
+default["zabbix"]["proxy"]["database"]["dbhost"]         = nil # ignored if using sqlite
+default["zabbix"]["proxy"]["database"]["dbname"]         = nil # ignored if using sqlite
+default["zabbix"]["proxy"]["database"]["dbport"]         = nil # ignored if using sqlite
+default["zabbix"]["proxy"]["database"]["dbpassword"]     = nil # ignored if using sqlite
+default["zabbix"]["proxy"]["config_frequency"]           = '3600' # 1 hour by default
+default["zabbix"]["proxy"]["data_sender_frequency"]      = '1' # every second by default
+default["zabbix"]["proxy"]["heartbeat_frequency"]        = '60' # every minute by default
