@@ -25,6 +25,9 @@ case "$1" in
         ;;
   stop)
         echo "Stopping $DESC: $NAME"
+        # Hack to avoid shutting the proxy down while it is
+        # initially creating the sqlite DB
+        sleep 3
         start-stop-daemon --oknodo --stop --pidfile $PID \
                 --exec $DAEMON
         ;;

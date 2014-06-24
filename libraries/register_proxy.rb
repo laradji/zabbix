@@ -1,4 +1,10 @@
-require 'zabbixapi'
+#begin
+#  require 'zabbixapi'
+#rescue LoadError
+#  chef_gem 'zabbixapi'
+#  action :install
+#  version '~> 0.6.3'
+#end
 
 class Chef
   module Zabbix

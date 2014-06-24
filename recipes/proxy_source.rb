@@ -7,6 +7,7 @@
 # Apache 2.0
 #
 
+include_recipe 'zabbix::agent_common'
 include_recipe 'zabbix::_server_common_build_deps'
 
 zabbix_source 'install_zabbix_server' do

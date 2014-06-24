@@ -50,6 +50,9 @@ start()
 
 stop()
 {
+  # Wait 3 seconds to avoid race condition during 
+  # initial sqlite DB creation.
+  sleep 3
   killproc -p $PID
   RETVAL="$?"
   [ $RETVAL -eq 0 ] && rm -f $PID $LOCK
