@@ -2,6 +2,7 @@
 
 ############ GENERAL PARAMETERS #################
 
+Hostname=<%= node.name %>
 <% if node['zabbix']['proxy']['log_file'] -%>
 LogFile=<%= node['zabbix']['proxy']['log_file'] %>
 <% end -%>
