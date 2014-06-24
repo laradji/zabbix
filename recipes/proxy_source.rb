@@ -9,7 +9,6 @@
 
 include_recipe 'zabbix::_server_common_build_deps'
 
-Chef::Log.info "zabbix::proxy_source.rb : config opts are #{node['zabbix']['server']['configure_options']}"
 zabbix_source 'install_zabbix_server' do
   branch node['zabbix']['server']['branch']
   version node['zabbix']['server']['version']
@@ -23,11 +22,41 @@ zabbix_source 'install_zabbix_server' do
   action :install_server
 end
 
+# Master server set in wrapper cookbook
+master = search(:node, "name:#{node['zabbix']['proxy']['master']}").first
+unless master 
+  Chef::Application.fatal! "Cannot find Zabbix server (master) for this slave to register with"
+end
+
+connection_info = {
+  :url => "http://#{master['zabbix']['web']['fqdn']}/api_jsonrpc.php",
+  :user => master['zabbix']['web']['login'],
+  :password => master['zabbix']['web']['password']
+}
+
+# Let's register ourselves with the master node
+# if we have one
+zabbix_register_proxy node.name do
+  master master.name
+  server_connection connection_info
+  only_if { node['zabbix']['proxy']['master'] }
+  notifies :restart, 'service[zabbix_proxy]', :delayed
+end
+
 case node['platform']
 when 'ubuntu', 'debian'
-  init_template = 'zabbix_server.init.erb'
+  init_template = 'zabbix_proxy.init.erb'
 when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
-  init_template = 'zabbix_server.init-rh.erb'
+  init_template = 'zabbix_proxy.init-rh.erb'
+end
+
+# If using sqlite then make space to store the DB
+directory '/opt/zabbix/db' do
+  owner 'zabbix'
+  group 'zabbix'
+  mode '755'
+  action :create
+  only_if { node['zabbix']['database']['install_method'] == 'sqlite' }
 end
 
 # Install Init script

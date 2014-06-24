@@ -5,8 +5,11 @@
 <% if node['zabbix']['proxy']['log_file'] -%>
 LogFile=<%= node['zabbix']['proxy']['log_file'] %>
 <% end -%>
+DBName=<%= node['zabbix']['proxy']['database']['dbname'] %>
+Server=<%= node['zabbix']['proxy']['master'] %>
+PidFile=<%= node.zabbix.run_dir %>/zabbix_proxy.pid
 
-<% unless node["zabbix"]["proxy"]["database"]["install_method"] == 'sqlite' -%>
+<% unless node["zabbix"]["database"]["install_method"] == 'sqlite' -%>
 DBHost=<%= @dbhost %>
 DBName=<%= @dbname %>
 DBUser=<%= @dbuser %>
@@ -20,9 +23,9 @@ JavaGatewayPort=<%= @java_gateway_port %>
 StartJavaPollers=<%= @java_pollers %>
 <% end -%>
 
-StartPollers = <%= node['zabbix']['server']['start_pollers'] %>
-ProxyOfflineBuffer = <% node['zabbix']['proxy']['proxy_offline_buffer'] %>
-CacheSize = <% node['zabbix']['proxy']['cache_size'] %>
-DataSenderFrequency = <% node['zabbix']['proxy']['data_sender_frequency'] %>
-ConfigFrequency = <% node['zabbix']['proxy']['config_frequency'] %>
-HeartbeatFrequency = <% node['zabbix']['proxy']['heartbeat_frequency'] %>
+StartPollers = <%= node['zabbix']['proxy']['pollers'] %>
+ProxyOfflineBuffer = <%= node['zabbix']['proxy']['proxy_offline_buffer'] %>
+CacheSize = <%= node['zabbix']['proxy']['cache_size'] %>
+DataSenderFrequency = <%= node['zabbix']['proxy']['data_sender_frequency'] %>
+ConfigFrequency = <%= node['zabbix']['proxy']['config_frequency'] %>
+HeartbeatFrequency = <%= node['zabbix']['proxy']['heartbeat_frequency'] %>

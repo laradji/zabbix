@@ -62,6 +62,7 @@ case "$1" in
     if [ "$?" -gt 0 ];
     then
       log_failure_msg "$NAME did not start"
+      exit 1
     else 
       log_success_msg "$NAME started"
     fi
@@ -71,6 +72,7 @@ case "$1" in
     if [ "$?" -gt 0 ];
     then
       log_failure_msg "$NAME did not stop"
+      exit 1
     else 
       log_success_msg "$NAME stopped"
     fi
@@ -86,6 +88,7 @@ case "$1" in
       if [ "$?" -gt 0 ];
       then
         log_failure_msg "$NAME did not start"
+        exit 1
       else 
         log_success_msg "$NAME restarted"
       fi

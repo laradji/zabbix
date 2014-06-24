@@ -9,13 +9,11 @@
 include_recipe 'zabbix::common'
 include_recipe 'zabbix::server_common'
 
-Chef::Log.info '_server_common_build_deps.rb : starting build dep installation'
-
 packages = []
 case node['platform']
 when 'ubuntu', 'debian'
   packages = %w(fping libcurl4-openssl-dev libiksemel-utils libiksemel-dev libiksemel3 libsnmp-dev snmp php-pear)
-  case node['zabbix']['database']['install_method'] || node['zabbix']['proxy']['database']['install_method']
+  case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
     packages.push('libmysql++-dev', 'libmysql++3', 'libcurl3', 'php5-mysql', 'php5-gd')
   when 'postgres'
@@ -41,7 +39,7 @@ when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
   packages = %w(fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear)
   packages.push(curldev)
 
-  case node['zabbix']['database']['install_method'] || node['zabbix']['proxy']['database']['install_method']
+  case node['zabbix']['database']['install_method']
   when 'mysql', 'rds_mysql'
     php_packages =
     if node['platform_version'].to_i < 6
@@ -66,7 +64,7 @@ when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
     # Only do this if the proxy is actually enabled
     # since sqlite is only an option with the proxy
     if node['zabbix']['proxy']['enabled']
-      packages.push('sqlite', 'sqlite-dev')
+      packages.push('sqlite', 'sqlite-devel')
     else
       Chef::Application.fatal 'sqlite db only applies to zabbix proxies!'
     end
@@ -91,7 +89,7 @@ configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 
-case node['zabbix']['database']['install_method'] || node['zabbix']['proxy']['database']['install_method']
+case node['zabbix']['database']['install_method']
 when 'mysql', 'rds_mysql'
   with_mysql = '--with-mysql'
   configure_options << with_mysql unless configure_options.include?(with_mysql)
@@ -124,9 +122,8 @@ if node['zabbix']['server']['java_gateway_enable'] == true
 end
 
 if node['zabbix']['proxy']['enabled'] == true
-  configure_options << '--enable-proxy'
+  configure_options << '--enable-proxy' unless configure_options.include?('--enable-proxy')
 end
 
-Chef::Log.info "_server_common_build_deps.rb : configure_options are #{configure_options}"
 node.normal['zabbix']['server']['configure_options'] = configure_options
 node.save
