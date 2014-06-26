@@ -10,9 +10,9 @@ include_recipe 'java'
 template '/etc/zabbix/zabbix_java_gateway.conf' do
   source 'zabbix-java-gateway/zabbix_java_gateway.conf.erb'
   variables(
-    :java_gateway_listen_ip => node['zabbix']['server']['java_gateway_listen_ip'],
-    :java_gateway_listen_port => node['zabbix']['server']['java_gateway_listen_port'],
-    :java_gateway_pollers => node['zabbix']['server']['java_gateway_pollers']
+    :java_gateway_listen_ip => node['zabbix']['server']['java_gateway'],
+    :java_gateway_listen_port => node['zabbix']['server']['java_gateway_port'],
+    :java_gateway_pollers => node['zabbix']['server']['java_pollers']
   )
   owner 'zabbix'
   group 'zabbix'
