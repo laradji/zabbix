@@ -108,8 +108,8 @@ If you are using AWS RDS
 
 ## Proxy
 
-Only node\['zabbix']\['proxy']['master'] is required but the following is available to be overridden in a 
-wrapper cookbook :
+Only node\['zabbix']\['proxy']['master'] is required but the following 
+is available to be overridden in a wrapper cookbook :
 
     node.set['zabbix']['proxy']['enabled'] = true
     node.set['zabbix']['proxy']['master'] = search(:node, 'recipe:zabbix\\:\\:server').first.name
@@ -122,6 +122,11 @@ wrapper cookbook :
     node.set['zabbix']['proxy']['proxy_offline_buffer']       = '1' # 1 hour buffer if master goes down
     node.set['zabbix']['proxy']['cache_size']                 = '8M'
     node.set['zabbix']['proxy']['log_file']                   = '/var/log/zabbix/zabbix_proxy.log'VV
+
+Also, in your wrapper cookbook, set the following attribute equal to the amount 
+of Zabbix proxies you have
+
+    node.set['zabbix']['server']['start_trappers']
 
 # RECIPES
 
@@ -164,6 +169,16 @@ You can control the agent install with:
     node['zabbix']['agent']['branch']
     node['zabbix']['agent']['version']
     node['zabbix']['agent']['configure_options']
+
+## agent\_registration
+
+This recipe will attempt to register the agent with the master Zabbix
+servers. The following attributes are used on top of the regular agent
+build attributes 
+
+    node['zabbix']['agent']['create_missing_groups']
+    node['zabbix']['agent']['servers'] # If using a proxy then this will be
+set t
 
 ## database
 
@@ -258,9 +273,12 @@ Creates an Apache site for the Zabbix Web component
 
 ## proxy\_source
 
-Downloads and installs the Zabbix Proxy component from source. As mentioned
-in the attributes above you can control the installation with the following
-attributes
+Downloads and installs the Zabbix Proxy component from source. Once
+installed the recipe will proceed to register the proxy with the main
+Zabbix server (if it can find it).
+
+As mentioned in the attributes description above you can control the 
+installation with the following attributes
 
     node['zabbix']['server']['version']
     node['zabbix']['server']['version']
@@ -268,6 +286,9 @@ attributes
     node['zabbix']['database']['install_method']
     # If using sqlite then only the "dbname" attribute is required.
     node['zabbix']['database']['dbname']
+
+once the proxy is built this recipe will also register the proxy with the
+Zabbix server (if found).
 
 ### Note on MySQL, PostgreSQL and Oracle
 

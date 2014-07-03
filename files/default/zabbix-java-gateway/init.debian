@@ -101,6 +101,7 @@ case "$1" in
   ;;
   restart|force-reload)
     $0 stop
+    sleep 3
     $0 status >/dev/null \
     &&  exit 1  \
     || $0 start
