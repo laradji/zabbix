@@ -9,7 +9,6 @@ LogFile=<%= node['zabbix']['proxy']['log_file'] %>
 DBName=<%= node['zabbix']['proxy']['database']['dbname'] %>
 Server=<%= node['zabbix']['proxy']['master'] %>
 PidFile=<%= node.zabbix.run_dir %>/zabbix_proxy.pid
-
 <% unless node["zabbix"]["database"]["install_method"] == 'sqlite' -%>
 DBHost=<%= @dbhost %>
 DBName=<%= @dbname %>
@@ -17,7 +16,6 @@ DBUser=<%= @dbuser %>
 DBPassword=<%= @dbpassword %>
 DBPort=<%= @dbport %>
 <% end -%>
-
 <% if node['zabbix']['server']['java_gateway_enable'] -%>
 JavaGateway=<%= @java_gateway %>
 JavaGatewayPort=<%= @java_gateway_port %>

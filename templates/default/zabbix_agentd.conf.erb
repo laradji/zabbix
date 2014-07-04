@@ -2,7 +2,11 @@
 # Created by chef
 Hostname=<%= node['zabbix']['agent']['hostname'] %>
 Include=<%= node['zabbix']['agent']['include_dir'] %>
+<% if node['zabbix']['agent']['my_proxy'] -%>
+Server=<%= node['zabbix']['agent']['my_proxy'] %>
+<% else -%>
 Server=<%= node['zabbix']['agent']['servers'].join(',') %>
+<% end -%>
 <% if node['zabbix']['agent']['log_file'] -%>
 LogFile=<%= node['zabbix']['agent']['log_file'] %>
 <% end -%>

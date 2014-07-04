@@ -24,7 +24,18 @@ zabbix_source 'install_zabbix_server' do
 end
 
 # Master server set in wrapper cookbook
-master = search(:node, "name:#{node['zabbix']['proxy']['master']}").first
+if !Chef::Config[:solo]
+  master = search(:node, "name:#{node['zabbix']['proxy']['master']}").first
+else
+  if node['zabbix']['proxy']['master']
+    master = node
+  else
+    Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
+    Chef::Log.warn("If you did not set node['zabbix']['proxy']['master'], the recipe will fail")
+    return
+  end
+end
+
 unless master
   Chef::Application.fatal! 'Cannot find Zabbix server (master) for this slave to register with'
 end
