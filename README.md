@@ -108,6 +108,10 @@ If you are using AWS RDS
 
 ## Proxy
 
+To install a proxy on a node set 
+
+    node['zabbix']['proxy']['enabled'] = true
+
 Only node\['zabbix']\['proxy']['master'] is required but the following 
 is available to be overridden in a wrapper cookbook :
 
