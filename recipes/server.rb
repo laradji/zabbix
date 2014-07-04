@@ -7,4 +7,8 @@
 # Apache 2.0
 #
 
-include_recipe "zabbix::server_#{node['zabbix']['server']['install_method']}"
+if node['zabbix']['proxy']['enabled']
+  include_recipe "zabbix::proxy_#{node['zabbix']['server']['install_method']}"
+else
+  include_recipe "zabbix::server_#{node['zabbix']['server']['install_method']}"
+end

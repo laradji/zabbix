@@ -36,7 +36,7 @@ Installing the Database :
     "recipe[zabbix]",
     "recipe[zabbix::database]"
 
-Installing all 3 - Database MUST come before Server
+Installing database, server and agent - Database MUST come before Server
 
     "recipe[database::mysql]",
     "recipe[mysql::server]",
@@ -44,6 +44,15 @@ Installing all 3 - Database MUST come before Server
     "recipe[zabbix::database]",
     "recipe[zabbix::server]"
 
+Installing the proxy and agent :
+    
+    # First override the proxy master. The exact way you set this is up to you but, for example,
+    # using search you can do the following
+    node.set['zabbix']['proxy']['master'] = search(:node, 'recipe:zabbix\\:\\:server').first.name
+    
+    include "zabbix"
+    include "zabbix::proxy_source"
+    
 NOTE:
 
 If you are running on Redhat, Centos, Scientific or Amazon, you will need packages from EPEL.
@@ -76,27 +85,52 @@ example :
 
 ## Agent
 
-	  node.set['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
-	  node.set['zabbix']['agent']['version'] = "2.0.0"
-	  node.set['zabbix']['agent']['source_url'] = nil
-	  node.set['zabbix']['agent']['install_method'] = "prebuild"
+      node.set['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
+      node.set['zabbix']['agent']['version'] = "2.0.0"
+      node.set['zabbix']['agent']['source_url'] = nil
+      node.set['zabbix']['agent']['install_method'] = "prebuild"
+      node.set["zabbix"]["agent"]["my_proxy"] = "proxy.example.com"
 
 ## Database
 
-    node.set['zabbix']['database']['install_method'] = 'mysql'
-    node.set['zabbix']['database']['dbname'] = "zabbix"
-    node.set['zabbix']['database']['dbuser'] = "zabbix"
-    node.set['zabbix']['database']['dbhost'] = "localhost"
-    node.set['zabbix']['database']['dbpassword'] = 'password'
-    node.set['zabbix']['database']['dbport'] = "3306"
+      node.set['zabbix']['database']['install_method'] = 'mysql'
+      node.set['zabbix']['database']['dbname'] = "zabbix"
+      node.set['zabbix']['database']['dbuser'] = "zabbix"
+      node.set['zabbix']['database']['dbhost'] = "localhost"
+      node.set['zabbix']['database']['dbpassword'] = 'password'
+      node.set['zabbix']['database']['dbport'] = "3306"
 
 If you are using AWS RDS
 
-    node.set['zabbix']['database']['install_method'] = 'rds_mysql'
-    node.set['zabbix']['database']['rds_master_user'] = 'username'
-    node.set['zabbix']['database']['rds_master_password'] = 'password'
+      node.set['zabbix']['database']['install_method'] = 'rds_mysql'
+      node.set['zabbix']['database']['rds_master_user'] = 'username'
+      node.set['zabbix']['database']['rds_master_password'] = 'password'
 
+## Proxy
 
+To install a proxy on a node set 
+
+    node['zabbix']['proxy']['enabled'] = true
+
+Only node\['zabbix']\['proxy']['master'] is required but the following 
+is available to be overridden in a wrapper cookbook :
+
+    node.set['zabbix']['proxy']['enabled'] = true
+    node.set['zabbix']['proxy']['master'] = search(:node, 'recipe:zabbix\\:\\:server').first.name
+    node.set['zabbix']['server']['version'] = "2.2.1" # Uses same node attribute as server to determine which version to install
+    node.set['zabbix']['database']['install_method'] = 'sqlite' # dbhost, dbname, dbport and dbpassword are ignore if sqlite is in use
+    node.set['zabbix']['proxy']['install_method'] = 'source'
+    node.set['zabbix']['proxy']['config_frequency']           = '3600' # 1 hour by default
+    node.set['zabbix']['proxy']['data_sender_frequency']      = '1' # every second by default
+    node.set['zabbix']['proxy']['heartbeat_frequency']        = '60' # every minute by default
+    node.set['zabbix']['proxy']['proxy_offline_buffer']       = '1' # 1 hour buffer if master goes down
+    node.set['zabbix']['proxy']['cache_size']                 = '8M'
+    node.set['zabbix']['proxy']['log_file']                   = '/var/log/zabbix/zabbix_proxy.log'
+
+Also, in your wrapper cookbook, set the following attribute equal to the amount 
+of Zabbix proxies you have
+
+    node.set['zabbix']['server']['start_trappers']
 
 # RECIPES
 
@@ -139,6 +173,17 @@ You can control the agent install with:
     node['zabbix']['agent']['branch']
     node['zabbix']['agent']['version']
     node['zabbix']['agent']['configure_options']
+
+## agent\_registration
+
+This recipe will attempt to register the agent with the master Zabbix
+servers. The following attributes are used on top of the regular agent
+build attributes 
+
+    node['zabbix']['agent']['create_missing_groups']
+    # If this node uses a proxy then this will be set
+    # to the proxy instead
+    node['zabbix']['agent']['servers'] 
 
 ## database
 
@@ -231,7 +276,40 @@ The server also needs to know about:
 
 Creates an Apache site for the Zabbix Web component
 
+## proxy\_source
+
+Downloads and installs the Zabbix Proxy component from source. Once
+installed the recipe will proceed to register the proxy with the main
+Zabbix server (if it can find it).
+
+As mentioned in the attributes description above you can control the 
+installation with the following attributes
+
+    node['zabbix']['server']['version']
+    node['zabbix']['server']['version']
+    node['zabbix']['server']['configure_options']
+    node['zabbix']['database']['install_method']
+    # If using sqlite then only the "dbname" attribute is required.
+    node['zabbix']['database']['dbname']
+
+once the proxy is built this recipe will also register the proxy with the
+Zabbix server (if found).
+
+### Note on MySQL, PostgreSQL and Oracle
+
+if using MySQL, PostgreSQL or Oracle then you'll also need to include the
+appropriate run list items for installing these databases e.g.,
+"recipe\[database::postgresql]". Finally, these databases will also require
+that the following be set for connection details 
+
+    node['zabbix']['database']['dbhost']
+    node['zabbix']['database']['dbuser']
+    node['zabbix']['database']['dbpassword']
+    node['zabbix']['database']['dbport']
+
+
 # LWRPs
+
 
 ## database
 
@@ -315,6 +393,21 @@ Fetchs the Zabbix source tar and does something with it
 ### providers/source:
 
 Default implementation of how to Fetch and handle the Zabbix source code.
+
+## proxy
+
+### resources/register\_proxy
+
+#### Actions
+
+* `register` (Default action) - Register this node as a proxy with the
+  Zabbix master
+
+#### Attributes
+
+* `name`  (Name Attribute) - Name of this proxy
+* `master` - String representation of the Zabbix master server
+* `server_connection` - Hash containing the Zabbix server connection info
 
 
 # TODO

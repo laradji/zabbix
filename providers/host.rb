@@ -90,6 +90,7 @@ action :create do
     templates.keys.each do |key|
       templates_to_send.concat([{ 'templateid' => key }])
     end
+
     request = {
       :method => 'host.create',
       :params => {
@@ -100,6 +101,20 @@ action :create do
         :macros => format_macros(new_resource.macros)
       }
     }
+
+    # Check if we belong to a particular proxy and register us there
+    # All the API requests in this recipe should really go into a library and be
+    # more DRY. For a future PR.
+    if params_incoming[:my_proxy]
+      my_proxy = get_proxy_id(connection, params_incoming[:my_proxy])
+      if my_proxy['proxyid'].nil? || my_proxy['proxyid'].empty?
+        Chef::Application.fatal! 'Zabbix proxy specified but can\'t find proxy in Zabbix server!'
+      else
+        Chef::Log.info "Using proxy #{params_incoming[:my_proxy]} with id #{my_proxy['proxyid']} for this host."
+        request[:params][:proxy_hostid] = my_proxy['proxyid']
+      end
+    end
+
     Chef::Log.info 'Creating new Zabbix entry for this host'
     connection.query(request)
   end
@@ -158,7 +173,11 @@ action :update do
       acc << template
     end
 
-    existing_interfaces = host['interfaces'].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+    begin
+      existing_interfaces = host['interfaces'].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+    rescue NoMethodError
+      existing_interfaces = host['interfaces'].map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+    end
     new_host_interfaces = determine_new_host_interfaces(existing_interfaces, params_incoming[:interfaces].map(&:to_hash))
 
     host_update_request = {
@@ -169,6 +188,15 @@ action :update do
         :templates => desired_templates.flatten,
       }
     }
+    if params_incoming[:my_proxy]
+      my_proxy = get_proxy_id(connection, params_incoming[:my_proxy])
+      if my_proxy['proxyid'].nil? || my_proxy['proxyid'].empty?
+        Chef::Application.fatal! 'Zabbix proxy specified but can\'t find proxy in Zabbix server!'
+      else
+        Chef::Log.info "Using proxy #{params_incoming[:my_proxy]} with id #{my_proxy['proxyid']} for this host update."
+        host_update_request[:params][:proxy_hostid] = my_proxy['proxyid']
+      end
+    end
     connection.query(host_update_request)
 
     new_host_interfaces.each do |interface|
@@ -206,4 +234,15 @@ def format_macros(macros)
       :value => value
     }
   end
+end
+
+def get_proxy_id(connection, target_proxy)
+  get_my_proxy_id = {
+    :method => 'proxy.get',
+    :params => {
+      :output => 'extend',
+      :filter => { :host => target_proxy }
+    }
+  }
+  connection.query(get_my_proxy_id).first
 end

@@ -72,15 +72,21 @@ interface_list.each do |interface|
   end
 end
 
+host_parameters = {
+  :host => node['hostname'],
+  :groupNames => node['zabbix']['agent']['groups'],
+  :templates => node['zabbix']['agent']['templates'],
+  :interfaces => interface_data
+}
+
+if node['zabbix']['agent']['my_proxy']
+  host_parameters[:my_proxy] = node['zabbix']['agent']['my_proxy']
+end
+
 zabbix_host node['zabbix']['agent']['hostname'] do
   create_missing_groups true
   server_connection connection_info
-  parameters(
-    :host => node['hostname'],
-    :groupNames => node['zabbix']['agent']['groups'],
-    :templates => node['zabbix']['agent']['templates'],
-    :interfaces => interface_data
-  )
+  parameters host_parameters
   action :nothing
 end
 

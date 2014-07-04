@@ -1,0 +1,50 @@
+#! /bin/sh
+#
+# Zabbix proxy daemon start/stop script.
+#
+# Written by Alexei Vladishev <alexei.vladishev@zabbix.com>.
+
+NAME=zabbix_proxy
+DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
+DESC="Zabbix proxy daemon"
+DIR=<%= node.zabbix.run_dir %>
+PID=<%= node.zabbix.run_dir %>/$NAME.pid
+
+. /lib/lsb/init-functions
+
+test -f $DAEMON || exit 0
+
+[ -d "$DIR" ] || mkdir "$DIR"
+chown -R zabbix:zabbix "$DIR"
+
+case "$1" in
+  start)
+        echo "Starting $DESC: $NAME"
+        start-stop-daemon --oknodo --start --pidfile $PID \
+                --exec $DAEMON -- -c <%= node.zabbix.etc_dir %>/zabbix_proxy.conf
+        ;;
+  stop)
+        echo "Stopping $DESC: $NAME"
+        # Hack to avoid shutting the proxy down while it is
+        # initially creating the sqlite DB
+        sleep 3
+        start-stop-daemon --oknodo --stop --pidfile $PID \
+                --exec $DAEMON
+        ;;
+  restart|force-reload)
+        $0 stop
+        sleep 5
+        $0 start
+        ;;
+  status)
+        status_of_proc $DAEMON "Zabbix server"
+        exit $?
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

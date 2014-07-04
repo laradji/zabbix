@@ -1,0 +1,117 @@
+#! /bin/sh
+#
+# zabbix_proxy service script
+#
+# chkconfig: 345 71 44
+# description: The Zabbix Proxy
+# processname: zabbix_proxy
+#
+
+# Provides: zabbix_proxy
+### BEGIN INIT INFO
+# Required-Start: $local_fs $remote_fs
+# Required-Stop: $local_fs $remote_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: S 0 1 6
+# Short-Description: Zabbix proxy daemon
+# Description: Controls the Zabbix proxy daemon
+### END INIT INFO
+
+# Define LSB functions.
+. /lib/lsb/init-functions
+
+NAME=zabbix_proxy
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:<%= node.zabbix.install_dir %>/sbin
+DAEMON=<%= node.zabbix.install_dir %>/sbin/${NAME}
+OPTS="-c <%= node.zabbix.etc_dir %>/zabbix_proxy.conf"
+DESC="Zabbix proxy daemon"
+DIR=<%= node.zabbix.run_dir %>
+PID=<%= node.zabbix.run_dir %>/$NAME.pid
+LOCK=<%= node.zabbix.lock_dir %>/$NAME
+
+# Exit if the package is not installed
+if [ ! -x "$DAEMON" ]; then
+{
+  echo "Couldn't find $DAEMON"
+  exit 99
+}
+fi
+
+[ -d "$DIR" ] || mkdir "$DIR"
+chown -R zabbix:zabbix "$DIR"
+
+start()
+{
+  start_daemon -p $PID $DAEMON $OPTS
+  RETVAL=$?
+  [ $RETVAL -eq 0 ] && touch $LOCK
+  return $RETVAL
+}
+
+stop()
+{
+  # Wait 3 seconds to avoid race condition during 
+  # initial sqlite DB creation.
+  sleep 3
+  killproc -p $PID
+  RETVAL="$?"
+  [ $RETVAL -eq 0 ] && rm -f $PID $LOCK
+  return "$RETVAL"
+}
+
+case "$1" in
+  start)
+    start
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME did not start"
+      exit 1
+    else 
+      log_success_msg "$NAME started"
+    fi
+    ;;
+  stop)
+    stop
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME did not stop"
+      exit 1
+    else 
+      log_success_msg "$NAME stopped"
+    fi
+    ;;
+  restart)
+    stop
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME did not stop"
+    else
+      sleep 5
+      start
+      if [ "$?" -gt 0 ];
+      then
+        log_failure_msg "$NAME did not start"
+        exit 1
+      else 
+        log_success_msg "$NAME restarted"
+      fi
+    fi
+    ;;
+  status)
+    PID_NUM=$(pidofproc -p $PID)
+    if [ "$?" -gt 0 ];
+    then
+      log_failure_msg "$NAME is not running"
+      exit 1
+    else 
+      log_success_msg "$NAME is running ($PID_NUM)"
+      exit 0
+    fi
+    ;;
+  *)
+    echo "Usage: $NAME {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0
