@@ -121,7 +121,7 @@ is available to be overridden in a wrapper cookbook :
     node.set['zabbix']['proxy']['heartbeat_frequency']        = '60' # every minute by default
     node.set['zabbix']['proxy']['proxy_offline_buffer']       = '1' # 1 hour buffer if master goes down
     node.set['zabbix']['proxy']['cache_size']                 = '8M'
-    node.set['zabbix']['proxy']['log_file']                   = '/var/log/zabbix/zabbix_proxy.log'VV
+    node.set['zabbix']['proxy']['log_file']                   = '/var/log/zabbix/zabbix_proxy.log'
 
 Also, in your wrapper cookbook, set the following attribute equal to the amount 
 of Zabbix proxies you have
