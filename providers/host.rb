@@ -174,9 +174,9 @@ action :update do
     end
 
     begin
-      existing_interfaces = host["interfaces"].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+      existing_interfaces = host['interfaces'].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
     rescue NoMethodError
-      existing_interfaces = host["interfaces"].map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+      existing_interfaces = host['interfaces'].map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
     end
     new_host_interfaces = determine_new_host_interfaces(existing_interfaces, params_incoming[:interfaces].map(&:to_hash))
 
@@ -237,12 +237,12 @@ def format_macros(macros)
 end
 
 def get_proxy_id(connection, target_proxy)
-      get_my_proxy_id = {
-        :method => 'proxy.get',
-        :params => {
-          :output => 'extend',
-          :filter => { :host => target_proxy }
-        }
-      }
-      my_proxy = connection.query(get_my_proxy_id).first
+  get_my_proxy_id = {
+    :method => 'proxy.get',
+    :params => {
+      :output => 'extend',
+      :filter => { :host => target_proxy }
+    }
+  }
+  connection.query(get_my_proxy_id).first
 end

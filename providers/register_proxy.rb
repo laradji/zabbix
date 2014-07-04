@@ -9,5 +9,3 @@ action :register do
   # register_proxy() returns true if something was created, false otherwise
   new_resource.updated_by_last_action(result)
 end
-
-

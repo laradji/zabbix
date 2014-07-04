@@ -79,7 +79,7 @@ host_parameters = {
   :interfaces => interface_data
 }
 
-if node['zabbix']['agent']['my_proxy'] 
+if node['zabbix']['agent']['my_proxy']
   host_parameters[:my_proxy] = node['zabbix']['agent']['my_proxy']
 end
 

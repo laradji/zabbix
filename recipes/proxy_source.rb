@@ -25,8 +25,8 @@ end
 
 # Master server set in wrapper cookbook
 master = search(:node, "name:#{node['zabbix']['proxy']['master']}").first
-unless master 
-  Chef::Application.fatal! "Cannot find Zabbix server (master) for this slave to register with"
+unless master
+  Chef::Application.fatal! 'Cannot find Zabbix server (master) for this slave to register with'
 end
 
 connection_info = {
