@@ -9,7 +9,6 @@
 
 include_recipe 'zabbix::_server_common_build_deps'
 
-Chef::Log.info "zabbix::server_source.rb : config opts are #{node['zabbix']['server']['configure_options']}"
 zabbix_source 'install_zabbix_server' do
   branch node['zabbix']['server']['branch']
   version node['zabbix']['server']['version']

@@ -36,7 +36,7 @@ Installing the Database :
     "recipe[zabbix]",
     "recipe[zabbix::database]"
 
-Installing all database, server and agent - Database MUST come before Server
+Installing database, server and agent - Database MUST come before Server
 
     "recipe[database::mysql]",
     "recipe[mysql::server]",
@@ -85,26 +85,26 @@ example :
 
 ## Agent
 
-	  node.set['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
-	  node.set['zabbix']['agent']['version'] = "2.0.0"
-	  node.set['zabbix']['agent']['source_url'] = nil
-	  node.set['zabbix']['agent']['install_method'] = "prebuild"
+      node.set['zabbix']['agent']['branch'] = "ZABBIX%20Latest%20Stable"
+      node.set['zabbix']['agent']['version'] = "2.0.0"
+      node.set['zabbix']['agent']['source_url'] = nil
+      node.set['zabbix']['agent']['install_method'] = "prebuild"
       node.set["zabbix"]["agent"]["my_proxy"] = "proxy.example.com"
 
 ## Database
 
-    node.set['zabbix']['database']['install_method'] = 'mysql'
-    node.set['zabbix']['database']['dbname'] = "zabbix"
-    node.set['zabbix']['database']['dbuser'] = "zabbix"
-    node.set['zabbix']['database']['dbhost'] = "localhost"
-    node.set['zabbix']['database']['dbpassword'] = 'password'
-    node.set['zabbix']['database']['dbport'] = "3306"
+      node.set['zabbix']['database']['install_method'] = 'mysql'
+      node.set['zabbix']['database']['dbname'] = "zabbix"
+      node.set['zabbix']['database']['dbuser'] = "zabbix"
+      node.set['zabbix']['database']['dbhost'] = "localhost"
+      node.set['zabbix']['database']['dbpassword'] = 'password'
+      node.set['zabbix']['database']['dbport'] = "3306"
 
 If you are using AWS RDS
 
-    node.set['zabbix']['database']['install_method'] = 'rds_mysql'
-    node.set['zabbix']['database']['rds_master_user'] = 'username'
-    node.set['zabbix']['database']['rds_master_password'] = 'password'
+      node.set['zabbix']['database']['install_method'] = 'rds_mysql'
+      node.set['zabbix']['database']['rds_master_user'] = 'username'
+      node.set['zabbix']['database']['rds_master_password'] = 'password'
 
 ## Proxy
 
@@ -177,8 +177,9 @@ servers. The following attributes are used on top of the regular agent
 build attributes 
 
     node['zabbix']['agent']['create_missing_groups']
-    node['zabbix']['agent']['servers'] # If using a proxy then this will be
-set t
+    # If this node uses a proxy then this will be set
+    # to the proxy instead
+    node['zabbix']['agent']['servers'] 
 
 ## database
 

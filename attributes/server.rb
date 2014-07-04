@@ -12,11 +12,11 @@ default['zabbix']['server']['housekeeping_frequency'] = '1'
 default['zabbix']['server']['max_housekeeper_delete'] = '100_000'
 
 default['zabbix']['server']['host'] = 'localhost'
-default['zabbix']['server']['port'] = 100_51
+default['zabbix']['server']['port'] = 10_051
 default['zabbix']['server']['name'] = nil
 
 default['zabbix']['server']['java_gateway'] = '127.0.0.1'
-default['zabbix']['server']['java_gateway_port'] = 100_52
+default['zabbix']['server']['java_gateway_port'] = 10_052
 default['zabbix']['server']['java_pollers'] = 5
 default['zabbix']['server']['start_pollers'] = 5
 
