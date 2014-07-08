@@ -19,8 +19,6 @@ attribute :macros, :kind_of => Hash, :default => {}
 # for appropriate inventory hash keys (Property name from the table)
 attribute :inventory, :kind_of => Hash, :default => {}
 
-attribute :interfaces, :kind_of => Array, :default => []
-
 attribute :server_connection, :kind_of => Hash, :default => {}
 attribute :create_missing_groups, :kind_of => [TrueClass, FalseClass], :default => false
 attribute :parameters, :kind_of => Hash, :default => {}
