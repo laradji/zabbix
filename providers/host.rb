@@ -29,12 +29,16 @@ action :create do
       Chef::Application.fatal!(':interfaces must only contain Chef::Zabbix::API::HostInterface')
     end
 
-    params_incoming = new_resource.parameters
+    Chef::Log.error('Please supply a group for this host!') if new_resource.groups.empty? && new_resource.parameters[:groupNames].empty?
 
-    Chef::Log.error('Please supply a group for this host!') if params_incoming[:groupNames].length == 0
+    if new_resource.groups.empty?
+      group_names = new_resource.parameters[:groupNames]
+    else
+      group_names = new_resource.groups
+    end
 
     groups = []
-    params_incoming[:groupNames].each do |current_group|
+    group_names.each do |current_group|
       Chef::Log.info "Checking for existence of group #{current_group}"
       get_groups_request = {
         :method => 'hostgroup.get',
@@ -65,23 +69,28 @@ action :create do
       end
     end
 
-    if params_incoming[:templates].length == 0
+    if new_resource.templates.empty? && new_resource.parameters[:templates].empty?
       Chef::Log.warn 'Empty Zabbix template list for this host - not searching to see if templates exist'
       templates = {}
     else
+      if new_resource.templates.empty?
+        template_names = new_resource.parameters[:templates]
+      else
+        template_names = new_resource.templates
+      end
       get_templates_request = {
         :method => 'template.get',
         :params => {
           :output => 'extend',
           :filter => {
-            :name => params_incoming[:templates]
+            :name => template_names
           }
         }
       }
 
       templates = Hash[connection.query(get_templates_request).map { |template| [template['templateid'], template['name']] }]
-      if templates.length != params_incoming[:templates].length
-        missing_elements = params_incoming[:templates] - templates.values
+      if templates.length != template_names.length
+        missing_elements = template_names - templates.values
         Chef::Application.fatal! "Cannot find all templates associated with host, missing : #{missing_elements}"
       end
     end
@@ -90,13 +99,20 @@ action :create do
     templates.keys.each do |key|
       templates_to_send.concat([{ 'templateid' => key }])
     end
+
+    if new_resource.interfaces.empty?
+      interfaces = new_resource.parameters[:interfaces]
+    else
+      interfaces = new_resource.interfaces
+    end
+
     request = {
       :method => 'host.create',
       :params => {
         :host => new_resource.hostname,
         :groups => groups,
         :templates => templates_to_send,
-        :interfaces => params_incoming[:interfaces].map(&:to_hash),
+        :interfaces => interfaces.map(&:to_hash),
         :macros => format_macros(new_resource.macros)
       }
     }
@@ -125,8 +141,11 @@ action :update do
       Chef::Application.fatal! "Could not find host #{new_resource.hostname}"
     end
 
-    params_incoming = new_resource.parameters
-    group_names = params_incoming[:groupNames]
+    if new_resource.groups.empty?
+      group_names = new_resource.parameters[:groupNames]
+    else
+      group_names = new_resource.groups
+    end
 
     desired_groups = group_names.reduce([]) do |acc, desired_group|
       get_desired_groups_request = {
@@ -144,8 +163,12 @@ action :update do
       acc << group
     end
 
-    templates = params_incoming[:templates]
-    desired_templates = templates.reduce([]) do |acc, desired_template|
+    if new_resource.templates.empty?
+      template_names = new_resource.parameters[:templates]
+    else
+      template_names = new_resource.templates
+    end
+    desired_templates = template_names.reduce([]) do |acc, desired_template|
       get_desired_templates_request = {
         :method => 'template.get',
         :params => {
@@ -158,8 +181,14 @@ action :update do
       acc << template
     end
 
+    if new_resource.interfaces.empty?
+      interfaces = new_resource.parameters[:interfaces]
+    else
+      interfaces = new_resource.interfaces
+    end
+
     existing_interfaces = host['interfaces'].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
-    new_host_interfaces = determine_new_host_interfaces(existing_interfaces, params_incoming[:interfaces].map(&:to_hash))
+    new_host_interfaces = determine_new_host_interfaces(existing_interfaces, interfaces.map(&:to_hash))
 
     host_update_request = {
       :method => 'host.update',
