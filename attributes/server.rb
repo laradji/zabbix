@@ -8,8 +8,8 @@ default['zabbix']['server']['configure_options']      = ['--with-libcurl', '--wi
 default['zabbix']['server']['include_dir']            = '/opt/zabbix/server_include'
 default['zabbix']['server']['log_file']               = ::File.join(node['zabbix']['log_dir'], 'zabbix_server.log')
 default['zabbix']['server']['log_level']              = 3
-default['zabbix']['server']['housekeeping_frequency'] = '1'
-default['zabbix']['server']['max_housekeeper_delete'] = '100000'
+default['zabbix']['server']['housekeeping_frequency'] = 1
+default['zabbix']['server']['max_housekeeper_delete'] = 100000
 
 default['zabbix']['server']['host'] = 'localhost'
 default['zabbix']['server']['port'] = 10_051
@@ -22,6 +22,6 @@ default['zabbix']['server']['start_pollers'] = 5
 
 default['zabbix']['server']['externalscriptspath'] = '/usr/local/scripts/zabbix/externalscripts/'
 
-default['zabbix']['server']['timeout'] = '3'
+default['zabbix']['server']['timeout'] = 3
 default['zabbix']['server']['value_cache_size'] = '8M' # default 8MB
 default['zabbix']['server']['cache_size'] = '8M' # default 8MB
