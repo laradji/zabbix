@@ -17,7 +17,7 @@ attribute :vsize, :kind_of => Integer, :default => 1
 #     the graph of the given host as a normal graph resource
 #   - key_: only valid when the `resourcetype` is 1, it will identify the item
 #     of the given host to use as a simple graph resource
-# Please note: only `resourcetype` 0 and 1 lookups are supported currently
+# Please note: only `resourcetype` 0, 1 and 3 lookups are supported currently
 #
 # Example:
 # [{

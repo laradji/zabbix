@@ -151,8 +151,8 @@ def add_resource_ids_for_screen_items(screen_items, connection)
         Chef::Application.fatal! "When 'resourcetype' is 0 and 'resourceid' is a Hash, then you must set 'name' in that Hash" if current_screen_item[:resourceid][:name].nil?
         Chef::Log.debug "Checking graph id for: host: '#{current_screen_item[:resourceid][:host]}', name: '#{current_screen_item[:resourceid][:name]}'"
         current_screen_item[:resourceid] = get_graph_id_from_graph_name(current_screen_item[:resourceid][:host], current_screen_item[:resourceid][:name], connection)
-      elsif current_screen_item[:resourcetype] == 1
-        Chef::Application.fatal! "When 'resourcetype' is 1 and 'resourceid' is a Hash, then you must set 'key_' in that Hash" if current_screen_item[:resourceid][:key_].nil?
+      elsif current_screen_item[:resourcetype] == 1 || current_screen_item[:resourcetype] == 3
+        Chef::Application.fatal! "When 'resourcetype' is 1 or 3 and 'resourceid' is a Hash, then you must set 'key_' in that Hash" if current_screen_item[:resourceid][:key_].nil?
         Chef::Log.debug "Checking item id for: host: '#{current_screen_item[:resourceid][:host]}', key: '#{current_screen_item[:resourceid][:key_]}'"
         current_screen_item[:resourceid] = get_item_id_from_item_key(current_screen_item[:resourceid][:host], current_screen_item[:resourceid][:key_], connection)
       end
