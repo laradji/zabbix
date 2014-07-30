@@ -28,3 +28,4 @@ default['zabbix']['uid']    = nil
 default['zabbix']['gid']    = nil
 default['zabbix']['home']   = '/opt/zabbix'
 default['zabbix']['shell']  = '/bin/bash'
+default['zabbix']['major_version'] = '2.2'
