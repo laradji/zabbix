@@ -4,10 +4,10 @@
 #
 # Copyright (C) 2014 Jorge Espada
 #
-# All rights reserved - Do Not Redistribute
+# Apache 2.0
 #
 
-#in case you using a wrapper or already have a recipe to install custom repos
+# in case you using a wrapper or already have a recipe to install custom repos
 include_recipe node['zabbix']['agent_package_custom']['custom_repo_recipe'] if node['zabbix']['agent_package_custom']['custom_repo_recipe']
 
 # Install prerequisite RPM
