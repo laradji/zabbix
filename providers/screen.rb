@@ -76,7 +76,7 @@ action :update do
 
     looked_up_screen_items.each_with_index do |screen_item, index|
       screen_item.each do |key, value|
-        need_to_update = true if value.to_s != screen['screenitems'][index][key.to_s]
+        need_to_update = true if screen['screenitems'][index].nil? || value.to_s != screen['screenitems'][index][key.to_s]
       end
     end
 
