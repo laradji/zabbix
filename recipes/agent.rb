@@ -26,6 +26,19 @@ template 'user_params.conf' do
   only_if { node['zabbix']['agent']['user_parameter'].length > 0 }
 end
 
+# Install custom scripts
+node['zabbix']['agent']['user_script'].each do |script|
+  cookbook_file File.join(node['zabbix']['agent']['scripts_dir'], script) do
+    source "scripts/#{script}"
+    unless node['platform_family'] == 'windows'
+      owner 'root'
+      group 'root'
+      mode '755'
+    end
+    action :create_if_missing
+  end
+end
+
 ruby_block 'start service' do
   block do
     true
