@@ -41,7 +41,7 @@ interface_definitions = {
     :useip => 1,
     :ip => ip_address,
     :dns => node['fqdn'],
-    :port => '10050'
+    :port => node['zabbix']['agent']['zabbix_agent_port']
   },
   :jmx => {
     :type => 4,
@@ -49,7 +49,7 @@ interface_definitions = {
     :useip => 1,
     :ip => ip_address,
     :dns => node['fqdn'],
-    :port => '10052'
+    :port => node['zabbix']['agent']['jmx_port']
   },
   :snmp => {
     :type => 2,
@@ -57,7 +57,7 @@ interface_definitions = {
     :useip => 1,
     :ip => ip_address,
     :dns => node['fqdn'],
-    :port => '161'
+    :port => node['zabbix']['agent']['snmp_port']
   }
 }
 
