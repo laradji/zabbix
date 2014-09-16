@@ -12,6 +12,7 @@ default['zabbix']['agent']['servers_active']    = []
 default['zabbix']['agent']['hostname']          = node['fqdn']
 default['zabbix']['agent']['configure_options'] = ['--with-libcurl']
 default['zabbix']['agent']['include_dir']       = ::File.join(node['zabbix']['etc_dir'] , 'agent_include')
+default['zabbix']['agent']['scripts_dir']    = ::File.join(node['zabbix']['etc_dir'], 'user_scripts')
 default['zabbix']['agent']['enable_remote_commands'] = true
 default['zabbix']['agent']['listen_port']       = '10050'
 default['zabbix']['agent']['timeout']       	= '3'
@@ -47,3 +48,4 @@ default['zabbix']['agent']['zabbix_agent_port']  = '10050'
 default['zabbix']['agent']['snmp_port']          = '161'
 
 default['zabbix']['agent']['user_parameter'] = []
+default['zabbix']['agent']['user_script']    = []
