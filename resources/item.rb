@@ -29,7 +29,7 @@ attribute :snmpv3_privpassphrase, :kind_of => String
 attribute :formula, :kind_of => Fixnum, :default => 1
 attribute :delay_flex, :kind_of => String
 attribute :ipmi_sensor, :kind_of => String
-attribute :data_type , :kind_of => Chef::Zabbix::API::DataType, :default => Chef::Zabbix::API::DataType.decimal
+attribute :data_type, :kind_of => Chef::Zabbix::API::DataType, :default => Chef::Zabbix::API::DataType.decimal
 attribute :authtype, :kind_of => Chef::Zabbix::API::AuthType, :default => Chef::Zabbix::API::AuthType.password
 attribute :username, :kind_of => String
 attribute :password, :kind_of => String

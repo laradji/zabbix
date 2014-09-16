@@ -73,7 +73,7 @@ class Chef
         enum :zabbix_agent_active_check,  7
         enum :zabbix_aggregate,           8
         enum :web_item,                   9
-        enum :externali_check ,           10
+        enum :externali_check,            10
         enum :database_monitor,           11
         enum :ipmi_agent,                 12
         enum :ssh_agent,                  13

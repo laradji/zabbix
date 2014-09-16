@@ -11,8 +11,8 @@ class Chef
             Chef::Application.fatal! ':item_template or :host is required'
           end
           Chef::Application.fatal! ':item_key is required' if options[:item_key].to_s.empty?
-          Chef::Application.fatal! ':calc_function must be a Zabbix::API::GraphItemCalcFunction' unless options[:calc_function].kind_of?(GraphItemCalcFunction)
-          Chef::Application.fatal! ':type must be a Zabbix::API::GraphItemType' unless options[:type].kind_of?(GraphItemType)
+          Chef::Application.fatal! ':calc_function must be a Zabbix::API::GraphItemCalcFunction' unless options[:calc_function].is_a?(GraphItemCalcFunction)
+          Chef::Application.fatal! ':type must be a Zabbix::API::GraphItemType' unless options[:type].is_a?(GraphItemType)
           @options = options
         end
 
@@ -80,7 +80,7 @@ class Chef
           search = options[:useip] ? :ip : :dns
           Chef::Application.fatal!("#{search} must be set when :useip is #{options[:useip]}") unless options[search]
           Chef::Application.fatal!(':port is required') unless options[:port]
-          Chef::Application.fatal!(':type must be a Chef::Zabbix::API:HostInterfaceType') unless options[:type].kind_of?(Chef::Zabbix::API::HostInterfaceType)
+          Chef::Application.fatal!(':type must be a Chef::Zabbix::API:HostInterfaceType') unless options[:type].is_a?(Chef::Zabbix::API::HostInterfaceType)
         end
 
         def symbolize(options)
