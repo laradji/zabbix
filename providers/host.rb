@@ -213,6 +213,23 @@ action :update do
   new_resource.updated_by_last_action(true)
 end
 
+action :delete do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+
+    delete_host_request = {
+      :method => 'host.delete',
+      :params => [new_resource.hostid]
+    }
+    Chef::Log.info "Zabbix host #{new_resource.hostname}: Deleting host with hostid #{new_resource.hostid}"
+    result = connection.query(delete_host_request)
+    if result['hostids'].nil?
+      Chef::Log.error "Could not delete host #{new_resource.hostname} (#{new_resource.hostid})"
+    end
+    new_resource.updated_by_last_action(true)
+  end
+end
+
+
 def load_current_resource
   run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
