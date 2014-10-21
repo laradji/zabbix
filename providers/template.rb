@@ -22,6 +22,21 @@ action :create do
   new_resource.updated_by_last_action(true)
 end
 
+action :delete do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    if new_resource.templateid
+      connection.query(
+          :method => "template.delete",
+          :params => [new_resource.templateid]
+        )
+    else
+      Chef::Application.fatal! "template delete only supported by templateid"
+    end
+
+    new_resource.updated_by_last_action(true)
+  end
+end
+
 def load_current_resource
   run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'
