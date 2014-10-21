@@ -7,6 +7,6 @@
 # Apache 2.0
 #
 
-unless node[:zabbix][:agent][:skip] do
+unless node[:zabbix][:agent][:skip]
   include_recipe 'zabbix::agent'
 end

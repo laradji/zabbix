@@ -14,7 +14,7 @@ action :add do
     owner node['zabbix']['user']
     group node['zabbix']['group']
     mode 0640
-    notifies :restart, "service[#{node[:zabbix][:agent][:service_name]}]'
+    notifies :restart, "service[#{node[:zabbix][:agent][:service_name]}]"
   end
   new_resource.updated_by_last_action(true)
 end
@@ -24,7 +24,7 @@ action :remove do
     Chef::Log.info "Removing #{node[:zabbix][:agent][:include_dir]}/#{new_resource.param_key}.conf"
     file "#{node[:zabbix][:agent][:include_dir]}/#{new_resource.param_key}.conf" do
       action :delete
-      notifies :restart, "service[#{node[:zabbix][:agent][:service_name]}]'
+      notifies :restart, "service[#{node[:zabbix][:agent][:service_name]}]"
     end
     new_resource.updated_by_last_action(true)
   end

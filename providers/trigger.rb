@@ -1,4 +1,4 @@
-action :create do
+action :create_or_update do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     # NOTE: Triggers in the zabbix api don't really have a "name"
     # Instead we call it name so that lwrp users don't lose their minds
