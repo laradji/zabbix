@@ -1,5 +1,5 @@
-actions :create
-default_action :create
+actions :create_or_update, :delete
+default_action :create_or_update
 
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :expression, :kind_of => String, :required => true

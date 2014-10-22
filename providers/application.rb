@@ -1,7 +1,6 @@
 action :create do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-    # Convert the "hostname" (a template name) into a hostid
-
+    # Convert the "hostname" (a template name) into a template ID
     template_ids = Zabbix::API.find_template_ids(connection, new_resource.template)
     if template_ids.empty?
       Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
@@ -14,7 +13,7 @@ action :create do
         :method => 'application.create',
         :params => {
           :name => new_resource.name,
-          :hostid => template_ids.first['hostid']
+          :hostid => template_ids.first['templateid']
         }
       }
       connection.query(request)

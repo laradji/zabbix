@@ -43,7 +43,7 @@ class Chef
         include Enumeration
         enum :decimal,      0
         enum :octal,        1
-        enum :hexidecimal,  2
+        enum :hexadecimal,  2
         enum :boolean,      3
       end
 

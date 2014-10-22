@@ -1,4 +1,4 @@
-actions :create
+actions :create, :delete
 default_action :create
 
 attribute :name, :kind_of => String, :name_attribute => true
@@ -8,6 +8,7 @@ attribute :key, :kind_of => String, :required => true
 attribute :type, :kind_of => Chef::Zabbix::API::ItemType, :required => true
 attribute :value_type, :kind_of => Chef::Zabbix::API::ItemValueType, :required => true
 attribute :server_connection, :kind_of => Hash, :required => true
+attribute :itemid, :kind_of => String
 
 attribute :delay, :kind_of => Fixnum, :default => 60
 attribute :description, :kind_of => String
