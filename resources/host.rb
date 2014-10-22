@@ -1,4 +1,4 @@
-actions :create_or_update, :create, :update, :link
+actions :create_or_update, :create, :update, :link, :delete
 default_action :create_or_update
 
 attribute :hostname, :kind_of => String, :name_attribute => true
@@ -22,3 +22,5 @@ attribute :inventory, :kind_of => Hash, :default => {}
 attribute :server_connection, :kind_of => Hash, :default => {}
 attribute :create_missing_groups, :kind_of => [TrueClass, FalseClass], :default => false
 attribute :parameters, :kind_of => Hash, :default => {}
+
+attribute :hostid, :kind_of => String

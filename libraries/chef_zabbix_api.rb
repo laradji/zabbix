@@ -144,29 +144,70 @@ class Chef
           connection.query(request)
         end
 
-        def find_trigger_ids(connection, description)
+        # Trigger descriptions are not unique, so to find a specific trigger we want
+        # to search by description and expression
+        def find_trigger_ids(connection, description, expression)
           request = {
             :method => 'trigger.get',
             :params => {
+              :expandExpression => true,
               :search => {
                 :description => description
-              }
+              },
+              :output => 'extend'
             }
           }
-          connection.query(request)
+          triggers = connection.query(request)
+
+          # Unfortunately we can't search by expression via the API, because in the
+          # database its stored in a compacted format. But the :expandExpression
+          # above caused expression to get exploded back to match the input form, so
+          # we can filter by expression now.  We also ignore any trigger where
+          # templateid is non-zero as those are *instances* of the "master" template
+          # (referenced in the templateid) as applied to individual hosts and they
+          # are not editable via the API
+
+          result = []
+          triggers.each do |trigger|
+            next if trigger["expression"] != expression
+            next if trigger["templateid"] != '0'
+            result.push(trigger)
+          end
+          return result
         end
 
-        def find_trigger_prototype_ids(connection, description)
+        # Trigger descriptions are not unique, so to find a specific trigger we want
+        # to search by description and expression
+        def find_trigger_prototype_ids(connection, description, expression)
           request = {
             :method => 'triggerprototype.get',
             :params => {
+              :expandExpression => true,
               :search => {
                 :description => description
-              }
+              },
+              :output => 'extend'
             }
           }
-          connection.query(request)
+          triggers = connection.query(request)
+
+          # Unfortunately we can't search by expression via the API, because in the
+          # database its stored in a compacted format. But the :expandExpression
+          # above caused expression to get exploded back to match the input form, so
+          # we can filter by expression now.  We also ignore any trigger where
+          # templateid is non-zero as those are *instances* of the "master" template
+          # (referenced in the templateid) as applied to individual hosts and they
+          # are not editable via the API
+
+          result = []
+          triggers.each do |trigger|
+            next if trigger["expression"] != expression
+            next if trigger["templateid"] != '0'
+            result.push(trigger)
+          end
+          return result
         end
+
 
         def find_item_ids(connection, template_id, key, name = nil)
           request = {
@@ -239,6 +280,82 @@ class Chef
           }
           connection.query(request)
         end
+
+        # get_* routines allow arbitrary searching of the existing Zabbix config
+        # searchParams should be a structure of parameters to pass to the Zabbix API
+        # e.g. calling get_triggers with {"search" => { "description" => "something" } }
+        # will find all triggers with "something" in the description field.  To
+        # fetch all triggers provide nil or {}, but for large zabbix instances this
+        # may overrun the PHP memory limits and fail.
+        #
+        # If your chef rules always add a unique string to the description of
+        # triggers/items/etc you insert, then you can use this to find them and remove
+        # them when your chef rules no longer specify to add them
+
+        def get_triggers(connection, searchParams)
+          searchParams = {} if searchParams.nil?
+          searchParams[:output] = 'extend'
+          searchParams[:expandExpression] = true
+          request = {
+            :method => 'trigger.get',
+            :params => searchParams,
+          }
+          triggers = connection.query(request)
+          if triggers.nil?
+            Chef::Application.fatal! "Could not retrieve existing trigger list"
+          end
+
+          # We ignore any trigger where templateid is non-zero as those are *instances*
+          # of the template (referenced in the templateid) as applied to individual hosts
+          # and they are not editable via the API
+          return triggers.reject{ |t| t["templateid"] != '0' }
+        end
+
+        def get_hosts(connection, searchParams)
+            searchParams = {} if searchParams.nil?
+            searchParams[:output] = 'extend'
+            request = {
+              :method => 'host.get',
+              :params => searchParams
+            }
+            hosts = connection.query(request)
+            if hosts.nil?
+              Chef::Application.fatal! "Could not retrieve existing host list"
+            end
+
+            return hosts
+        end
+
+        def get_items(connection, searchParams)
+            searchParams = {} if searchParams.nil?
+            searchParams[:output] = 'extend'
+            request = {
+              :method => 'item.get',
+              :params => searchParams,
+            }
+            items = connection.query(request)
+            if items.nil?
+              Chef::Application.fatal! "Could not retrieve existing item list"
+            end
+
+            return items
+        end
+
+        def get_templates(connection, searchParams)
+            searchParams = {} if searchParams.nil?
+            searchParams[:output] = 'extend'
+            request = {
+              :method => 'template.get',
+              :params => searchParams
+            }
+            templates = connection.query(request)
+            if templates.nil?
+              Chef::Application.fatal! "Could not retrieve existing template list"
+            end
+
+            return templates
+        end
+
       end
     end
   end

@@ -1,4 +1,4 @@
-action :create do
+action :create_or_update do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     # NOTE: Triggers in the zabbix api don't really have a "name"
     # Instead we call it name so that lwrp users don't lose their minds
@@ -16,18 +16,20 @@ action :create do
       :status => new_resource.status.value,
     }
 
-    noun = (new_resource.prototype) ? 'triggerprototype' : 'trigger'
+    noun = 'trigger'
     verb = 'create'
 
+    # Check to see if this trigger name already exists
     if new_resource.prototype
-      trigger_ids = Zabbix::API.find_trigger_prototype_ids(connection, new_resource.name)
+      noun = 'triggerprototype'
+      trigger_ids = Chef::Zabbix::API.find_trigger_prototype_ids(connection, new_resource.name, new_resource.expression)
     else
-      trigger_ids = Zabbix::API.find_trigger_ids(connection, new_resource.name)
+      trigger_ids = Chef::Zabbix::API.find_trigger_ids(connection, new_resource.name, new_resource.expression)
     end
 
-    unless trigger_ids.empty?
-      verb = 'update'
+    if ! trigger_ids.empty?
       params[:triggerid] = trigger_ids.first['triggerid']
+      verb = 'update'
     end
 
     method = "#{noun}.#{verb}"
@@ -37,6 +39,29 @@ action :create do
     )
   end
   new_resource.updated_by_last_action(true)
+end
+
+action :delete do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    # NOTE: Triggers in the zabbix api don't really have a "name"
+    # Instead we call it name so that lwrp users don't lose their minds
+    # and we just treat it as the description field the api wants
+    #
+    trigger_ids = Chef::Zabbix::API.find_trigger_ids(connection, new_resource.name, new_resource.expression)
+    if ! trigger_ids.empty?
+      # This *shouldn't* return more then one trigger_id, but just to be safe we'll just map the list
+      params = trigger_ids.map{ |t| t["triggerid"] }
+      connection.query(
+        :method => "trigger.delete",
+        :params => params
+      )
+    else
+      # Nothing to update, move along
+      Chef::Log.debug "trigger:delete:Could not find a trigger named #{new_resource.name} with expression '#{new_resource.expression}', nothing to delete"
+    end
+
+    new_resource.updated_by_last_action(true)
+  end
 end
 
 def load_current_resource

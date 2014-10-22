@@ -5,7 +5,7 @@ action :create do
       Chef::Application.fatal! "Could not find a template named #{new_resource.template}"
     end
 
-    template_id = template_ids.first['hostid']
+    template_id = template_ids.first['templateid']
 
     application_ids = new_resource.applications.map do |application|
       app_ids = Zabbix::API.find_application_ids(connection, application, template_id)
@@ -65,6 +65,21 @@ action :create do
   end
 
   new_resource.updated_by_last_action(true)
+end
+
+action :delete do
+  Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
+    if new_resource.itemid
+      connection.query(
+          :method => "item.delete",
+          :params => [new_resource.itemid]
+        )
+    else
+      Chef::Application.fatal! "item delete only supported by itemid"
+    end
+
+    new_resource.updated_by_last_action(true)
+  end
 end
 
 def load_current_resource
