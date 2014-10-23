@@ -352,7 +352,6 @@ class Chef
 
           templates
         end
-
       end
     end
   end
