@@ -169,11 +169,10 @@ class Chef
 
           result = []
           triggers.each do |trigger|
-            next if trigger["expression"] != expression
-            next if trigger["templateid"] != '0'
+            next if trigger['expression'] != expression
+            next if trigger['templateid'] != '0'
             result.push(trigger)
           end
-          return result
         end
 
         # Trigger descriptions are not unique, so to find a specific trigger we want
@@ -201,13 +200,11 @@ class Chef
 
           result = []
           triggers.each do |trigger|
-            next if trigger["expression"] != expression
-            next if trigger["templateid"] != '0'
+            next if trigger['expression'] != expression
+            next if trigger['templateid'] != '0'
             result.push(trigger)
           end
-          return result
         end
-
 
         def find_item_ids(connection, template_id, key, name = nil)
           request = {
@@ -282,7 +279,7 @@ class Chef
         end
 
         # get_* routines allow arbitrary searching of the existing Zabbix config
-        # searchParams should be a structure of parameters to pass to the Zabbix API
+        # search_params should be a structure of parameters to pass to the Zabbix API
         # e.g. calling get_triggers with {"search" => { "description" => "something" } }
         # will find all triggers with "something" in the description field.  To
         # fetch all triggers provide nil or {}, but for large zabbix instances this
@@ -292,68 +289,68 @@ class Chef
         # triggers/items/etc you insert, then you can use this to find them and remove
         # them when your chef rules no longer specify to add them
 
-        def get_triggers(connection, searchParams)
-          searchParams = {} if searchParams.nil?
-          searchParams[:output] = 'extend'
-          searchParams[:expandExpression] = true
+        def get_triggers(connection, search_params)
+          search_params = {} if search_params.nil?
+          search_params[:output] = 'extend'
+          search_params[:expandExpression] = true
           request = {
             :method => 'trigger.get',
-            :params => searchParams,
+            :params => search_params,
           }
           triggers = connection.query(request)
           if triggers.nil?
-            Chef::Application.fatal! "Could not retrieve existing trigger list"
+            Chef::Application.fatal! 'Could not retrieve existing trigger list'
           end
 
           # We ignore any trigger where templateid is non-zero as those are *instances*
           # of the template (referenced in the templateid) as applied to individual hosts
           # and they are not editable via the API
-          return triggers.reject{ |t| t["templateid"] != '0' }
+          triggers.reject { |t| t['templateid'] != '0' }
         end
 
-        def get_hosts(connection, searchParams)
-            searchParams = {} if searchParams.nil?
-            searchParams[:output] = 'extend'
-            request = {
-              :method => 'host.get',
-              :params => searchParams
-            }
-            hosts = connection.query(request)
-            if hosts.nil?
-              Chef::Application.fatal! "Could not retrieve existing host list"
-            end
+        def get_hosts(connection, search_params)
+          search_params = {} if search_params.nil?
+          search_params[:output] = 'extend'
+          request = {
+            :method => 'host.get',
+            :params => search_params
+          }
+          hosts = connection.query(request)
+          if hosts.nil?
+            Chef::Application.fatal! 'Could not retrieve existing host list'
+          end
 
-            return hosts
+          hosts
         end
 
-        def get_items(connection, searchParams)
-            searchParams = {} if searchParams.nil?
-            searchParams[:output] = 'extend'
-            request = {
-              :method => 'item.get',
-              :params => searchParams,
-            }
-            items = connection.query(request)
-            if items.nil?
-              Chef::Application.fatal! "Could not retrieve existing item list"
-            end
+        def get_items(connection, search_params)
+          search_params = {} if search_params.nil?
+          search_params[:output] = 'extend'
+          request = {
+            :method => 'item.get',
+            :params => search_params,
+          }
+          items = connection.query(request)
+          if items.nil?
+            Chef::Application.fatal! 'Could not retrieve existing item list'
+          end
 
-            return items
+          items
         end
 
-        def get_templates(connection, searchParams)
-            searchParams = {} if searchParams.nil?
-            searchParams[:output] = 'extend'
-            request = {
-              :method => 'template.get',
-              :params => searchParams
-            }
-            templates = connection.query(request)
-            if templates.nil?
-              Chef::Application.fatal! "Could not retrieve existing template list"
-            end
+        def get_templates(connection, search_params)
+          search_params = {} if search_params.nil?
+          search_params[:output] = 'extend'
+          request = {
+            :method => 'template.get',
+            :params => search_params
+          }
+          templates = connection.query(request)
+          if templates.nil?
+            Chef::Application.fatal! 'Could not retrieve existing template list'
+          end
 
-            return templates
+          templates
         end
 
       end

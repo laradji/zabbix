@@ -26,7 +26,7 @@ end
 action :remove do
   service_name = node['zabbix']['agent']['service_name']
   include_dir = node['zabbix']['agent']['include_dir']
-  if ::File.exists?("#{include_dir}/#{new_resource.param_key}.conf")
+  if ::File.exist?("#{include_dir}/#{new_resource.param_key}.conf")
     Chef::Log.info "Removing #{include_dir}/#{new_resource.param_key}.conf"
     file "#{include_dir}/#{new_resource.param_key}.conf" do
       action :delete

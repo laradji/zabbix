@@ -27,7 +27,7 @@ action :create_or_update do
       trigger_ids = Chef::Zabbix::API.find_trigger_ids(connection, new_resource.name, new_resource.expression)
     end
 
-    if ! trigger_ids.empty?
+    unless trigger_ids.empty?
       params[:triggerid] = trigger_ids.first['triggerid']
       verb = 'update'
     end
@@ -48,11 +48,11 @@ action :delete do
     # and we just treat it as the description field the api wants
     #
     trigger_ids = Chef::Zabbix::API.find_trigger_ids(connection, new_resource.name, new_resource.expression)
-    if ! trigger_ids.empty?
+    unless trigger_ids.empty?
       # This *shouldn't* return more then one trigger_id, but just to be safe we'll just map the list
-      params = trigger_ids.map{ |t| t["triggerid"] }
+      params = trigger_ids.map{ |t| t['triggerid'] }
       connection.query(
-        :method => "trigger.delete",
+        :method => 'trigger.delete',
         :params => params
       )
     else

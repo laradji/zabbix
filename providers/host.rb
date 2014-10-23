@@ -229,7 +229,6 @@ action :delete do
   end
 end
 
-
 def load_current_resource
   run_context.include_recipe 'zabbix::_providers_common'
   require 'zabbixapi'

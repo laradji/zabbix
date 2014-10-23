@@ -26,11 +26,11 @@ action :delete do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     if new_resource.templateid
       connection.query(
-          :method => "template.delete",
+          :method => 'template.delete',
           :params => [new_resource.templateid]
         )
     else
-      Chef::Application.fatal! "template delete only supported by templateid"
+      Chef::Application.fatal! 'template delete only supported by templateid'
     end
 
     new_resource.updated_by_last_action(true)

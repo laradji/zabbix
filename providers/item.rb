@@ -71,11 +71,11 @@ action :delete do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
     if new_resource.itemid
       connection.query(
-          :method => "item.delete",
+          :method => 'item.delete',
           :params => [new_resource.itemid]
         )
     else
-      Chef::Application.fatal! "item delete only supported by itemid"
+      Chef::Application.fatal! 'item delete only supported by itemid'
     end
 
     new_resource.updated_by_last_action(true)
