@@ -1,6 +1,8 @@
 include_recipe "zabbix::agent_#{node['zabbix']['agent']['install_method']}"
 include_recipe 'zabbix::agent_common'
 
+service_name = node['zabbix']['agent']['service_name']
+
 # Install configuration
 template 'zabbix_agentd.conf' do
   path node['zabbix']['agent']['config_file']
@@ -10,7 +12,7 @@ template 'zabbix_agentd.conf' do
     group 'root'
     mode '644'
   end
-  notifies :restart, "service[#{node[:zabbix][:agent][:service_name]}]"
+  notifies :restart, "service[#{service_name}]"
 end
 
 # Install optional additional agent config file containing UserParameter(s)
@@ -22,7 +24,7 @@ template 'user_params.conf' do
     group 'root'
     mode '644'
   end
-  notifies :restart, "service[#{node[:zabbix][:agent][:service_name]}]"
+  notifies :restart, "service[#{service_name}]"
   only_if { node['zabbix']['agent']['user_parameter'].length > 0 }
 end
 
@@ -31,6 +33,6 @@ ruby_block 'start service' do
     true
   end
   Array(node['zabbix']['agent']['service_state']).each do |action|
-    notifies action, "service[#{node[:zabbix][:agent][:service_name]}]"
+    notifies action, "service[#{service_name}]"
   end
 end
