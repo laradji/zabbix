@@ -173,6 +173,7 @@ class Chef
             next if trigger['templateid'] != '0'
             result.push(trigger)
           end
+          result
         end
 
         # Trigger descriptions are not unique, so to find a specific trigger we want
@@ -204,6 +205,7 @@ class Chef
             next if trigger['templateid'] != '0'
             result.push(trigger)
           end
+          result
         end
 
         def find_item_ids(connection, template_id, key, name = nil)
