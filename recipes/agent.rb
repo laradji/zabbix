@@ -10,7 +10,7 @@ template 'zabbix_agentd.conf' do
     group 'root'
     mode '644'
   end
-  notifies :restart, "service[#{node[:zabbix][:agent][:servicename]}]"
+  notifies :restart, "service[#{node['zabbix']['agent']['servicename']}]"
 end
 
 # Install optional additional agent config file containing UserParameter(s)
@@ -22,7 +22,7 @@ template 'user_params.conf' do
     group 'root'
     mode '644'
   end
-  notifies :restart, "service[#{node[:zabbix][:agent][:servicename]}]"
+  notifies :restart, "service[#{node['zabbix']['agent']['servicename']}]"
   only_if { node['zabbix']['agent']['user_parameter'].length > 0 }
 end
 
@@ -31,6 +31,6 @@ ruby_block 'start service' do
     true
   end
   Array(node['zabbix']['agent']['service_state']).each do |action|
-    notifies action, "service[#{node[:zabbix][:agent][:servicename]}]"
+    notifies action, "service[#{node['zabbix']['agent']['servicename']}]"
   end
 end

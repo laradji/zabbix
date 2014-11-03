@@ -3,7 +3,7 @@ include_attribute 'zabbix'
 
 default['zabbix']['agent']['install']           = true
 default['zabbix']['agent']['service_state']     = [:start, :enable]
-default['zabbix']['agent']['servicename']       = "zabbix_agentd"
+default['zabbix']['agent']['servicename']       = 'zabbix_agentd'
 
 default['zabbix']['agent']['branch']            = 'ZABBIX%20Latest%20Stable'
 default['zabbix']['agent']['version']           = '2.2.0'
