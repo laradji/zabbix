@@ -21,6 +21,6 @@ ark 'zabbix_agent' do
   path '/opt'
   strip_components 0
   has_binaries ['bin/zabbix_sender', 'bin/zabbix_get', 'sbin/zabbix_agent', 'sbin/zabbix_agentd']
-  notifies :restart, 'service[zabbix_agentd]'
+  notifies :restart, "service[#{node[:zabbix][:agent][:servicename]}]"
   checksum node['zabbix']['agent']['checksum']
 end
