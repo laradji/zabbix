@@ -11,6 +11,6 @@ root_dirs.each do |dir|
       mode '755'
     end
     recursive true
-    notifies :restart, "service[#{node['zabbix']['agent']['servicename']}]"
+    notifies :restart, 'service[zabbix_agentd]'
   end
 end

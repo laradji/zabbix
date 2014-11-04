@@ -11,7 +11,9 @@ when 'sysvinit'
   end
 
   # Define zabbix_agentd service
-  service node['zabbix']['agent']['servicename'] do
+  service 'zabbix_agentd' do
+    service_name node['zabbix']['agent']['service_name']
+    pattern 'zabbix_agentd'
     supports :status => true, :start => true, :stop => true, :restart => true
     action :nothing
   end
