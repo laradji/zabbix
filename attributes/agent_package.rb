@@ -1,5 +1,3 @@
-default['zabbix']['agent']['servicename'] = 'zabbix-agent'
-
 case node['platform']
 when 'ubuntu', 'debian'
   default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/2.4/#{node['platform']}/"
