@@ -26,7 +26,8 @@ node['zabbix']['web']['packages'].each do |pkg|
   end
 end
 
-package 'libapache2-mod-php5' if platform_family?('debian')
+# install php5 module
+include_recipe 'apache2::mod_php5'
 
 zabbix_source 'extract_zabbix_web' do
   branch node['zabbix']['server']['branch']
