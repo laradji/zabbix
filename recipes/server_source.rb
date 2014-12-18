@@ -114,13 +114,23 @@ zabbix_source 'install_zabbix_server' do
   action :install_server
 end
 
-# Install Init script
-template '/etc/init.d/zabbix_server' do
-  source init_template
-  owner 'root'
-  group 'root'
-  mode '755'
-  notifies :restart, 'service[zabbix_server]', :delayed
+if node['init_package'] == 'systemd'
+  template '/lib/systemd/system/zabbix-server.service' do
+    source 'zabbix-server.service.erb'
+    owner 'root'
+    group 'root'
+    mode '644'
+    notifies :restart, 'service[zabbix_server]', :delayed
+  end
+else
+  # Install Init script
+  template '/etc/init.d/zabbix_server' do
+    source init_template
+    owner 'root'
+    group 'root'
+    mode '755'
+    notifies :restart, 'service[zabbix_server]', :delayed
+  end
 end
 
 # install zabbix server conf
@@ -144,6 +154,7 @@ end
 
 # Define zabbix_agentd service
 service 'zabbix_server' do
+  service_name 'zabbix-server' if node['init_package'] == 'systemd'
   supports :status => true, :start => true, :stop => true, :restart => true
   action [:start, :enable]
 end
