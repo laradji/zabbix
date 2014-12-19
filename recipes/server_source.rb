@@ -30,7 +30,8 @@ when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
 
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
-  packages = %w(fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear)
+  packages = %w(fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel php-pear)
+  packages.push('redhat-lsb') if node['init_package'] != 'systemd'
   packages.push(curldev)
 
   case node['zabbix']['database']['install_method']
