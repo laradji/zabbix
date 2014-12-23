@@ -1,12 +1,13 @@
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          zabbix_agentd
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Start zabbix_agentd at boot time
 # Description:       Zabbix agent.
 ### END INIT INFO
-#! /bin/sh
 #
 # Zabbix agent start/stop script.
 #
