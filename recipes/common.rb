@@ -48,7 +48,7 @@ zabbix_dirs.each do |dir|
     recursive true
     # Only execute this if zabbix can't write to it. This handles cases of
     # dir being world writable (like /tmp)
-    not_if { ::File.world_writable?(dir) }
+    not_if { ::File.world_writable?(dir) || ["/var/log", "/var/run"].include?(dir) }
   end
 end
 
