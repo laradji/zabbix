@@ -64,6 +64,7 @@ end
 # install vhost for zabbix frontend
 web_app node['zabbix']['web']['fqdn'] do
   server_name node['zabbix']['web']['fqdn']
+  server_port node['zabbix']['web']['port']
   server_aliases node['zabbix']['web']['aliases']
   docroot node['zabbix']['web_dir']
   not_if { node['zabbix']['web']['fqdn'].nil? }
