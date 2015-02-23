@@ -1,6 +1,7 @@
 cookbook "zabbix" do
 	configuration "default"
   	configuration "server_source"
+	configuration "screen_resource"
 	exclude :platform => 'centos'
 	exclude :platform => 'debian'
 	exclude :platform => 'redhat'

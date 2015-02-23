@@ -19,3 +19,12 @@ suites:
   run_list:
     - "recipe[zabbix::default]"
   attributes:
+- name: screen_resource
+  run_list:
+    - recipe[apt]
+    - recipe[zabbix_test::screen_resource]
+  attributes:
+  excludes:
+    - ubuntu-10.04
+    - centos-5.9
+    - centos-6.4
