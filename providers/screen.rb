@@ -141,20 +141,23 @@ end
 def add_resource_ids_for_screen_items(screen_items, connection)
   returned_screen_items = []
   screen_items.each do |current_screen_item|
-    if current_screen_item[:resourceid].kind_of? Fixnum
+    if current_screen_item[:resourceid].is_a? Fixnum
       # We make it to a String for possible later comparison/sorting, because the API
       # can only return String values anyway
       current_screen_item[:resourceid] = current_screen_item[:resourceid].to_s
       returned_screen_items.push current_screen_item
     else
-      if current_screen_item[:resourcetype] == 0
+      case current_screen_item[:resourcetype]
+      when 0
         Chef::Application.fatal! "When 'resourcetype' is 0 and 'resourceid' is a Hash, then you must set 'name' in that Hash" if current_screen_item[:resourceid][:name].nil?
         Chef::Log.debug "Checking graph id for: host: '#{current_screen_item[:resourceid][:host]}', name: '#{current_screen_item[:resourceid][:name]}'"
         current_screen_item[:resourceid] = get_graph_id_from_graph_name(current_screen_item[:resourceid][:host], current_screen_item[:resourceid][:name], connection)
-      elsif current_screen_item[:resourcetype] == 1 || current_screen_item[:resourcetype] == 3
+      when 1, 3
         Chef::Application.fatal! "When 'resourcetype' is 1 or 3 and 'resourceid' is a Hash, then you must set 'key_' in that Hash" if current_screen_item[:resourceid][:key_].nil?
         Chef::Log.debug "Checking item id for: host: '#{current_screen_item[:resourceid][:host]}', key: '#{current_screen_item[:resourceid][:key_]}'"
         current_screen_item[:resourceid] = get_item_id_from_item_key(current_screen_item[:resourceid][:host], current_screen_item[:resourceid][:key_], connection)
+      else
+        Chef::Application.fatal! "You either have to supply a correct Numeric 'resourceid' paramater or if you use a lookup Hash instead, then the 'resourcetype' must be 0, 1 or 3!"
       end
       returned_screen_items.push current_screen_item
     end

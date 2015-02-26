@@ -27,50 +27,50 @@ end
 # Also add the VM itself to Zabbix hosts, since monitored items are needed for
 # the screen items to be able to test them
 zabbix_host 'localhost' do
-    parameters({
-        groupNames: ['Linux servers'],
-        templates: ['Template OS Linux'],
-        interfaces: [Chef::Zabbix::API::HostInterface.new(type: Chef::Zabbix::API::HostInterfaceType.new(1), main: 1, useip: 1, ip: '127.0.0.1', port: 10050)]
-    })
-    server_connection({
-        url: 'http://127.0.0.1/api_jsonrpc.php',
-        user: 'Admin',
-        password: 'zabbix'
-    })
+  parameters(
+    groupNames: ['Linux servers'],
+    templates: ['Template OS Linux'],
+    interfaces: [Chef::Zabbix::API::HostInterface.new(type: Chef::Zabbix::API::HostInterfaceType.new(1), main: 1, useip: 1, ip: '127.0.0.1', port: 10_050)]
+  )
+  server_connection(
+    url: 'http://127.0.0.1/api_jsonrpc.php',
+    user: 'Admin',
+    password: 'zabbix'
+  )
 end
 
 # Then create a simple test screen to validate that the screen resource is
 # working
 zabbix_screen 'test-screen' do
-    hsize 2
-    vsize 2
-    screen_items [
-        {
-            resourcetype: 1,
-            colspan: 1,
-            rowspan: 1,
-            elements: 25,
-            height: 200,
-            resourceid: {host: 'localhost', key_: 'system.cpu.load[percpu,avg1]'},
-            width: 320,
-            x: 0,
-            y: 0
-        },
-        {
-            resourcetype: 0,
-            colspan: 0,
-            rowspan: 0,
-            elements: 25,
-            height: 200,
-            resourceid: {host: 'localhost', name: 'CPU load'},
-            width: 320,
-            x: 1,
-            y: 1
-        }
-    ]
-    server_connection({
-        url: 'http://127.0.0.1/api_jsonrpc.php',
-        user: 'Admin',
-        password: 'zabbix'
-    })
+  hsize 2
+  vsize 2
+  screen_items [
+    {
+      resourcetype: 1,
+      colspan: 1,
+      rowspan: 1,
+      elements: 25,
+      height: 200,
+      resourceid: { host: 'localhost', key_: 'system.cpu.load[percpu,avg1]' },
+      width: 320,
+      x: 0,
+      y: 0
+    },
+    {
+      resourcetype: 0,
+      colspan: 0,
+      rowspan: 0,
+      elements: 25,
+      height: 200,
+      resourceid: { host: 'localhost', name: 'CPU load' },
+      width: 320,
+      x: 1,
+      y: 1
+    }
+  ]
+  server_connection(
+    url: 'http://127.0.0.1/api_jsonrpc.php',
+    user: 'Admin',
+    password: 'zabbix'
+  )
 end
