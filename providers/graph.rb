@@ -1,6 +1,5 @@
 action :create do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
-
     new_resource.graph_items.each do |graph_item|
       if graph_item[:item_template]
         template_id = Zabbix::API.find_template_ids(connection, graph_item[:item_template]).first['templateid']

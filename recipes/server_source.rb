@@ -72,7 +72,7 @@ php_pear 'oci8' do
 end
 
 configure_options = node['zabbix']['server']['configure_options'].dup
-configure_options = (configure_options || Array.new).delete_if do |option|
+configure_options = (configure_options || []).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
 case node['zabbix']['database']['install_method']

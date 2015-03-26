@@ -7,7 +7,6 @@
 # Apache 2.0
 #
 
-
 case node['platform']
 when 'ubuntu', 'debian'
   apt_repository 'zabbix' do

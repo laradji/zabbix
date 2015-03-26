@@ -48,7 +48,6 @@ action :create do
     else
       Chef::Log.info "Trigger '#{new_resource.trigger_name}' already depends on a trigger named '#{new_resource.dependency_name}'"
     end
-
   end
 end
 

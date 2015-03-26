@@ -10,5 +10,4 @@ describe 'zabbix::server_source' do
   it 'runs as a daemon' do
     service('zabbix_server').must_be_running
   end
-
 end
