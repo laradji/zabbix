@@ -8,8 +8,8 @@ driver_config:
 platforms:
 - name: ubuntu-10.04
 - name: ubuntu-12.04
-- name: centos-6.4
-- name: centos-5.9
+- name: centos-6.6
+- name: centos-5.11
 
 provisioner:
     name: chef_zero
