@@ -140,8 +140,8 @@ action :update do
     if host.nil?
       Chef::Application.fatal! "Could not find host #{new_resource.hostname}"
     end
- 
-    #Get,create and assign groups
+
+    # Get,create and assign groups
     if new_resource.groups.empty?
       group_names = new_resource.parameters[:groupNames]
     else
@@ -170,7 +170,7 @@ action :update do
         # And now fetch the newly made group to be sure it worked
         # and for later use
         group = connection.query(get_desired_groups_request).first
-        Chef::Log.error('Error creating groups, see Chef errors') if result.nil? or group.nil?
+        Chef::Log.error('Error creating groups, see Chef errors') if result.nil? || group.nil?
       elsif group
         Chef::Log.info "Group #{desired_group} already exists"
       else
@@ -178,8 +178,8 @@ action :update do
       end
       acc << group
     end
-    
-    #Get/assign templates
+
+    # Get/assign templates
     if new_resource.templates.empty?
       template_names = new_resource.parameters[:templates]
     else
