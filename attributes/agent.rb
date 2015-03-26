@@ -47,3 +47,4 @@ default['zabbix']['agent']['zabbix_agent_port']  = '10050'
 default['zabbix']['agent']['snmp_port']          = '161'
 
 default['zabbix']['agent']['user_parameter'] = []
+default['zabbix']['agent']['server_search'] = "recipe:zabbix\\:\\:server"
