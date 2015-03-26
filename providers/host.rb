@@ -140,7 +140,8 @@ action :update do
     if host.nil?
       Chef::Application.fatal! "Could not find host #{new_resource.hostname}"
     end
-
+ 
+    #Get,create and assign groups
     if new_resource.groups.empty?
       group_names = new_resource.parameters[:groupNames]
     else
@@ -157,12 +158,28 @@ action :update do
         }
       }
       group = connection.query(get_desired_groups_request).first
-      if group.nil?
-        Chef::Application.fatal! "Could not find group '#{desired_group}'"
+      if group.nil? && new_resource.create_missing_groups
+        Chef::Log.info "Creating group #{desired_group}"
+        make_groups_request = {
+          :method => 'hostgroup.create',
+          :params => {
+            :name => desired_group
+          }
+        }
+        result = connection.query(make_groups_request)
+        # And now fetch the newly made group to be sure it worked
+        # and for later use
+        group = connection.query(get_desired_groups_request).first
+        Chef::Log.error('Error creating groups, see Chef errors') if result.nil? or group.nil?
+      elsif group
+        Chef::Log.info "Group #{desired_group} already exists"
+      else
+        Chef::Application.fatal! "Could not find group, #{desired_group}, for this host and \"create_missing_groups\" is False (or unset)"
       end
       acc << group
     end
-
+    
+    #Get/assign templates
     if new_resource.templates.empty?
       template_names = new_resource.parameters[:templates]
     else
@@ -173,11 +190,11 @@ action :update do
         :method => 'template.get',
         :params => {
           :filter => {
-            :host => desired_template
+            :name => desired_template
           }
         }
       }
-      template = connection.query(get_desired_templates_request)
+      template = connection.query(get_desired_templates_request).first
       acc << template
     end
 
