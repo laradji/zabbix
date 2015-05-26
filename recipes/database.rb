@@ -1,6 +1,5 @@
 include_recipe 'zabbix::common'
-include_recipe 'mysql_chef_gem'
-include_recipe 'mysql2_chef_gem'
+
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
@@ -17,11 +16,16 @@ end
 
 case node['zabbix']['database']['install_method']
   when 'rds_mysql'
+    mysql_chef_gem 'default'
+    mysql2_chef_gem 'default'
     root_username = node['zabbix']['database']['rds_master_username']
     root_password = node['zabbix']['database']['rds_master_password']
     allowed_user_hosts = '%'
     provider = Chef::Provider::ZabbixDatabaseMySql
   when 'mysql'
+    mysql_chef_gem 'default'
+    mysql2_chef_gem 'default'
+
     unless node['mysql']['server_root_password']
       node.normal['mysql']['server_root_password'] = secure_password
     end
