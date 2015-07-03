@@ -112,12 +112,14 @@ case "$1" in
         ;;
     restart)
         $0 stop
+        sleep 1
         $0 start
         RETVAL=$?
         ;;
     condrestart)
         if [ -n "$PID_FILE" -a -e "$PID_FILE" ]; then
             $0 stop
+            sleep 1
             $0 start
         fi
         RETVAL=$?
