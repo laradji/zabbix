@@ -97,7 +97,7 @@ end
 
 packages.delete_if do |item|
   item.match(/-dev(el)?$/)
-end if node['zabbix']['server']['install_method'] == 'source'
+end if node['zabbix']['server']['install_method'] != 'source'
 
 packages.each do |pck|
   package pck do
