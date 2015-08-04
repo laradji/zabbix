@@ -52,4 +52,3 @@ zabbix_source 'install_zabbix_server' do
 
   action :install_server
 end
-

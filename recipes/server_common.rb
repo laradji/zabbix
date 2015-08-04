@@ -40,7 +40,6 @@ root_dirs.each do |dir|
   end
 end
 
-
 packages = []
 case node['platform']
 when 'ubuntu', 'debian'
@@ -111,7 +110,6 @@ php_pear 'oci8' do
   action :install
   only_if { node['zabbix']['database']['install_method'] == 'oracle' }
 end
-
 
 # install zabbix server conf
 template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
