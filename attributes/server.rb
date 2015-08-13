@@ -19,9 +19,13 @@ default['zabbix']['server']['java_gateway'] = '127.0.0.1'
 default['zabbix']['server']['java_gateway_port'] = 10_052
 default['zabbix']['server']['java_pollers'] = 0
 default['zabbix']['server']['start_pollers'] = 5
+default['zabbix']['server']['start_pingers'] = '1' # default 1
 
 default['zabbix']['server']['externalscriptspath'] = '/usr/local/scripts/zabbix/externalscripts/'
 
 default['zabbix']['server']['timeout'] = '3'
 default['zabbix']['server']['value_cache_size'] = '8M' # default 8MB
 default['zabbix']['server']['cache_size'] = '8M' # default 8MB
+default['zabbix']['server']['history_cache_size'] = '8M' # default 8M
+default['zabbix']['server']['history_text_cache_size'] = '16M' # default 16M
+default['zabbix']['server']['trend_cache_size'] = '4M' # default 4M
