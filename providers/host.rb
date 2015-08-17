@@ -61,7 +61,7 @@ action :create do
         # And now fetch the newly made group to be sure it worked
         # and for later use
         groups = connection.query(get_groups_request)
-        Chef::Log.error('Error creating groups, see Chef errors') if result.nil?
+        Chef::Log.error('Error creating groups, see Chef errors') if result.nil? || groups.length == 0
       elsif groups.length == 1
         Chef::Log.info "Group #{current_group} already exists"
       else
