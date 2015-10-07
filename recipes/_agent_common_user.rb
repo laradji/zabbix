@@ -13,6 +13,5 @@ if node['zabbix']['agent']['user']
     uid node['zabbix']['agent']['uid'] if node['zabbix']['agent']['uid']
     gid node['zabbix']['agent']['gid'] || node['zabbix']['agent']['group']
     system true
-    supports :manage_home => true
   end
 end
