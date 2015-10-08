@@ -2,6 +2,8 @@ default['zabbix']['web']['login'] = 'admin'
 default['zabbix']['web']['password'] = 'zabbix'
 default['zabbix']['web']['install_method']  = 'apache'
 default['zabbix']['web']['fqdn']            = node['fqdn']
+default['zabbix']['web']['api']['uri'] = '/api_jasonrpc.php'
+default['zabbix']['web']['api']['scheme']   = 'http'
 default['zabbix']['web']['aliases']         = ['zabbix']
 default['zabbix']['web']['port']            = 80
 

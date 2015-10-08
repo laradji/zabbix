@@ -6,7 +6,7 @@
 #
 
 if !Chef::Config[:solo]
-  zabbix_server = search(:node, 'recipe:zabbix\\:\\:server').first
+  zabbix_server = search(:node, node['zabbix']['agent']['server_search']).first
 else
   if node['zabbix']['web']['fqdn']
     zabbix_server = node
@@ -18,7 +18,7 @@ else
 end
 
 connection_info = {
-  :url => "http://#{zabbix_server['zabbix']['web']['fqdn']}/api_jsonrpc.php",
+  :url => "#{zabbix_server['zabbix']['web']['api']['scheme']}://#{zabbix_server['zabbix']['web']['fqdn']}#{zabbix_server['zabbix']['web']['api']['uri']}",
   :user => zabbix_server['zabbix']['web']['login'],
   :password => zabbix_server['zabbix']['web']['password']
 }
