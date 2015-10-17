@@ -24,8 +24,13 @@ JavaGateway=<%= @java_gateway %>
 JavaGatewayPort=<%= @java_gateway_port %>
 StartJavaPollers=<%= @java_pollers %>
 StartPollers=<%= node['zabbix']['server']['start_pollers']%>
+StartPingers=<%= node['zabbix']['server']['start_pingers']%>
 
 ExternalScripts=<%= node['zabbix']['server']['externalscriptspath'] %>
 Timeout=<%= node['zabbix']['server']['timeout']%>
 ValueCacheSize=<%= node['zabbix']['server']['value_cache_size'] %>
 CacheSize=<%= node['zabbix']['server']['cache_size'] %>
+HistoryCacheSize=<%= node['zabbix']['server']['history_cache_size'] %>
+HistoryTextCacheSize=<%= node['zabbix']['server']['history_text_cache_size'] %>
+TrendCacheSize=<%= node['zabbix']['server']['trend_cache_size'] %>
+
