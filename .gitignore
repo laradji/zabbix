@@ -26,3 +26,5 @@ rerun.txt
 .kitchen
 .vagrant
 vendor
+/.idea/
+*.iml

@@ -1,9 +1,7 @@
 include_recipe 'zabbix::common'
 
-::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe 'database::mysql'
-include_recipe 'mysql::client'
+::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
 # Generates passwords if they aren't already set
 # This is INSECURE because node.normal persists the passwords to the chef
@@ -17,37 +15,43 @@ unless node['zabbix']['database']['dbpassword']
 end
 
 case node['zabbix']['database']['install_method']
-when 'rds_mysql'
-  root_username       = node['zabbix']['database']['rds_master_username']
-  root_password       = node['zabbix']['database']['rds_master_password']
-  allowed_user_hosts  = '%'
-  provider = Chef::Provider::ZabbixDatabaseMySql
-when 'mysql'
-  unless node['mysql']['server_root_password']
-    node.normal['mysql']['server_root_password'] = secure_password
-  end
-  root_username       = 'root'
-  root_password       = node['mysql']['server_root_password']
-  allowed_user_hosts  = node['zabbix']['database']['allowed_user_hosts']
-  provider = Chef::Provider::ZabbixDatabaseMySql
-when 'postgres'
-  unless node['postgresql']['password']['postgres']
-    node.normal['postgresql']['password']['postgres'] = secure_password
-  end
-  root_username       = 'postgres'
-  root_password       = node['postgresql']['password']['postgres']
-  provider = Chef::Provider::ZabbixDatabasePostgres
-when 'oracle'
-  # No oracle database installation or configuration currently done
-  # This recipe expects a fully configured Oracle DB with a Zabbix
-  # user + schema. The instant client is just for compiling php-oci8
-  # and Zabbix itself
-  include_recipe 'oracle-instantclient'
-  include_recipe 'oracle-instantclient::sdk'
-  # Not used yet but needs to be set
-  root_username       = 'sysdba'
-  root_password       = 'not_applicable'
-  provider = Chef::Provider::ZabbixDatabaseOracle
+  when 'rds_mysql'
+    mysql_chef_gem 'default'
+    mysql2_chef_gem 'default'
+    root_username = node['zabbix']['database']['rds_master_username']
+    root_password = node['zabbix']['database']['rds_master_password']
+    allowed_user_hosts = '%'
+    provider = Chef::Provider::ZabbixDatabaseMySql
+  when 'mysql'
+    mysql_chef_gem 'default'
+    mysql2_chef_gem 'default'
+
+    unless node['mysql']['server_root_password']
+      node.normal['mysql']['server_root_password'] = secure_password
+    end
+    root_username = 'root'
+    root_password = node['mysql']['server_root_password']
+    allowed_user_hosts = node['zabbix']['database']['allowed_user_hosts']
+    provider = Chef::Provider::ZabbixDatabaseMySql
+  when 'postgres'
+    include_recipe "database::postgresql"
+    unless node['postgresql']['password']['postgres']
+      node.normal['postgresql']['password']['postgres'] = secure_password
+    end
+    root_username = 'postgres'
+    root_password = node['postgresql']['password']['postgres']
+    provider = Chef::Provider::ZabbixDatabasePostgres
+  when 'oracle'
+    # No oracle database installation or configuration currently done
+    # This recipe expects a fully configured Oracle DB with a Zabbix
+    # user + schema. The instant client is just for compiling php-oci8
+    # and Zabbix itself
+    include_recipe 'oracle-instantclient'
+    include_recipe 'oracle-instantclient::sdk'
+    # Not used yet but needs to be set
+    root_username = 'sysdba'
+    root_password = 'not_applicable'
+    provider = Chef::Provider::ZabbixDatabaseOracle
 end
 
 zabbix_database node['zabbix']['database']['dbname'] do
