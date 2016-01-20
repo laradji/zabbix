@@ -1,0 +1,11 @@
+[Unit]
+Description=Zabbix Server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=<%= node['zabbix']['install_dir'] %>/sbin/zabbix_server -c <%= node['zabbix']['etc_dir'] %>/zabbix_server.conf
+PIDFile=<%= node['zabbix']['run_dir'] %>/zabbix_server.pid
+
+[Install]
+WantedBy=multi-user.target
