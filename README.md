@@ -116,11 +116,6 @@ You can control the agent install with the following attributes:
 
 Downloads and installs the Zabbix agent from a pre built package
 
-If you are on a machine in the RHEL family of platforms, then you must have your
-package manager setup to allow installation of:
-
-    package "redhat-lsb"
-
 You can control the agent version with:
 
     node['zabbix']['agent']['version']

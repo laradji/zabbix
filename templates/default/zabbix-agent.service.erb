@@ -1,0 +1,13 @@
+[Unit]
+Description=Zabbix Monitor Agent
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=<%= node['zabbix']['install_dir'] %>/sbin/zabbix_agentd -c <%= node['zabbix']['agent']['config_file'] %>
+User=<%= node['zabbix']['agent']['user'] %>
+Group=<%= node['zabbix']['agent']['group'] %>
+PIDFile=<%= node['zabbix']['agent']['pid_file'] %>
+
+[Install]
+WantedBy=multi-user.target

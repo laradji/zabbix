@@ -19,7 +19,7 @@ when 'ubuntu', 'debian'
   end
 
 when 'redhat', 'centos', 'scientific', 'amazon'
-  %w(fping curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb).each do |pck|
+  %w(fping curl-devel iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel).each do |pck|
     package pck do
       action :install
     end

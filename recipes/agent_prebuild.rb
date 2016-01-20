@@ -9,9 +9,6 @@
 
 include_recipe 'zabbix::agent_common'
 
-# Install prerequisite RPM
-package 'redhat-lsb' if node['platform_family'] == 'rhel'
-
 ark 'zabbix_agent' do
   name 'zabbix'
   url node['zabbix']['agent']['prebuild']['url']

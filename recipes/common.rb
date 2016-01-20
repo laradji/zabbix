@@ -52,6 +52,16 @@ zabbix_dirs.each do |dir|
   end
 end
 
+if node['init_package'] == 'systemd'
+  template "/usr/lib/tmpfiles.d/zabbix.conf" do
+    source 'tmpfiles.conf.erb'
+    owner 'root'
+    group 'root'
+    mode '644'
+    action :create
+  end
+end
+
 unless node['zabbix']['agent']['source_url']
   node.default['zabbix']['agent']['source_url'] = Chef::Zabbix.default_download_url(node['zabbix']['agent']['branch'], node['zabbix']['agent']['version'])
 end
