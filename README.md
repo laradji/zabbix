@@ -39,7 +39,6 @@ Installing the Database :
 
 Installing all 3 - Database MUST come before Server
 
-    "recipe[database::mysql]",
     "recipe[mysql::server]",
     "recipe[zabbix]",
     "recipe[zabbix::database]",
@@ -192,17 +191,6 @@ You can control the server and web installs with the following attributes:
     node['zabbix']['server']['install'] = true
     node['zabbix']['server']['install_method'] = 'source'
     node['zabbix']['web']['install'] = true
-
-If you are using a MySql or RDS MySql database make sure your runlist
-includes:
-
-    "recipe[database::mysql]",
-    "recipe[mysql::client]"
-
-If you are user a Postgres database make sure your runlist includes:
-
-    "recipe[database::postgresql]",
-    "recipe[postgresql::client]",
 
 ## server\_source
 

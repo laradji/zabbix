@@ -51,7 +51,6 @@ Vagrant.configure("2") do |config|
       }
     }
 
-    chef.add_recipe "database::mysql"
     chef.add_recipe "mysql::server"
     chef.add_recipe "zabbix"
     chef.add_recipe "zabbix::database"
