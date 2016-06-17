@@ -26,3 +26,4 @@ rerun.txt
 .kitchen
 .vagrant
 vendor
+.idea
