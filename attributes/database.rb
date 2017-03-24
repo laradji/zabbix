@@ -3,7 +3,7 @@ default['zabbix']['database']['dbname']             = 'zabbix'
 default['zabbix']['database']['dbuser']             = 'zabbix'
 default['zabbix']['database']['dbhost']             = 'localhost'
 default['zabbix']['database']['dbpassword']         = nil
-default['zabbix']['database']['dbport']             = '3306'
+default['zabbix']['database']['dbport']             = 3306
 default['zabbix']['database']['allowed_user_hosts'] = 'localhost'
 
 default['zabbix']['database']['rds_master_user']      = nil
