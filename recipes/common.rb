@@ -7,6 +7,16 @@
 # Apache 2.0
 #
 
+# create the login user
+user node['zabbix']['login'] do
+  action :create
+end
+
+group node['zabbix']['group'] do
+  members [node['zabbix']['login']]
+  action :create
+end
+
 # Define root owned folders
 root_dirs = [
   node['zabbix']['etc_dir'],
