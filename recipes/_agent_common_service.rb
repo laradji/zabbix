@@ -11,7 +11,7 @@ when 'sysvinit'
   # Define zabbix_agentd service
   service 'zabbix_agentd' do
     supports :status => true, :start => true, :stop => true, :restart => true
-    action :nothing
+    action [ :enable, :start ]
   end
 when 'windows'
   service 'zabbix_agentd' do
