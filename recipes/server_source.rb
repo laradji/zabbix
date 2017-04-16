@@ -78,19 +78,20 @@ end
 case node['zabbix']['database']['install_method']
 when 'mysql', 'rds_mysql'
   with_mysql = '--with-mysql'
-  configure_options << with_mysql unless configure_options.include?(with_mysql)
+  configure_options << with_mysql unless configure_options.any? { |opt| opt.strip.start_with?(with_mysql) }
 when 'postgres'
   with_postgresql = '--with-postgresql'
-  configure_options << with_postgresql unless configure_options.include?(with_postgresql)
+  configure_options << with_postgresql unless configure_options.any? { |opt| opt.strip.start_with?(with_postgresql) }
 when 'oracle'
   client_arch = node['kernel']['machine'] == 'x86_64' ? 'client64' : 'client'
   oracle_lib_path = "/usr/lib/oracle/#{node['oracle-instantclient']['version']}/#{client_arch}/lib"
   oracle_include_path = "/usr/include/oracle/#{node['oracle-instantclient']['version']}/#{client_arch}"
-  with_oracle_lib = "--with-oracle-lib=#{oracle_lib_path}"
+  with_oracle         = '--with-oracle'
+  with_oracle_lib     = "--with-oracle-lib=#{oracle_lib_path}"
   with_oracle_include = "--with-oracle-include=#{oracle_include_path}"
-  configure_options << '--with-oracle' unless configure_options.include?('--with-oracle')
-  configure_options << with_oracle_lib unless configure_options.include?(with_oracle_lib)
-  configure_options << with_oracle_include unless configure_options.include?(with_oracle_include)
+  configure_options << with_oracle         unless configure_options.any? { |opt| opt.strip.start_with?(with_oracle) }
+  configure_options << with_oracle_lib     unless configure_options.any? { |opt| opt.strip.start_with?(with_oracle_lib) }
+  configure_options << with_oracle_include unless configure_options.any? { |opt| opt.strip.start_with?(with_oracle_include) }
 end
 
 if node['zabbix']['server']['java_gateway_enable'] == true
