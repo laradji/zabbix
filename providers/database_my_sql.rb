@@ -92,7 +92,8 @@ def create_new_database
   # populate database
   executable = '/usr/bin/mysql'
   root_username = "-u #{new_resource.root_username}"
-  root_password = "-p#{new_resource.root_password}"
+  root_password_str = new_resource.root_password
+  root_password = "-p#{new_resource.root_password}" unless root_password_str.empty?
   host = "-h #{new_resource.host}"
   port = "-P #{new_resource.port}"
   dbname = new_resource.dbname
