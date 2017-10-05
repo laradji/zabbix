@@ -6,10 +6,14 @@ when 'sysvinit'
     owner 'root'
     group 'root'
     mode '754'
+    # use package init script if installed form package
+    not_if { node['zabbix']['agent']['install_method'] == 'package' }
   end
 
   # Define zabbix_agentd service
   service 'zabbix_agentd' do
+    service_name node['zabbix']['agent']['service_name']
+    pattern 'zabbix_agentd'
     supports :status => true, :start => true, :stop => true, :restart => true
     action :nothing
   end
